@@ -56,14 +56,6 @@ const mbtiTypeOptionGroup = [
   },
 ]
 
-const wannaDoWithYou = [
-  { label: "slideshow", value: 0 },
-  { label: "walk", value: 1 },
-]
-// const [isActive, setIsActive] = useState(false)
-// const handleToggle = () => {
-//   setIsActive(!isActive)
-// }
 const orderSummary = [
   {
     id: 1,
@@ -85,6 +77,19 @@ const Dashboard = () => {
   const [selectedMulti, setselectedMulti] = useState(null)
   const [haveChildren, setHaveChildren] = useState([])
   const [educationLevel, setEducationLevel] = useState([])
+
+  // 데이트하고싶은거 버튼
+  const wannaDoWithYou = [
+    { label: "slideshow", value: 0 },
+    { label: "walk", value: 1 },
+  ]
+  const [isActive, setIsActive] = useState({})
+  const handleToggle = value => {
+    setIsActive(prevState => ({
+      ...prevState,
+      [value]: !prevState[value],
+    }))
+  }
 
   function handleSelectGroup(selectedGroup) {
     setselectedGroup(selectedGroup)
@@ -1604,12 +1609,12 @@ const Dashboard = () => {
                                     <Col xl={2} key={index} className="my-1">
                                       <div
                                         className="py-3 rounded-3 w-100 border-0"
-                                        // onClick={handleToggle}
-                                        // style={{
-                                        //   backgroundColor: isActive
-                                        //     ? "#D3D3D3"
-                                        //     : "#F5F5F5",
-                                        // }}
+                                        onClick={() => handleToggle(icon.value)}
+                                        style={{
+                                          backgroundColor: isActive[icon.value]
+                                            ? "#D3D3D3"
+                                            : "#F5F5F5",
+                                        }}
                                       >
                                         <i
                                           className={`bx bx-${icon.label} mb-1`}
