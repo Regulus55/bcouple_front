@@ -60,7 +60,10 @@ const wannaDoWithYou = [
   { label: "slideshow", value: 0 },
   { label: "walk", value: 1 },
 ]
-
+// const [isActive, setIsActive] = useState(false)
+// const handleToggle = () => {
+//   setIsActive(!isActive)
+// }
 const orderSummary = [
   {
     id: 1,
@@ -82,12 +85,6 @@ const Dashboard = () => {
   const [selectedMulti, setselectedMulti] = useState(null)
   const [haveChildren, setHaveChildren] = useState([])
   const [educationLevel, setEducationLevel] = useState([])
-
-  const [isActive, setIsActive] = useState(false)
-
-  const handleToggle = () => {
-    setIsActive(!isActive)
-  }
 
   function handleSelectGroup(selectedGroup) {
     setselectedGroup(selectedGroup)
@@ -1606,13 +1603,13 @@ const Dashboard = () => {
                                   {wannaDoWithYou.map((icon, index) => (
                                     <Col xl={2} key={index} className="my-1">
                                       <div
-                                        onClick={handleToggle}
                                         className="py-3 rounded-3 w-100 border-0"
-                                        style={{
-                                          backgroundColor: isActive
-                                            ? "#D3D3D3"
-                                            : "#F5F5F5",
-                                        }}
+                                        // onClick={handleToggle}
+                                        // style={{
+                                        //   backgroundColor: isActive
+                                        //     ? "#D3D3D3"
+                                        //     : "#F5F5F5",
+                                        // }}
                                       >
                                         <i
                                           className={`bx bx-${icon.label} mb-1`}
@@ -1623,13 +1620,13 @@ const Dashboard = () => {
                                   ))}
                                   <Col xl={2} className="my-1">
                                     <div
-                                      onClick={handleToggle}
+                                      // onClick={handleToggle}
                                       className="py-3 rounded-3 w-100 border-0"
-                                      style={{
-                                        backgroundColor: isActive
-                                          ? "#D3D3D3"
-                                          : "#F5F5F5",
-                                      }}
+                                      // style={{
+                                      //   backgroundColor: isActive
+                                      //     ? "#D3D3D3"
+                                      //     : "#F5F5F5",
+                                      // }}
                                     >
                                       <i className="bx bx-slideshow mb-1"></i>
                                       TV 보기
@@ -1637,13 +1634,13 @@ const Dashboard = () => {
                                   </Col>
                                   <Col xl={2} className="my-1">
                                     <div
-                                      onClick={handleToggle}
+                                      // onClick={handleToggle}
                                       className="py-3 rounded-3 w-100 border-0"
-                                      style={{
-                                        backgroundColor: isActive
-                                          ? "#D3D3D3"
-                                          : "#F5F5F5",
-                                      }}
+                                      // style={{
+                                      //   backgroundColor: isActive
+                                      //     ? "#D3D3D3"
+                                      //     : "#F5F5F5",
+                                      // }}
                                     >
                                       <i className="bx bx-walk mb-1"></i>
                                       산책
