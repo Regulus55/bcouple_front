@@ -56,6 +56,11 @@ const mbtiTypeOptionGroup = [
   },
 ]
 
+const wannaDoWithYou = [
+  { label: "slideshow", value: 0 },
+  { label: "walk", value: 1 },
+]
+
 const orderSummary = [
   {
     id: 1,
@@ -77,6 +82,12 @@ const Dashboard = () => {
   const [selectedMulti, setselectedMulti] = useState(null)
   const [haveChildren, setHaveChildren] = useState([])
   const [educationLevel, setEducationLevel] = useState([])
+
+  const [isActive, setIsActive] = useState(false)
+
+  const handleToggle = () => {
+    setIsActive(!isActive)
+  }
 
   function handleSelectGroup(selectedGroup) {
     setselectedGroup(selectedGroup)
@@ -1592,75 +1603,49 @@ const Dashboard = () => {
 
                               <div className="form-floating mb-3 container-fluid">
                                 <Row className="icon-demo-content gx-1">
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-slideshow"></i>
+                                  {wannaDoWithYou.map((icon, index) => (
+                                    <Col xl={2} key={index} className="my-1">
+                                      <div
+                                        onClick={handleToggle}
+                                        className="py-3 rounded-3 w-100 border-0"
+                                        style={{
+                                          backgroundColor: isActive
+                                            ? "#D3D3D3"
+                                            : "#F5F5F5",
+                                        }}
+                                      >
+                                        <i
+                                          className={`bx bx-${icon.label} mb-1`}
+                                        ></i>
+                                        TV 보기
+                                      </div>
+                                    </Col>
+                                  ))}
+                                  <Col xl={2} className="my-1">
+                                    <div
+                                      onClick={handleToggle}
+                                      className="py-3 rounded-3 w-100 border-0"
+                                      style={{
+                                        backgroundColor: isActive
+                                          ? "#D3D3D3"
+                                          : "#F5F5F5",
+                                      }}
+                                    >
+                                      <i className="bx bx-slideshow mb-1"></i>
                                       TV 보기
                                     </div>
                                   </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-walk"></i>
-                                      산책
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-slideshow"></i>
-                                      TV 보기
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-walk"></i>
-                                      산책
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-slideshow"></i>
-                                      TV 보기
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-walk"></i>
-                                      산책
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-slideshow"></i>
-                                      TV 보기
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-walk"></i>
-                                      산책
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-slideshow"></i>
-                                      TV 보기
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-walk"></i>
-                                      산책
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-slideshow"></i>
-                                      TV 보기
-                                    </div>
-                                  </Col>
-                                  <Col xl={2}>
-                                    <div className="bg-light m-1 py-2 rounded-3">
-                                      <i className="bx bx-walk"></i>
+                                  <Col xl={2} className="my-1">
+                                    <div
+                                      onClick={handleToggle}
+                                      className="py-3 rounded-3 w-100 border-0"
+                                      style={{
+                                        backgroundColor: isActive
+                                          ? "#D3D3D3"
+                                          : "#F5F5F5",
+                                      }}
+                                    >
+                                      <i className="bx bx-walk mb-1"></i>
                                       산책
                                     </div>
                                   </Col>
@@ -1871,7 +1856,6 @@ const Dashboard = () => {
                             <Form onSubmit={floatingformik.handleSubmit}>
                               <Row>
                                 <Col sm={12}>
-                                  <h6 className="card-title">Dropzone</h6>
                                   <CardSubtitle className="mb-3">
                                     {" "}
                                     회원님의 평상시 잘 나온 사진들을 업로드
