@@ -80,8 +80,8 @@ const Dashboard = () => {
 
   // 데이트하고싶은거 버튼
   const wannaDoWithYou = [
-    { label: "slideshow", value: 0 },
-    { label: "walk", value: 1 },
+    { label: "slideshow", value: "TV 보기" },
+    { label: "walk", value: "산책" },
   ]
   const [isActive, setIsActive] = useState({})
   const handleToggle = value => {
@@ -1619,38 +1619,11 @@ const Dashboard = () => {
                                         <i
                                           className={`bx bx-${icon.label} mb-1`}
                                         ></i>
-                                        TV 보기
+                                        {icon.value}
                                       </div>
                                     </Col>
                                   ))}
-                                  <Col xl={2} className="my-1">
-                                    <div
-                                      // onClick={handleToggle}
-                                      className="py-3 rounded-3 w-100 border-0"
-                                      // style={{
-                                      //   backgroundColor: isActive
-                                      //     ? "#D3D3D3"
-                                      //     : "#F5F5F5",
-                                      // }}
-                                    >
-                                      <i className="bx bx-slideshow mb-1"></i>
-                                      TV 보기
-                                    </div>
-                                  </Col>
-                                  <Col xl={2} className="my-1">
-                                    <div
-                                      // onClick={handleToggle}
-                                      className="py-3 rounded-3 w-100 border-0"
-                                      // style={{
-                                      //   backgroundColor: isActive
-                                      //     ? "#D3D3D3"
-                                      //     : "#F5F5F5",
-                                      // }}
-                                    >
-                                      <i className="bx bx-walk mb-1"></i>
-                                      산책
-                                    </div>
-                                  </Col>
+                                  <Col xl={2} className="my-1"></Col>
                                 </Row>
                               </div>
                             </Form>
