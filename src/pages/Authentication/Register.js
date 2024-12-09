@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import {
   Row,
   Col,
@@ -28,6 +28,7 @@ import { Link, useNavigate } from "react-router-dom"
 // import images
 import profileImg from "../../assets/images/profile-img.png"
 import logoImg from "../../assets/images/logo.svg"
+import Dropzone from "react-dropzone"
 
 const Register = props => {
   //meta title
@@ -57,12 +58,12 @@ const Register = props => {
 
     initialValues: {
       // userName: "",
-      // nickName: "",
-      // email: "",
-      // phone: "",
+      nickName: "",
+      email: "",
+      phone: "",
       // profileImg: [
-      //   "https://example.com/profile1.jpg",
-      //   "https://example.com/profile2.jpg",
+      // "https://example.com/profile1.jpg",
+      // "https://example.com/profile2.jpg",
       // ],
       password: "",
       consent: {
@@ -74,14 +75,13 @@ const Register = props => {
       },
     },
     validationSchema: Yup.object({
-      // email: Yup.string()
-      //   .email("Invalid email format")
-      //   .required("Please enter your email"),
-      // userName: Yup.string().required("Please Enter Your Username"),
-      // nickName: Yup.string().required("Please Enter Your Nickname"),
+      email: Yup.string()
+        .email("Invalid email format")
+        .required("Please enter your email"),
+      nickName: Yup.string().required("Please Enter Your Nickname"),
       password: Yup.string().required("Please Enter Your Password"),
-      // phone: Yup.string().required("Please Enter Your Phone"),
-      // profileImg: Yup.string().required("Please Enter Your Password"),
+      phone: Yup.string().required("Please Enter Your Phone"),
+      // profileImg: Yup.string().required("Please Upload Your Images"),
       consent: Yup.object({
         overTwenty: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
         agreeOfTerm: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
@@ -96,8 +96,8 @@ const Register = props => {
     onSubmit: values => {
       const userInput = {
         email: values.email,
-        nickname: values.userName,
-        userName: values.userName,
+        nickname: values.nickName,
+        userName: values.nickName,
         password: values.password,
         phone: values.phone,
         consent: values.consent,
@@ -114,10 +114,23 @@ const Register = props => {
 
   const handleAllCheck = checked => {
     const updatedConsent = agreements.reduce((acc, cur) => {
-      acc[cur.key] = checked // 전체 항목을 선택/해제
+      acc[cur.key] = checked
       return acc
     }, {})
-    validation.setFieldValue("consent", updatedConsent) // 전체 동의 상태를 업데이트
+    validation.setFieldValue("consent", updatedConsent)
+  }
+
+  // 이미지 업로드
+  const [selectedFiles, setselectedFiles] = useState([])
+
+  function handleAcceptedFiles(files) {
+    files.map(file =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size),
+      })
+    )
+    setselectedFiles(files)
   }
 
   const AccountProperties = createSelector(
@@ -296,6 +309,88 @@ const Register = props => {
                         ) : null}
                       </div>
 
+                      <div className="mb-3">
+                        <Label className="form-label">Phone</Label>
+                        <Input
+                          name="phone"
+                          type="tel"
+                          placeholder="01012345678"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.phone || ""}
+                          invalid={
+                            validation.touched.phone && validation.errors.phone
+                              ? true
+                              : false
+                          }
+                        />
+                        {validation.touched.phone && validation.errors.phone ? (
+                          <FormFeedback type="invalid">
+                            {validation.errors.phone}
+                          </FormFeedback>
+                        ) : null}
+                      </div>
+
+                      <h6 className="card-title">Images</h6>
+                      <Dropzone
+                        onDrop={acceptedFiles => {
+                          handleAcceptedFiles(acceptedFiles)
+                        }}
+                      >
+                        {({ getRootProps, getInputProps }) => (
+                          <div className="dropzone">
+                            <div
+                              className="dz-message needsclick mt-2"
+                              {...getRootProps()}
+                            >
+                              <input {...getInputProps()} />
+                              <div className="mb-3">
+                                <i className="display-4 text-muted bx bxs-cloud-upload" />
+                              </div>
+                              <h4>Drop files here or click to upload.</h4>
+                            </div>
+                          </div>
+                        )}
+                      </Dropzone>
+                      <div
+                        className="dropzone-previews mt-3"
+                        id="file-previews"
+                      >
+                        {selectedFiles.map((f, i) => {
+                          return (
+                            <Card
+                              className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                              key={i + "-file"}
+                            >
+                              <div className="p-2">
+                                <Row className="align-items-center">
+                                  <Col className="col-auto">
+                                    <img
+                                      data-dz-thumbnail=""
+                                      height="80"
+                                      className="avatar-sm rounded bg-light"
+                                      alt={f.name}
+                                      src={f.preview}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Link
+                                      to="#"
+                                      className="text-muted font-weight-bold"
+                                    >
+                                      {f.name}
+                                    </Link>
+                                    <p className="mb-0">
+                                      <strong>{f.formattedSize}</strong>
+                                    </p>
+                                  </Col>
+                                </Row>
+                              </div>
+                            </Card>
+                          )
+                        })}
+                      </div>
+
                       {/*///////////////////*/}
                       <label className="form-label fw-bold">약관동의</label>
                       <div className="signup-consent p-3 border border-2 rounded">
@@ -318,8 +413,10 @@ const Register = props => {
                           </label>
                         </div>
 
+                        {/* 가로선 */}
                         <hr className="border-2" />
 
+                        {/* 개별 약관 항목 */}
                         {agreements.map(item => (
                           <div key={item.id} className="form-check mb-2">
                             <input
@@ -340,6 +437,8 @@ const Register = props => {
                           </div>
                         ))}
                       </div>
+
+                      {/* 에러 메시지 */}
                       {validation.touched.consent &&
                         Object.keys(validation.errors.consent || {}).some(
                           key =>
@@ -354,6 +453,7 @@ const Register = props => {
                           </div>
                         )}
 
+                      {/* 제출 버튼 */}
                       <div className="mt-4 d-grid">
                         <button
                           className="btn btn-primary btn-block"
