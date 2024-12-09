@@ -258,17 +258,30 @@ const Dashboard = () => {
   })
 
   // 결혼
+  const addChild = () => {
+    const newChild = {
+      childrenGender: "",
+      childrenBirth: "",
+      parentingStatus: "",
+    }
+    marriageformik.setFieldValue("childrenInfo", [
+      ...marriageformik.values.childrenInfo,
+      newChild,
+    ])
+  }
+
+  const removeChild = index => {
+    const updatedChildren = marriageformik.values.childrenInfo.filter(
+      (_, i) => i !== index
+    )
+    marriageformik.setFieldValue("childrenInfo", updatedChildren)
+  }
+
   const marriageformik = useFormik({
     initialValues: {
       mExperience: "",
       reasonForDivorce: "",
-      childrenInfo: [
-        {
-          childrenGender: "",
-          childrenBirth: "",
-          parentingStatus: "",
-        },
-      ],
+      childrenInfo: [],
     },
     validationSchema: Yup.object({
       mExperience: Yup.string().required("Marriage experience is required"),
@@ -792,7 +805,7 @@ const Dashboard = () => {
                                   onChange={marriageformik.handleChange}
                                   onBlur={marriageformik.handleBlur}
                                 >
-                                  <option defaultValue="0">
+                                  <option value="">
                                     Open this select your marriage info
                                   </option>
                                   <option value="1">이혼</option>
@@ -802,126 +815,112 @@ const Dashboard = () => {
                                 <label htmlFor="floatingSelectGrid">
                                   결혼 여부
                                 </label>
+                                {marriageformik.errors.mExperience &&
+                                marriageformik.touched.mExperience ? (
+                                  <span className="text-danger">
+                                    {marriageformik.errors.mExperience}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+
+                          <Row>
+                            <Col xl={12}>
+                              <div className="form-floating mb-3">
+                                <input
+                                  type="text"
+                                  name="reasonForDivorce"
+                                  className="form-control"
+                                  placeholder="Reason for Divorce"
+                                  value={marriageformik.values.reasonForDivorce}
+                                  onChange={marriageformik.handleChange}
+                                  onBlur={marriageformik.handleBlur}
+                                />
+                                <label>이혼사유</label>
+                                {marriageformik.errors.reasonForDivorce &&
+                                marriageformik.touched.reasonForDivorce ? (
+                                  <span className="text-danger">
+                                    {marriageformik.errors.reasonForDivorce}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+
+                          <Row>
+                            <Col xl={9}>
+                              <div className="form-floating mb-3">
+                                <select
+                                  className="form-select"
+                                  name="childrenInfo"
+                                  value={marriageformik.values.childrenInfo}
+                                  onChange={marriageformik.handleChange}
+                                  onBlur={marriageformik.handleBlur}
+                                >
+                                  <option defaultValue="0">
+                                    Open this select your kids
+                                  </option>
+                                  <option value="1">있음</option>
+                                  <option value="2">없음</option>
+                                </select>
+                                <label htmlFor="floatingSelectGrid">
+                                  자녀유무
+                                </label>
                                 <div>
-                                  {marriageformik.errors.mExperience &&
-                                  marriageformik.touched.mExperience ? (
+                                  {marriageformik.errors.childrenInfo &&
+                                  marriageformik.touched.childrenInfo ? (
                                     <span className="text-danger">
-                                      {marriageformik.errors.mExperience}
+                                      {marriageformik.errors.childrenInfo}
                                     </span>
                                   ) : null}
                                 </div>
                               </div>
+                            </Col>
 
-                              <Row>
-                                <Col xl={12}>
-                                  <div className="form-floating mb-3">
-                                    <input
-                                      type="text"
-                                      name="reasonForDivorce"
-                                      className="form-control"
-                                      id="reasonForDivorceInput"
-                                      placeholder="bornArea"
-                                      value={
-                                        marriageformik.values.reasonForDivorce
-                                      }
-                                      onChange={marriageformik.handleChange}
-                                      onBlur={marriageformik.handleBlur}
-                                    />
-                                    <label htmlFor="floatingnameInput">
-                                      이혼사유
-                                    </label>
-                                    {marriageformik.errors.reasonForDivorce &&
-                                    marriageformik.touched.reasonForDivorce ? (
-                                      <span className="text-danger">
-                                        {marriageformik.errors.reasonForDivorce}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row>
+                            <Col xl={3}>
+                              <button
+                                type="button"
+                                onClick={addChild}
+                                className="btn btn-primary w-100"
+                              >
+                                + 추가하기
+                              </button>
+                            </Col>
+                          </Row>
 
-                              <Row>
-                                <Col xl={9}>
-                                  <div className="form-floating mb-3">
-                                    <select
-                                      className="form-select"
-                                      name="childrenInfo"
-                                      value={marriageformik.values.childrenInfo}
-                                      onChange={marriageformik.handleChange}
-                                      onBlur={marriageformik.handleBlur}
-                                    >
-                                      <option defaultValue="0">
-                                        Open this select your kids
-                                      </option>
-                                      <option value="1">있음</option>
-                                      <option value="2">없음</option>
-                                    </select>
-                                    <label htmlFor="floatingSelectGrid">
-                                      자녀유무
-                                    </label>
-                                    <div>
-                                      {marriageformik.errors.childrenInfo &&
-                                      marriageformik.touched.childrenInfo ? (
-                                        <span className="text-danger">
-                                          {marriageformik.errors.childrenInfo}
-                                        </span>
-                                      ) : null}
-                                    </div>
-                                  </div>
-                                </Col>
-
-                                <Col xl={3}>
-                                  <button
-                                    type="button"
-                                    disabled={
-                                      marriageformik.values.childrenInfo === "1"
-                                        ? false
-                                        : true
-                                    }
-                                    onClick={() => {
-                                      setHaveChildren([...haveChildren, "1"])
-                                    }}
-                                    className="btn btn-primary w-100"
-                                  >
-                                    +<div>추가하기</div>
-                                  </button>
-                                </Col>
-                              </Row>
-
-                              {haveChildren.map((child, index) => (
+                          <Row>
+                            {marriageformik.values.childrenInfo.map(
+                              (child, index) => (
                                 <Row key={index}>
                                   <Col xl={3}>
                                     <div className="form-floating mb-3">
                                       <select
                                         className="form-select"
-                                        name="childrenGender"
-                                        value={
-                                          marriageformik.values.childrenGender
-                                        }
+                                        name={`childrenInfo[${index}].childrenGender`}
+                                        value={child.childrenGender}
                                         onChange={marriageformik.handleChange}
                                         onBlur={marriageformik.handleBlur}
                                       >
-                                        <option defaultValue="0">
-                                          select the gender of your kid
-                                        </option>
+                                        <option value="">Select Gender</option>
                                         <option value="1">남자</option>
                                         <option value="2">여자</option>
                                       </select>
-                                      <label htmlFor="floatingSelectGrid">
-                                        자녀성별
-                                      </label>
-                                      <div>
-                                        {marriageformik.errors.childrenGender &&
-                                        marriageformik.touched
-                                          .childrenGender ? (
-                                          <span className="text-danger">
-                                            {
-                                              marriageformik.errors
-                                                .childrenGender
-                                            }
-                                          </span>
-                                        ) : null}
-                                      </div>
+                                      <label>자녀성별</label>
+                                      {marriageformik.errors.childrenInfo &&
+                                      marriageformik.errors.childrenInfo[
+                                        index
+                                      ] &&
+                                      marriageformik.errors.childrenInfo[index]
+                                        .childrenGender ? (
+                                        <span className="text-danger">
+                                          {
+                                            marriageformik.errors.childrenInfo[
+                                              index
+                                            ].childrenGender
+                                          }
+                                        </span>
+                                      ) : null}
                                     </div>
                                   </Col>
 
@@ -929,23 +928,25 @@ const Dashboard = () => {
                                     <div className="form-floating mb-3">
                                       <input
                                         type="text"
-                                        name="childrenBirth"
+                                        name={`childrenInfo[${index}].childrenBirth`}
                                         className="form-control"
-                                        id="childrenBirth"
-                                        placeholder="childrenBirth"
-                                        value={
-                                          marriageformik.values.childrenBirth
-                                        }
+                                        value={child.childrenBirth}
                                         onChange={marriageformik.handleChange}
                                         onBlur={marriageformik.handleBlur}
                                       />
-                                      <label htmlFor="marriageformikInput">
-                                        자녀 출생연도
-                                      </label>
-                                      {marriageformik.errors.childrenBirth &&
-                                      marriageformik.touched.childrenBirth ? (
+                                      <label>자녀 출생연도</label>
+                                      {marriageformik.errors.childrenInfo &&
+                                      marriageformik.errors.childrenInfo[
+                                        index
+                                      ] &&
+                                      marriageformik.errors.childrenInfo[index]
+                                        .childrenBirth ? (
                                         <span className="text-danger">
-                                          {marriageformik.errors.childrenBirth}
+                                          {
+                                            marriageformik.errors.childrenInfo[
+                                              index
+                                            ].childrenBirth
+                                          }
                                         </span>
                                       ) : null}
                                     </div>
@@ -955,60 +956,55 @@ const Dashboard = () => {
                                     <div className="form-floating mb-3">
                                       <select
                                         className="form-select"
-                                        name="parentingStatus"
-                                        value={
-                                          floatingformik.values.parentingStatus
-                                        }
-                                        onChange={floatingformik.handleChange}
-                                        onBlur={floatingformik.handleBlur}
+                                        name={`childrenInfo[${index}].parentingStatus`}
+                                        value={child.parentingStatus}
+                                        onChange={marriageformik.handleChange}
+                                        onBlur={marriageformik.handleBlur}
                                       >
-                                        <option defaultValue="0">
-                                          select the Parental Status
+                                        <option value="">
+                                          Select Parenting Status
                                         </option>
                                         <option value="1">직접양육</option>
                                         <option value="2">배우자가 양육</option>
                                       </select>
-                                      <label htmlFor="floatingSelectGrid">
-                                        양육여부
-                                      </label>
-                                      <div>
-                                        {floatingformik.errors
-                                          .parentingStatus &&
-                                        floatingformik.touched
-                                          .parentingStatus ? (
-                                          <span className="text-danger">
-                                            {
-                                              floatingformik.errors
-                                                .parentingStatus
-                                            }
-                                          </span>
-                                        ) : null}
-                                      </div>
+                                      <label>양육여부</label>
+                                      {marriageformik.errors.childrenInfo &&
+                                      marriageformik.errors.childrenInfo[
+                                        index
+                                      ] &&
+                                      marriageformik.errors.childrenInfo[index]
+                                        .parentingStatus ? (
+                                        <span className="text-danger">
+                                          {
+                                            marriageformik.errors.childrenInfo[
+                                              index
+                                            ].parentingStatus
+                                          }
+                                        </span>
+                                      ) : null}
                                     </div>
                                   </Col>
 
                                   <Col xl={3}>
                                     <button
                                       type="button"
-                                      onClick={() =>
-                                        setHaveChildren(haveChildren.slice(1))
-                                      }
-                                      className="btn btn-primary w-100"
+                                      onClick={() => removeChild(index)}
+                                      className="btn btn-danger w-100"
                                     >
-                                      -<div>삭제하기</div>
+                                      - 삭제하기
                                     </button>
                                   </Col>
                                 </Row>
-                              ))}
+                              )
+                            )}
 
-                              <div className={"mt-3"}>
-                                <button
-                                  type="submit"
-                                  className="btn btn-primary w-md"
-                                >
-                                  결혼 관련 저장
-                                </button>
-                              </div>
+                            <Col xl={12}>
+                              <button
+                                type="submit"
+                                className="btn btn-primary w-md"
+                              >
+                                결혼 관련 저장
+                              </button>
                             </Col>
                           </Row>
                         </Form>
