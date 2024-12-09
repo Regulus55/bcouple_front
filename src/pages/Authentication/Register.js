@@ -66,6 +66,7 @@ const Register = props => {
       // "https://example.com/profile2.jpg",
       // ],
       password: "",
+      passwordconfirm: "",
       consent: {
         overTwenty: false,
         agreeOfTerm: false,
@@ -79,7 +80,12 @@ const Register = props => {
         .email("Invalid email format")
         .required("Please enter your email"),
       nickName: Yup.string().required("Please Enter Your Nickname"),
-      password: Yup.string().required("Please Enter Your Password"),
+      password: Yup.string()
+        .required("Please enter your password")
+        .min(6, "Password must be at least 6 characters"),
+      passwordconfirm: Yup.string()
+        .required("Please confirm your password")
+        .oneOf([Yup.ref("password"), null], "Passwords must match"),
       phone: Yup.string().required("Please Enter Your Phone"),
       // profileImg: Yup.string().required("Please Upload Your Images"),
       consent: Yup.object({
