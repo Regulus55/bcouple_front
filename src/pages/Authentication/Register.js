@@ -1,5 +1,16 @@
 import React, { useEffect } from "react"
-import { Row, Col, CardBody, Card, Alert, Container, Input, Label, Form, FormFeedback } from "reactstrap"
+import {
+  Row,
+  Col,
+  CardBody,
+  Card,
+  Alert,
+  Container,
+  Input,
+  Label,
+  Form,
+  FormFeedback,
+} from "reactstrap"
 
 // Formik Validation
 import * as Yup from "yup"
@@ -19,56 +30,110 @@ import profileImg from "../../assets/images/profile-img.png"
 import logoImg from "../../assets/images/logo.svg"
 
 const Register = props => {
-
   //meta title
   document.title = "Register | Skote - React Admin & Dashboard Template"
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const validation = useFormik({
-    // enableReinitialize : use this flag when initial values needs to be changed
-    enableReinitialize: true,
-
-    initialValues: {
-      email: "",
-      username: "",
-      nickname: "",
-      phone: "",
-      password: "",
-      passwordconfirm: ""
-    },
-    validationSchema: Yup.object({
-      email: Yup.string().required("Please Enter Your Email"),
-      username: Yup.string().required("Please Enter Your Username"),
-      password: Yup.string().required("Please Enter Your Password")
-    }),
-    onSubmit: (values) => {
-      dispatch(registerUser(values))
-    }
-  })
-
   const agreements = [
     { id: 1, label: "14세 이상입니다(필수)", key: "overTwenty" },
     { id: 2, label: "이용약관(필수)", key: "agreeOfTerm" },
-    { id: 3, label: "개인정보수집 및 이용동의(필수)", key: "agreeOfPersonalInfo" },
-    { id: 4, label: "개인정보 마케팅 활용 동의(선택)", key: "agreeOfMarketing" },
-    { id: 5, label: "이벤트, 특가 알림 및 SMS 등 수신(선택)", key: "etc" }
+    {
+      id: 3,
+      label: "개인정보수집 및 이용동의(필수)",
+      key: "agreeOfPersonalInfo",
+    },
+    {
+      id: 4,
+      label: "개인정보 마케팅 활용 동의(선택)",
+      key: "agreeOfMarketing",
+    },
+    { id: 5, label: "이벤트, 특가 알림 및 SMS 등 수신(선택)", key: "etc" },
   ]
 
+  const validation = useFormik({
+    enableReinitialize: true,
+
+    initialValues: {
+      // userName: "",
+      // nickName: "",
+      // email: "",
+      // phone: "",
+      // profileImg: [
+      //   "https://example.com/profile1.jpg",
+      //   "https://example.com/profile2.jpg",
+      // ],
+      password: "",
+      consent: {
+        overTwenty: false,
+        agreeOfTerm: false,
+        agreeOfPersonalInfo: false,
+        agreeOfMarketing: false,
+        etc: false,
+      },
+    },
+    validationSchema: Yup.object({
+      // email: Yup.string()
+      //   .email("Invalid email format")
+      //   .required("Please enter your email"),
+      // userName: Yup.string().required("Please Enter Your Username"),
+      // nickName: Yup.string().required("Please Enter Your Nickname"),
+      password: Yup.string().required("Please Enter Your Password"),
+      // phone: Yup.string().required("Please Enter Your Phone"),
+      // profileImg: Yup.string().required("Please Enter Your Password"),
+      consent: Yup.object({
+        overTwenty: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
+        agreeOfTerm: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
+        agreeOfPersonalInfo: Yup.boolean().oneOf(
+          [true],
+          "필수 약관에 동의해주세요."
+        ),
+        agreeOfMarketing: Yup.boolean(),
+        etc: Yup.boolean(),
+      }),
+    }),
+    onSubmit: values => {
+      const userInput = {
+        email: values.email,
+        nickname: values.userName,
+        userName: values.userName,
+        password: values.password,
+        phone: values.phone,
+        consent: values.consent,
+      }
+      console.log("userinput:", values)
+
+      console.log("Submitted values:", userInput)
+    },
+  })
+
+  const handleSingleCheck = (checked, key) => {
+    validation.setFieldValue(`consent.${key}`, checked) //
+  }
+
+  const handleAllCheck = checked => {
+    const updatedConsent = agreements.reduce((acc, cur) => {
+      acc[cur.key] = checked // 전체 항목을 선택/해제
+      return acc
+    }, {})
+    validation.setFieldValue("consent", updatedConsent) // 전체 동의 상태를 업데이트
+  }
+
   const AccountProperties = createSelector(
-    (state) => state.Account,
-    (account) => ({
+    state => state.Account,
+    account => ({
       user: account.user,
       registrationError: account.registrationError,
-      success: account.success
+      success: account.success,
       // loading: account.loading,
     })
   )
 
   const {
     user,
-    registrationError, success
+    registrationError,
+    success,
     // loading
   } = useSelector(AccountProperties)
 
@@ -123,11 +188,7 @@ const Register = props => {
                   <div className="p-2">
                     <Form
                       className="form-horizontal"
-                      onSubmit={(e) => {
-                        e.preventDefault()
-                        validation.handleSubmit()
-                        return false
-                      }}
+                      onSubmit={validation.handleSubmit}
                     >
                       {user && user ? (
                         <Alert color="success">
@@ -151,47 +212,39 @@ const Register = props => {
                           onBlur={validation.handleBlur}
                           value={validation.values.email || ""}
                           invalid={
-                            validation.touched.email && validation.errors.email ? true : false
+                            validation.touched.email && validation.errors.email
+                              ? true
+                              : false
                           }
                         />
                         {validation.touched.email && validation.errors.email ? (
-                          <FormFeedback type="invalid">{validation.errors.email}</FormFeedback>
-                        ) : null}
-                      </div>
-
-                      <div className="mb-3">
-                        <Label className="form-label">Username</Label>
-                        <Input
-                          name="username"
-                          type="text"
-                          placeholder="Enter username"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.username || ""}
-                          invalid={
-                            validation.touched.username && validation.errors.username ? true : false
-                          }
-                        />
-                        {validation.touched.username && validation.errors.username ? (
-                          <FormFeedback type="invalid">{validation.errors.username}</FormFeedback>
+                          <FormFeedback type="invalid">
+                            {validation.errors.email}
+                          </FormFeedback>
                         ) : null}
                       </div>
 
                       <div className="mb-3">
                         <Label className="form-label">Nickname</Label>
                         <Input
-                          name="nickname"
+                          name="nickName"
                           type="text"
                           placeholder="Enter nickname"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
-                          value={validation.values.nickname || ""}
+                          value={validation.values.nickName || ""}
                           invalid={
-                            validation.touched.nickname && validation.errors.nickname ? true : false
+                            validation.touched.nickName &&
+                            validation.errors.nickName
+                              ? true
+                              : false
                           }
                         />
-                        {validation.touched.nickname && validation.errors.nickname ? (
-                          <FormFeedback type="invalid">{validation.errors.nickname}</FormFeedback>
+                        {validation.touched.nickName &&
+                        validation.errors.nickName ? (
+                          <FormFeedback type="invalid">
+                            {validation.errors.nickName}
+                          </FormFeedback>
                         ) : null}
                       </div>
 
@@ -205,11 +258,17 @@ const Register = props => {
                           onBlur={validation.handleBlur}
                           value={validation.values.password || ""}
                           invalid={
-                            validation.touched.password && validation.errors.password ? true : false
+                            validation.touched.password &&
+                            validation.errors.password
+                              ? true
+                              : false
                           }
                         />
-                        {validation.touched.password && validation.errors.password ? (
-                          <FormFeedback type="invalid">{validation.errors.password}</FormFeedback>
+                        {validation.touched.password &&
+                        validation.errors.password ? (
+                          <FormFeedback type="invalid">
+                            {validation.errors.password}
+                          </FormFeedback>
                         ) : null}
                       </div>
 
@@ -223,53 +282,77 @@ const Register = props => {
                           onBlur={validation.handleBlur}
                           value={validation.values.passwordconfirm || ""}
                           invalid={
-                            validation.touched.passwordconfirm && validation.errors.passwordconfirm ? true : false
+                            validation.touched.passwordconfirm &&
+                            validation.errors.passwordconfirm
+                              ? true
+                              : false
                           }
                         />
-                        {validation.touched.passwordconfirm && validation.errors.passwordconfirm ? (
-                          <FormFeedback type="invalid">{validation.errors.passwordconfirm}</FormFeedback>
+                        {validation.touched.passwordconfirm &&
+                        validation.errors.passwordconfirm ? (
+                          <FormFeedback type="invalid">
+                            {validation.errors.passwordconfirm}
+                          </FormFeedback>
                         ) : null}
                       </div>
-
-                      <div className="mb-3">
-                        <Label className="form-label">Password Confirm</Label>
-                        <input
-                          className="form-control"
-                          type="tel"
-                          placeholder="1-(555)-555-5555"
-                        />
-                        {validation.touched.passwordconfirm && validation.errors.passwordconfirm ? (
-                          <FormFeedback type="invalid">{validation.errors.passwordconfirm}</FormFeedback>
-                        ) : null}
-                      </div>
-
 
                       {/*///////////////////*/}
-                      <div className="mb-3">
-                        <Label className="form-label">약관동의</Label>
-                        {agreements.map((agreement, index) => (
-                          <>
-                            <div className="form-check mb-3">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                value=""
-                                id={`agreement.id[${index+1}`}
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="defaultCheck1"
-                              >
-                                Form Checkbox
-                              </label>
-                            </div>
-                            {validation.touched.consent && validation.errors.consent ? (
-                              <FormFeedback type="invalid">{validation.errors.consent}</FormFeedback>
-                            ) : null}
-                          </>
-                        ))}
+                      <label className="form-label fw-bold">약관동의</label>
+                      <div className="signup-consent p-3 border border-2 rounded">
+                        {/* 전체 선택 */}
+                        <div className="form-check">
+                          <input
+                            type="checkbox"
+                            id="select-all"
+                            className="form-check-input"
+                            onChange={e => handleAllCheck(e.target.checked)}
+                            checked={Object.values(
+                              validation.values.consent
+                            ).every(Boolean)}
+                          />
+                          <label
+                            htmlFor="select-all"
+                            className="form-check-label"
+                          >
+                            전체 선택
+                          </label>
+                        </div>
 
+                        <hr className="border-2" />
+
+                        {agreements.map(item => (
+                          <div key={item.id} className="form-check mb-2">
+                            <input
+                              type="checkbox"
+                              id={`agreement-${item.id}`}
+                              className="form-check-input"
+                              checked={validation.values.consent[item.key]}
+                              onChange={e =>
+                                handleSingleCheck(e.target.checked, item.key)
+                              }
+                            />
+                            <label
+                              htmlFor={`agreement-${item.id}`}
+                              className="form-check-label"
+                            >
+                              {item.label}
+                            </label>
+                          </div>
+                        ))}
                       </div>
+                      {validation.touched.consent &&
+                        Object.keys(validation.errors.consent || {}).some(
+                          key =>
+                            [
+                              "overTwenty",
+                              "agreeOfTerm",
+                              "agreeOfPersonalInfo",
+                            ].includes(key) && validation.errors.consent[key]
+                        ) && (
+                          <div className="text-danger mt-2">
+                            Please agree to all the required terms.
+                          </div>
+                        )}
 
                       <div className="mt-4 d-grid">
                         <button
@@ -279,17 +362,17 @@ const Register = props => {
                           Register
                         </button>
                       </div>
-
                     </Form>
                   </div>
                 </CardBody>
               </Card>
               <div className="mt-5 text-center">
                 <p>
-                  Already have an account ?{" "} <Link to="/login" className="font-weight-medium text-primary">
-                  {" "}
-                  Login
-                </Link>{" "}
+                  Already have an account ?{" "}
+                  <Link to="/login" className="font-weight-medium text-primary">
+                    {" "}
+                    Login
+                  </Link>{" "}
                 </p>
                 <p>
                   © {new Date().getFullYear()} BeeCouple. Crafted with{" "}
