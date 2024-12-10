@@ -30,7 +30,6 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 //Import Images
 import img1 from "../../assets/images/product/img-1.png"
 import img7 from "../../assets/images/product/img-7.png"
-import Select from "react-select"
 import Dropzone from "react-dropzone"
 
 const bloodTypeOptionGroup = [
@@ -70,10 +69,7 @@ const Dashboard = () => {
   const [textareabadge, settextareabadge] = useState(0)
   const [selectedGroup, setselectedGroup] = useState(null)
   const [selectedMulti, setselectedMulti] = useState(null)
-  const [haveChildren, setHaveChildren] = useState([])
-  const [haveChildButton, setHaveChildButton] = useState(false)
   const [educationLevel, setEducationLevel] = useState([])
-  const [educationLevelButton, setEducationLevelButton] = useState(false)
 
   // 데이트하고싶은거 버튼
   const wannaDoWithYou = [
@@ -111,7 +107,6 @@ const Dashboard = () => {
   // 텍스트 에어리어
   const [textcount, settextcount] = useState(0)
 
-  // const [textareabadge, settextareabadge] = useState(false)
   function textareachange(event) {
     const count = event.target.value.length
     if (count > 0) {
@@ -141,49 +136,6 @@ const Dashboard = () => {
     )
     setselectedFiles(files)
   }
-
-  //Inline forms
-  const inlineformik = useFormik({
-    initialValues: {
-      username: "",
-      select: "",
-      check: "",
-    },
-    validationSchema: Yup.object({
-      username: Yup.string().required("This field is required"),
-      select: Yup.string().required("This field is required"),
-      check: Yup.string().required("This field is required"),
-    }),
-
-    onSubmit: values => {
-      // console.log("valuessss", values);
-    },
-  })
-
-  const validation = useFormik({
-    initialValues: {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      country: "",
-      states: "",
-      order: "",
-    },
-    validationSchema: Yup.object({
-      name: Yup.string().required("Please Enter your Name"),
-      email: Yup.string().email().required("Please Enter your Email Address"),
-      phone: Yup.string().required("Please Enter your Phone"),
-      address: Yup.string().required("Please Enter your Address"),
-      country: Yup.string().required("Please Enter your Country Name"),
-      states: Yup.string().required("Please Enter your States"),
-      order: Yup.string().required("Please Enter your Order Note"),
-    }),
-
-    onSubmit: values => {
-      // console.log('valuessssss',values)
-    },
-  })
 
   // 기본정보
   const basicInfoFormik = useFormik({
@@ -223,7 +175,6 @@ const Dashboard = () => {
 
     onSubmit: values => {
       console.log("기본정보 values", values)
-      console.log("크크킄")
     },
   })
 
@@ -253,30 +204,10 @@ const Dashboard = () => {
 
     onSubmit: values => {
       console.log("valuesssssdsssss", values)
-      console.log("크크킄")
     },
   })
 
   // 결혼
-  const addChild = () => {
-    const newChild = {
-      childrenGender: "",
-      childrenBirth: "",
-      parentingStatus: "",
-    }
-    marriageformik.setFieldValue("childrenInfo", [
-      ...marriageformik.values.childrenInfo,
-      newChild,
-    ])
-  }
-
-  const removeChild = index => {
-    const updatedChildren = marriageformik.values.childrenInfo.filter(
-      (_, i) => i !== index
-    )
-    marriageformik.setFieldValue("childrenInfo", updatedChildren)
-  }
-
   const marriageformik = useFormik({
     initialValues: {
       mExperience: "",
@@ -307,7 +238,57 @@ const Dashboard = () => {
     },
   })
 
+  const addChild = () => {
+    marriageformik.setFieldValue("childrenInfo", [
+      ...marriageformik.values.childrenInfo,
+      {},
+    ])
+  }
+
+  const removeChild = index => {
+    const updatedChildren = marriageformik.values.childrenInfo.filter(
+      (_, i) => i !== index
+    )
+    marriageformik.setFieldValue("childrenInfo", updatedChildren)
+  }
+
   // 학력
+  const handleEducationChange = e => {
+    const value = e.target.value
+    educationformik.handleChange(e)
+
+    let numberOfFields = 0
+    if (value === "1") {
+      numberOfFields = 1
+    } else if (["2", "3", "4", "5"].includes(value)) {
+      numberOfFields = 2
+    } else if (value === "6") {
+      numberOfFields = 3
+    }
+
+    const newFields = Array(numberOfFields)
+      .fill(null)
+      .map((_, index) => ({
+        finaledu: value,
+        educationLevels: [],
+        //  schoolname: "",
+        // major: "",
+        // location: "",
+        // type: "",
+        // status: "",
+      }))
+
+    setEducationLevel(newFields)
+  }
+  const removeEducationLevel = index => {
+    const updatedEducationLevel = educationLevel.filter((_, i) => i !== index)
+    setEducationLevel(updatedEducationLevel)
+  }
+
+  useEffect(() => {
+    educationformik.setFieldValue("educationLevels", educationLevel)
+  }, [educationLevel])
+
   const educationformik = useFormik({
     initialValues: {
       finaledu: "",
@@ -380,28 +361,6 @@ const Dashboard = () => {
       console.log("직업 values", values)
     },
   })
-
-  // 자녀추가 버튼
-  useEffect(() => {
-    if (marriageformik.values.children === "1") {
-      setHaveChildren(["1"])
-      setHaveChildButton(true)
-    } else if (marriageformik.values.children === "2") {
-      setHaveChildren([])
-      setHaveChildButton(false)
-    }
-  }, [marriageformik.values.children])
-
-  // 학력추가 버튼
-  useEffect(() => {
-    if (marriageformik.values.children === "1") {
-      setHaveChildren(["1"])
-      setHaveChildButton(true)
-    } else if (marriageformik.values.children === "2") {
-      setHaveChildren([])
-      setHaveChildButton(false)
-    }
-  }, [marriageformik.values.children])
 
   return (
     <React.Fragment>
@@ -812,9 +771,11 @@ const Dashboard = () => {
                                   <option value="2">사별</option>
                                   <option value="3">미혼</option>
                                 </select>
-                                <label htmlFor="floatingSelectGrid">
-                                  결혼 여부
+
+                                <label htmlFor="reasonForDivorce">
+                                  이혼 사유
                                 </label>
+
                                 {marriageformik.errors.mExperience &&
                                 marriageformik.touched.mExperience ? (
                                   <span className="text-danger">
@@ -854,33 +815,44 @@ const Dashboard = () => {
                                 <select
                                   className="form-select"
                                   name="childrenInfo"
-                                  value={marriageformik.values.childrenInfo}
-                                  onChange={marriageformik.handleChange}
+                                  value={
+                                    // marriageformik.values.childrenInfo.length >
+                                    // 0
+                                    //   ? "1"
+                                    //   : "2"
+                                    marriageformik.values.childrenInfo
+                                  }
+                                  onChange={e => {
+                                    const value = e.target.value
+                                    marriageformik.setFieldValue(
+                                      "childrenInfo",
+                                      value === "1" ? [{}] : []
+                                    )
+                                  }}
                                   onBlur={marriageformik.handleBlur}
                                 >
-                                  <option defaultValue="0">
-                                    Open this select your kids
-                                  </option>
+                                  <option value="">Select Children</option>
                                   <option value="1">있음</option>
                                   <option value="2">없음</option>
                                 </select>
-                                <label htmlFor="floatingSelectGrid">
-                                  자녀유무
-                                </label>
-                                <div>
-                                  {marriageformik.errors.childrenInfo &&
-                                  marriageformik.touched.childrenInfo ? (
-                                    <span className="text-danger">
-                                      {marriageformik.errors.childrenInfo}
-                                    </span>
-                                  ) : null}
-                                </div>
+                                <label htmlFor="childrenInfo">자녀 여부</label>
+                                {/* {marriageformik.errors.childrenInfo &&
+                                marriageformik.touched.childrenInfo ? (
+                                  <span className="text-danger">
+                                    {marriageformik.errors.childrenInfo}
+                                  </span>
+                                ) : null} */}
                               </div>
                             </Col>
 
                             <Col xl={3}>
                               <button
                                 type="button"
+                                disabled={
+                                  marriageformik.values.childrenInfo === "1"
+                                    ? true
+                                    : false
+                                }
                                 onClick={addChild}
                                 className="btn btn-primary w-100"
                               >
@@ -889,124 +861,73 @@ const Dashboard = () => {
                             </Col>
                           </Row>
 
-                          <Row>
-                            {marriageformik.values.childrenInfo.map(
-                              (child, index) => (
-                                <Row key={index}>
-                                  <Col xl={3}>
-                                    <div className="form-floating mb-3">
-                                      <select
-                                        className="form-select"
-                                        name={`childrenInfo[${index}].childrenGender`}
-                                        value={child.childrenGender}
-                                        onChange={marriageformik.handleChange}
-                                        onBlur={marriageformik.handleBlur}
-                                      >
-                                        <option value="">Select Gender</option>
-                                        <option value="1">남자</option>
-                                        <option value="2">여자</option>
-                                      </select>
-                                      <label>자녀성별</label>
-                                      {marriageformik.errors.childrenInfo &&
-                                      marriageformik.errors.childrenInfo[
-                                        index
-                                      ] &&
-                                      marriageformik.errors.childrenInfo[index]
-                                        .childrenGender ? (
-                                        <span className="text-danger">
-                                          {
-                                            marriageformik.errors.childrenInfo[
-                                              index
-                                            ].childrenGender
-                                          }
-                                        </span>
-                                      ) : null}
-                                    </div>
-                                  </Col>
-
-                                  <Col xl={3}>
-                                    <div className="form-floating mb-3">
-                                      <input
-                                        type="text"
-                                        name={`childrenInfo[${index}].childrenBirth`}
-                                        className="form-control"
-                                        value={child.childrenBirth}
-                                        onChange={marriageformik.handleChange}
-                                        onBlur={marriageformik.handleBlur}
-                                      />
-                                      <label>자녀 출생연도</label>
-                                      {marriageformik.errors.childrenInfo &&
-                                      marriageformik.errors.childrenInfo[
-                                        index
-                                      ] &&
-                                      marriageformik.errors.childrenInfo[index]
-                                        .childrenBirth ? (
-                                        <span className="text-danger">
-                                          {
-                                            marriageformik.errors.childrenInfo[
-                                              index
-                                            ].childrenBirth
-                                          }
-                                        </span>
-                                      ) : null}
-                                    </div>
-                                  </Col>
-
-                                  <Col xl={3}>
-                                    <div className="form-floating mb-3">
-                                      <select
-                                        className="form-select"
-                                        name={`childrenInfo[${index}].parentingStatus`}
-                                        value={child.parentingStatus}
-                                        onChange={marriageformik.handleChange}
-                                        onBlur={marriageformik.handleBlur}
-                                      >
-                                        <option value="">
-                                          Select Parenting Status
-                                        </option>
-                                        <option value="1">직접양육</option>
-                                        <option value="2">배우자가 양육</option>
-                                      </select>
-                                      <label>양육여부</label>
-                                      {marriageformik.errors.childrenInfo &&
-                                      marriageformik.errors.childrenInfo[
-                                        index
-                                      ] &&
-                                      marriageformik.errors.childrenInfo[index]
-                                        .parentingStatus ? (
-                                        <span className="text-danger">
-                                          {
-                                            marriageformik.errors.childrenInfo[
-                                              index
-                                            ].parentingStatus
-                                          }
-                                        </span>
-                                      ) : null}
-                                    </div>
-                                  </Col>
-
-                                  <Col xl={3}>
-                                    <button
-                                      type="button"
-                                      onClick={() => removeChild(index)}
-                                      className="btn btn-danger w-100"
+                          {marriageformik.values.childrenInfo.map(
+                            (child, index) => (
+                              <Row key={index}>
+                                <Col xl={3}>
+                                  <div className="form-floating mb-3">
+                                    <label>자녀 성별</label>
+                                    <select
+                                      className="form-select"
+                                      name={`childrenInfo[${index}].childrenGender`}
+                                      value={child.childrenGender || ""}
+                                      onChange={marriageformik.handleChange}
                                     >
-                                      - 삭제하기
-                                    </button>
-                                  </Col>
-                                </Row>
-                              )
-                            )}
+                                      <option value="">Select</option>
+                                      <option value="1">남자</option>
+                                      <option value="2">여자</option>
+                                    </select>
+                                  </div>
+                                </Col>
 
-                            <Col xl={12}>
-                              <button
-                                type="submit"
-                                className="btn btn-primary w-md"
-                              >
-                                결혼 관련 저장
-                              </button>
-                            </Col>
-                          </Row>
+                                <Col xl={3}>
+                                  <div className="form-floating mb-3">
+                                    <label>자녀 출생연도</label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      name={`childrenInfo[${index}].childrenBirth`}
+                                      value={child.childrenBirth || ""}
+                                      onChange={marriageformik.handleChange}
+                                    />
+                                  </div>
+                                </Col>
+
+                                <Col xl={3}>
+                                  <div className="form-floating mb-3">
+                                    <label>양육 여부</label>
+                                    <select
+                                      className="form-select"
+                                      name={`childrenInfo[${index}].parentingStatus`}
+                                      value={child.parentingStatus || ""}
+                                      onChange={marriageformik.handleChange}
+                                    >
+                                      <option value="">Select</option>
+                                      <option value="1">직접양육</option>
+                                      <option value="2">배우자가 양육</option>
+                                    </select>
+                                  </div>
+                                </Col>
+
+                                <Col xl={3}>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeChild(index)}
+                                    className="btn btn-danger w-100"
+                                  >
+                                    - 삭제하기
+                                  </button>
+                                </Col>
+                              </Row>
+                            )
+                          )}
+
+                          <button
+                            type="submit"
+                            className="btn btn-primary w-md"
+                          >
+                            결혼 관련 저장
+                          </button>
                         </Form>
                       </CardBody>
                     </Card>
@@ -1120,10 +1041,10 @@ const Dashboard = () => {
                                   className="form-select"
                                   name="finaledu"
                                   value={educationformik.values.finaledu}
-                                  onChange={educationformik.handleChange}
+                                  onChange={handleEducationChange} // 변경된 함수
                                   onBlur={educationformik.handleBlur}
                                 >
-                                  <option defaultValue="">
+                                  <option value="">
                                     Select your education level
                                   </option>
                                   <option value="1">고등학교</option>
@@ -1135,6 +1056,7 @@ const Dashboard = () => {
                                   <option value="5">대학교(4년제)</option>
                                   <option value="6">대학원</option>
                                 </select>
+
                                 <label htmlFor="floatingSelectGrid">
                                   최종학력
                                 </label>
@@ -1162,30 +1084,27 @@ const Dashboard = () => {
                             </Col>
                           </Row>
 
-                          {educationLevel.map(edu => (
-                            <>
+                          {educationLevel.map((edu, index) => (
+                            <div key={index}>
                               <Row>
                                 <Col xl={4}>
                                   <div className="form-floating mb-3">
                                     <input
                                       type="text"
-                                      name="schoolname"
+                                      name={`educationLevel[${index}].schoolname`}
                                       className="form-control"
-                                      id="floatingnameInput"
                                       placeholder="School Name"
-                                      value={educationformik.values.schoolname}
-                                      onChange={educationformik.handleChange}
-                                      onBlur={educationformik.handleBlur}
+                                      value={edu.schoolname}
+                                      onChange={e => {
+                                        const updatedFields = [
+                                          ...educationLevel,
+                                        ]
+                                        updatedFields[index].schoolname =
+                                          e.target.value
+                                        setEducationLevel(updatedFields)
+                                      }}
                                     />
-                                    <label htmlFor="floatingnameInput">
-                                      학교이름
-                                    </label>
-                                    {educationformik.errors.schoolname &&
-                                    educationformik.touched.schoolname ? (
-                                      <span className="text-danger">
-                                        {educationformik.errors.schoolname}
-                                      </span>
-                                    ) : null}
+                                    <label>학교 이름</label>
                                   </div>
                                 </Col>
 
@@ -1193,23 +1112,20 @@ const Dashboard = () => {
                                   <div className="form-floating mb-3">
                                     <input
                                       type="text"
-                                      name="major"
+                                      name={`educationLevel[${index}].major`}
                                       className="form-control"
-                                      id="floatingnameInput"
                                       placeholder="Major"
-                                      value={educationformik.values.major}
-                                      onChange={educationformik.handleChange}
-                                      onBlur={educationformik.handleBlur}
+                                      value={edu.major}
+                                      onChange={e => {
+                                        const updatedFields = [
+                                          ...educationLevel,
+                                        ]
+                                        updatedFields[index].major =
+                                          e.target.value
+                                        setEducationLevel(updatedFields)
+                                      }}
                                     />
-                                    <label htmlFor="floatingnameInput">
-                                      전공 (3개까지 입력 가능)
-                                    </label>
-                                    {educationformik.errors.major &&
-                                    educationformik.touched.major ? (
-                                      <span className="text-danger">
-                                        {educationformik.errors.major}
-                                      </span>
-                                    ) : null}
+                                    <label>전공</label>
                                   </div>
                                 </Col>
 
@@ -1217,67 +1133,46 @@ const Dashboard = () => {
                                   <div className="form-floating mb-3">
                                     <input
                                       type="text"
-                                      name="location"
+                                      name={`educationLevel[${index}].location`}
                                       className="form-control"
-                                      id="floatingnameInput"
-                                      placeholder="Location"
-                                      value={educationformik.values.location}
-                                      onChange={educationformik.handleChange}
-                                      onBlur={educationformik.handleBlur}
+                                      placeholder="Campus Location"
+                                      value={edu.location}
+                                      onChange={e => {
+                                        const updatedFields = [
+                                          ...educationLevel,
+                                        ]
+                                        updatedFields[index].location =
+                                          e.target.value
+                                        setEducationLevel(updatedFields)
+                                      }}
                                     />
-                                    <label htmlFor="floatingnameInput">
-                                      캠퍼스 위치
-                                    </label>
-                                    {educationformik.errors.location &&
-                                    educationformik.touched.location ? (
-                                      <span className="text-danger">
-                                        {educationformik.errors.location}
-                                      </span>
-                                    ) : null}
+                                    <label>캠퍼스 위치</label>
                                   </div>
                                 </Col>
-                              </Row>
 
-                              <Row>
                                 <Col xl={5}>
                                   <div className="form-floating mb-3">
                                     <select
                                       className="form-select"
-                                      name="type"
-                                      value={educationformik.values.type}
-                                      onChange={educationformik.handleChange}
-                                      onBlur={educationformik.handleBlur}
+                                      name={`educationLevel[${index}].type`}
+                                      value={edu.type}
+                                      onChange={e => {
+                                        const updatedFields = [
+                                          ...educationLevel,
+                                        ]
+                                        updatedFields[index].type =
+                                          e.target.value
+                                        setEducationLevel(updatedFields)
+                                      }}
                                     >
-                                      <option defaultValue="0">
-                                        Select your education level
+                                      <option value="">
+                                        Select Education Type
                                       </option>
                                       <option value="1">고등학교 졸업</option>
-                                      <option value="3">대학 중퇴</option>
-                                      <option value="2">전문대 졸업</option>
-                                      <option value="3">대학교 재학</option>
-                                      <option value="3">대학교 졸업</option>
-                                      <option value="3">
-                                        대학원(석사) 졸업
-                                      </option>
-
-                                      <option value="3">
-                                        대학원(석사) 졸업
-                                      </option>
-                                      <option value="3">
-                                        대학원(박사) 졸업
-                                      </option>
+                                      <option value="2">대학 중퇴</option>
+                                      <option value="3">전문대 졸업</option>
                                     </select>
-                                    <label htmlFor="floatingSelectGrid">
-                                      학력구분
-                                    </label>
-                                    <div>
-                                      {educationformik.errors.type &&
-                                      educationformik.touched.type ? (
-                                        <span className="text-danger">
-                                          {educationformik.errors.type}
-                                        </span>
-                                      ) : null}
-                                    </div>
+                                    <label>학력 구분</label>
                                   </div>
                                 </Col>
 
@@ -1285,47 +1180,39 @@ const Dashboard = () => {
                                   <div className="form-floating mb-3">
                                     <select
                                       className="form-select"
-                                      name="status"
-                                      value={educationformik.values.status}
-                                      onChange={educationformik.handleChange}
-                                      onBlur={educationformik.handleBlur}
+                                      name={`educationLevel[${index}].status`}
+                                      value={edu.status}
+                                      onChange={e => {
+                                        const updatedFields = [
+                                          ...educationLevel,
+                                        ]
+                                        updatedFields[index].status =
+                                          e.target.value
+                                        setEducationLevel(updatedFields)
+                                      }}
                                     >
-                                      <option defaultValue="0">
-                                        Select your graduation status
+                                      <option value="">
+                                        Select Graduation Status
                                       </option>
                                       <option value="1">졸업</option>
                                       <option value="2">재학</option>
                                       <option value="3">자퇴</option>
                                     </select>
-                                    <label htmlFor="floatingSelectGrid">
-                                      졸업구분
-                                    </label>
-                                    <div>
-                                      {educationformik.errors.status &&
-                                      educationformik.touched.status ? (
-                                        <span className="text-danger">
-                                          {educationformik.errors.status}
-                                        </span>
-                                      ) : null}
-                                    </div>
+                                    <label>졸업 구분</label>
                                   </div>
                                 </Col>
 
                                 <Col xl={2}>
                                   <button
                                     type="button"
-                                    onClick={() =>
-                                      setEducationLevel(
-                                        educationLevel.splice(1)
-                                      )
-                                    }
-                                    className="btn btn-primary w-100"
+                                    className="btn btn-danger w-100"
+                                    onClick={() => removeEducationLevel(index)}
                                   >
-                                    -<div>추가하기</div>
+                                    -<div>삭제하기</div>
                                   </button>
                                 </Col>
                               </Row>
-                            </>
+                            </div>
                           ))}
 
                           <div>
