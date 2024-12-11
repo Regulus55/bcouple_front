@@ -29,6 +29,7 @@ import { Link, useNavigate } from "react-router-dom"
 import profileImg from "../../assets/images/profile-img.png"
 import logoImg from "../../assets/images/logo.svg"
 import Dropzone from "react-dropzone"
+import axios from "axios"
 
 const Register = props => {
   //meta title
@@ -68,11 +69,11 @@ const Register = props => {
       password: "",
       passwordconfirm: "",
       consent: {
-        overTwenty: false,
-        agreeOfTerm: false,
-        agreeOfPersonalInfo: false,
-        agreeOfMarketing: false,
-        etc: false,
+        overTwenty: true,
+        agreeOfTerm: true,
+        agreeOfPersonalInfo: true,
+        agreeOfMarketing: true,
+        etc: true,
       },
     },
     validationSchema: Yup.object({
@@ -99,18 +100,26 @@ const Register = props => {
         etc: Yup.boolean(),
       }),
     }),
-    onSubmit: values => {
+    onSubmit: async values => {
       const userInput = {
         email: values.email,
-        nickname: values.nickName,
+        nickName: values.nickName,
         userName: values.nickName,
         password: values.password,
+        profileImg: ["https://example.com/profile1.jpg"],
         phone: values.phone,
         consent: values.consent,
       }
-      console.log("userinput:", values)
+      console.log("userInput", userInput)
 
-      console.log("Submitted values:", userInput)
+      try {
+        const url = "http://localhost/api/auth/signup"
+        const res = await axios.post(url, userInput)
+        console.log("res", res)
+      } catch (e) {
+        console.log("회원가입 제출 에러", e)
+      }
+      console.log("Serialized JSON:", JSON.stringify(userInput))
     },
   })
 
