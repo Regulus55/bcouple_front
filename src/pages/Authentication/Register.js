@@ -115,7 +115,14 @@ const Register = props => {
   })
 
   const handleSingleCheck = (checked, key) => {
-    validation.setFieldValue(`consent.${key}`, checked) //
+    validation.setFieldValue(`consent.${key}`, checked)
+
+    const allChecked = Object.values({
+      ...validation.values.consent,
+      [key]: checked,
+    }).every(Boolean)
+
+    document.getElementById("select-all").checked = allChecked
   }
 
   const handleAllCheck = checked => {
@@ -400,7 +407,6 @@ const Register = props => {
                       {/*///////////////////*/}
                       <label className="form-label fw-bold">약관동의</label>
                       <div className="signup-consent p-3 border border-2 rounded">
-                        {/* 전체 선택 */}
                         <div className="form-check">
                           <input
                             type="checkbox"
@@ -419,17 +425,15 @@ const Register = props => {
                           </label>
                         </div>
 
-                        {/* 가로선 */}
                         <hr className="border-2" />
 
-                        {/* 개별 약관 항목 */}
                         {agreements.map(item => (
                           <div key={item.id} className="form-check mb-2">
                             <input
                               type="checkbox"
                               id={`agreement-${item.id}`}
                               className="form-check-input"
-                              checked={validation.values.consent[item.key]}
+                              checked={validation.values.consent[item.key]} // 상태 반영
                               onChange={e =>
                                 handleSingleCheck(e.target.checked, item.key)
                               }
@@ -444,7 +448,6 @@ const Register = props => {
                         ))}
                       </div>
 
-                      {/* 에러 메시지 */}
                       {validation.touched.consent &&
                         Object.keys(validation.errors.consent || {}).some(
                           key =>
@@ -459,7 +462,6 @@ const Register = props => {
                           </div>
                         )}
 
-                      {/* 제출 버튼 */}
                       <div className="mt-4 d-grid">
                         <button
                           className="btn btn-primary btn-block"

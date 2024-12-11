@@ -252,6 +252,10 @@ const Dashboard = () => {
     marriageformik.setFieldValue("childrenInfo", updatedChildren)
   }
 
+  useEffect(() => {
+    console.log("adfasdfasdfqerqwerqwer", marriageformik.values.childrenInfo)
+  }, [marriageformik.values.childrenInfo])
+
   // 학력
   const handleEducationChange = e => {
     const value = e.target.value
@@ -815,13 +819,7 @@ const Dashboard = () => {
                                 <select
                                   className="form-select"
                                   name="childrenInfo"
-                                  value={
-                                    // marriageformik.values.childrenInfo.length >
-                                    // 0
-                                    //   ? "1"
-                                    //   : "2"
-                                    marriageformik.values.childrenInfo
-                                  }
+                                  value={marriageformik.values.childrenInfo}
                                   onChange={e => {
                                     const value = e.target.value
                                     marriageformik.setFieldValue(
