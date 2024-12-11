@@ -206,281 +206,263 @@ const Register = props => {
                   </Row>
                 </div>
                 <CardBody className="pt-0">
-                  {/*<div>*/}
-                  {/*  <Link to="/">*/}
-                  {/*    <div className="avatar-md profile-user-wid mb-4">*/}
-                  {/*      <span className="avatar-title rounded-circle bg-light">*/}
-                  {/*        <img*/}
-                  {/*          src={logoImg}*/}
-                  {/*          alt=""*/}
-                  {/*          className="rounded-circle"*/}
-                  {/*          height="34"*/}
-                  {/*        />*/}
-                  {/*      </span>*/}
-                  {/*    </div>*/}
-                  {/*  </Link>*/}
-                  {/*</div>*/}
-                  <div className="p-2">
-                    <Form
-                      className="form-horizontal"
-                      onSubmit={validation.handleSubmit}
+                  <Form
+                    className="form-horizontal p-2"
+                    onSubmit={validation.handleSubmit}
+                  >
+                    {user && user ? (
+                      <Alert color="success">Register User Successfully</Alert>
+                    ) : null}
+
+                    {registrationError && registrationError ? (
+                      <Alert color="danger">{registrationError}</Alert>
+                    ) : null}
+
+                    <div className="mb-3">
+                      <Label className="form-label">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        className="form-control"
+                        placeholder="Enter email"
+                        type="email"
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={validation.values.email || ""}
+                        invalid={
+                          validation.touched.email && validation.errors.email
+                            ? true
+                            : false
+                        }
+                      />
+                      {validation.touched.email && validation.errors.email ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.email}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+
+                    <div className="mb-3">
+                      <Label className="form-label">Nickname</Label>
+                      <Input
+                        name="nickName"
+                        type="text"
+                        placeholder="Enter nickname"
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={validation.values.nickName || ""}
+                        invalid={
+                          validation.touched.nickName &&
+                          validation.errors.nickName
+                            ? true
+                            : false
+                        }
+                      />
+                      {validation.touched.nickName &&
+                      validation.errors.nickName ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.nickName}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+
+                    <div className="mb-3">
+                      <Label className="form-label">Password</Label>
+                      <Input
+                        name="password"
+                        type="password"
+                        placeholder="Enter Password"
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={validation.values.password || ""}
+                        invalid={
+                          validation.touched.password &&
+                          validation.errors.password
+                            ? true
+                            : false
+                        }
+                      />
+                      {validation.touched.password &&
+                      validation.errors.password ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.password}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+
+                    <div className="mb-3">
+                      <Label className="form-label">Password Confirm</Label>
+                      <Input
+                        name="passwordconfirm"
+                        type="password"
+                        placeholder="Enter Password"
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={validation.values.passwordconfirm || ""}
+                        invalid={
+                          validation.touched.passwordconfirm &&
+                          validation.errors.passwordconfirm
+                            ? true
+                            : false
+                        }
+                      />
+                      {validation.touched.passwordconfirm &&
+                      validation.errors.passwordconfirm ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.passwordconfirm}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+
+                    <div className="mb-3">
+                      <Label className="form-label">Phone</Label>
+                      <Input
+                        name="phone"
+                        type="tel"
+                        placeholder="01012345678"
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={validation.values.phone || ""}
+                        invalid={
+                          validation.touched.phone && validation.errors.phone
+                            ? true
+                            : false
+                        }
+                      />
+                      {validation.touched.phone && validation.errors.phone ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.phone}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+
+                    <label className="form-label fw-bold">Images</label>
+                    <Dropzone
+                      onDrop={acceptedFiles => {
+                        handleAcceptedFiles(acceptedFiles)
+                      }}
                     >
-                      {user && user ? (
-                        <Alert color="success">
-                          Register User Successfully
-                        </Alert>
-                      ) : null}
-
-                      {registrationError && registrationError ? (
-                        <Alert color="danger">{registrationError}</Alert>
-                      ) : null}
-
-                      <div className="mb-3">
-                        <Label className="form-label">Email</Label>
-                        <Input
-                          id="email"
-                          name="email"
-                          className="form-control"
-                          placeholder="Enter email"
-                          type="email"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.email || ""}
-                          invalid={
-                            validation.touched.email && validation.errors.email
-                              ? true
-                              : false
-                          }
-                        />
-                        {validation.touched.email && validation.errors.email ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.email}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
-
-                      <div className="mb-3">
-                        <Label className="form-label">Nickname</Label>
-                        <Input
-                          name="nickName"
-                          type="text"
-                          placeholder="Enter nickname"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.nickName || ""}
-                          invalid={
-                            validation.touched.nickName &&
-                            validation.errors.nickName
-                              ? true
-                              : false
-                          }
-                        />
-                        {validation.touched.nickName &&
-                        validation.errors.nickName ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.nickName}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
-
-                      <div className="mb-3">
-                        <Label className="form-label">Password</Label>
-                        <Input
-                          name="password"
-                          type="password"
-                          placeholder="Enter Password"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.password || ""}
-                          invalid={
-                            validation.touched.password &&
-                            validation.errors.password
-                              ? true
-                              : false
-                          }
-                        />
-                        {validation.touched.password &&
-                        validation.errors.password ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.password}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
-
-                      <div className="mb-3">
-                        <Label className="form-label">Password Confirm</Label>
-                        <Input
-                          name="passwordconfirm"
-                          type="password"
-                          placeholder="Enter Password"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.passwordconfirm || ""}
-                          invalid={
-                            validation.touched.passwordconfirm &&
-                            validation.errors.passwordconfirm
-                              ? true
-                              : false
-                          }
-                        />
-                        {validation.touched.passwordconfirm &&
-                        validation.errors.passwordconfirm ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.passwordconfirm}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
-
-                      <div className="mb-3">
-                        <Label className="form-label">Phone</Label>
-                        <Input
-                          name="phone"
-                          type="tel"
-                          placeholder="01012345678"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.phone || ""}
-                          invalid={
-                            validation.touched.phone && validation.errors.phone
-                              ? true
-                              : false
-                          }
-                        />
-                        {validation.touched.phone && validation.errors.phone ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.phone}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
-
-                      <h6 className="card-title">Images</h6>
-                      <Dropzone
-                        onDrop={acceptedFiles => {
-                          handleAcceptedFiles(acceptedFiles)
-                        }}
-                      >
-                        {({ getRootProps, getInputProps }) => (
-                          <div className="dropzone">
-                            <div
-                              className="dz-message needsclick mt-2"
-                              {...getRootProps()}
-                            >
-                              <input {...getInputProps()} />
-                              <div className="mb-3">
-                                <i className="display-4 text-muted bx bxs-cloud-upload" />
-                              </div>
-                              <h4>Drop files here or click to upload.</h4>
-                            </div>
-                          </div>
-                        )}
-                      </Dropzone>
-                      <div
-                        className="dropzone-previews mt-3"
-                        id="file-previews"
-                      >
-                        {selectedFiles.map((f, i) => {
-                          return (
-                            <Card
-                              className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
-                              key={i + "-file"}
-                            >
-                              <div className="p-2">
-                                <Row className="align-items-center">
-                                  <Col className="col-auto">
-                                    <img
-                                      data-dz-thumbnail=""
-                                      height="80"
-                                      className="avatar-sm rounded bg-light"
-                                      alt={f.name}
-                                      src={f.preview}
-                                    />
-                                  </Col>
-                                  <Col>
-                                    <Link
-                                      to="#"
-                                      className="text-muted font-weight-bold"
-                                    >
-                                      {f.name}
-                                    </Link>
-                                    <p className="mb-0">
-                                      <strong>{f.formattedSize}</strong>
-                                    </p>
-                                  </Col>
-                                </Row>
-                              </div>
-                            </Card>
-                          )
-                        })}
-                      </div>
-
-                      {/*///////////////////*/}
-                      <label className="form-label fw-bold">약관동의</label>
-                      <div className="signup-consent p-3 border border-2 rounded">
-                        <div className="form-check">
-                          <input
-                            type="checkbox"
-                            id="select-all"
-                            className="form-check-input"
-                            onChange={e => handleAllCheck(e.target.checked)}
-                            checked={Object.values(
-                              validation.values.consent
-                            ).every(Boolean)}
-                          />
-                          <label
-                            htmlFor="select-all"
-                            className="form-check-label"
+                      {({ getRootProps, getInputProps }) => (
+                        <div className="dropzone">
+                          <div
+                            className="dz-message needsclick mt-2"
+                            {...getRootProps()}
                           >
-                            전체 선택
-                          </label>
+                            <input {...getInputProps()} />
+                            <div className="mb-3">
+                              <i className="display-4 text-muted bx bxs-cloud-upload" />
+                            </div>
+                            <h4>Drop files here or click to upload.</h4>
+                          </div>
                         </div>
+                      )}
+                    </Dropzone>
+                    <div className="dropzone-previews mt-3" id="file-previews">
+                      {selectedFiles.map((f, i) => {
+                        return (
+                          <Card
+                            className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                            key={i + "-file"}
+                          >
+                            <div className="p-2">
+                              <Row className="align-items-center">
+                                <Col className="col-auto">
+                                  <img
+                                    data-dz-thumbnail=""
+                                    height="80"
+                                    className="avatar-sm rounded bg-light"
+                                    alt={f.name}
+                                    src={f.preview}
+                                  />
+                                </Col>
+                                <Col>
+                                  <Link
+                                    to="#"
+                                    className="text-muted font-weight-bold"
+                                  >
+                                    {f.name}
+                                  </Link>
+                                  <p className="mb-0">
+                                    <strong>{f.formattedSize}</strong>
+                                  </p>
+                                </Col>
+                              </Row>
+                            </div>
+                          </Card>
+                        )
+                      })}
+                    </div>
 
-                        <hr className="border-2" />
-
-                        {agreements.map(item => (
-                          <div key={item.id} className="form-check mb-2">
+                    <Row>
+                      <Col xl={12}>
+                        <label className="form-label fw-bold">Consent</label>
+                        <div className="signup-consent p-3 border border-2 rounded">
+                          <div className="form-check">
                             <input
                               type="checkbox"
-                              id={`agreement-${item.id}`}
+                              id="select-all"
                               className="form-check-input"
-                              checked={validation.values.consent[item.key]} // 상태 반영
-                              onChange={e =>
-                                handleSingleCheck(e.target.checked, item.key)
-                              }
+                              onChange={e => handleAllCheck(e.target.checked)}
+                              checked={Object.values(
+                                validation.values.consent
+                              ).every(Boolean)}
                             />
                             <label
-                              htmlFor={`agreement-${item.id}`}
+                              htmlFor="select-all"
                               className="form-check-label"
                             >
-                              {item.label}
+                              전체 선택
                             </label>
                           </div>
-                        ))}
-                      </div>
 
-                      {validation.touched.consent &&
-                        Object.keys(validation.errors.consent || {}).some(
-                          key =>
-                            [
-                              "overTwenty",
-                              "agreeOfTerm",
-                              "agreeOfPersonalInfo",
-                            ].includes(key) && validation.errors.consent[key]
-                        ) && (
-                          <div className="text-danger mt-2">
-                            Please agree to all the required terms.
-                          </div>
-                        )}
+                          <hr className="border-2" />
 
-                      <div className="mt-4 d-grid">
-                        <button
-                          className="btn btn-primary btn-block"
-                          type="submit"
-                        >
-                          Register
-                        </button>
-                      </div>
-                    </Form>
-                  </div>
+                          {agreements.map(item => (
+                            <div key={item.id} className="form-check mb-2">
+                              <input
+                                type="checkbox"
+                                id={`agreement-${item.id}`}
+                                className="form-check-input"
+                                checked={validation.values.consent[item.key]}
+                                onChange={e =>
+                                  handleSingleCheck(e.target.checked, item.key)
+                                }
+                              />
+                              <label
+                                htmlFor={`agreement-${item.id}`}
+                                className="form-check-label"
+                              >
+                                {item.label}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+
+                        {validation.touched.consent &&
+                          Object.keys(validation.errors.consent || {}).some(
+                            key =>
+                              [
+                                "overTwenty",
+                                "agreeOfTerm",
+                                "agreeOfPersonalInfo",
+                              ].includes(key) && validation.errors.consent[key]
+                          ) && (
+                            <div className="text-danger mt-2">
+                              Please agree to all the required terms.
+                            </div>
+                          )}
+                      </Col>
+                    </Row>
+
+                    <div className="mt-4 d-grid">
+                      <button
+                        className="btn btn-primary btn-block"
+                        type="submit"
+                      >
+                        Register
+                      </button>
+                    </div>
+                  </Form>
                 </CardBody>
               </Card>
               <div className="mt-5 text-center">
