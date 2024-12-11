@@ -11,7 +11,7 @@ const getProfileInfo = async () => {
     }
     const url = "http://localhost/api/auth"
     const res = await axios.get(url, config)
-    // console.log("profile res", res)
+    console.log("profile res", res.data.data)
     return res.data.data
   } catch (e) {
     console.log(e)

@@ -10,12 +10,11 @@ import ForgetPwd from "../pages/Authentication/ForgetPassword"
 // Dashboard
 import Dashboard from "../pages/Dashboard/index"
 import ForgetEmail from "../pages/Authentication/ForgetEmail"
-import { components } from "react-select"
 import UserProfile from "pages/Authentication/user-profile"
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
-
+  { path: "/profile", component: <UserProfile /> },
   // this route should be at the end of all other routes
   // eslint-disable-next-line react/display-name
 
@@ -32,7 +31,6 @@ const publicRoutes = [
   { path: "/forgot-password", component: <ForgetPwd /> },
   { path: "/register", component: <Register /> },
   { path: "/forgot-email", component: <ForgetEmail /> },
-  { path: "/profile", component: <UserProfile /> },
 ]
 
 export { authProtectedRoutes, publicRoutes }
