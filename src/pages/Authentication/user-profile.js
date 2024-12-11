@@ -85,6 +85,7 @@ const UserProfile = () => {
       nickName: profileInfo?.nickName || "",
       email: profileInfo?.email || "",
       phone: profileInfo?.phone || "",
+      profileImg: profileInfo?.profileImg[0] || "/moon.jpg",
       id: profileInfo?.id || "",
     },
     profileformikSchema: Yup.object({
@@ -134,9 +135,9 @@ const UserProfile = () => {
                   <div className="d-flex">
                     <div className="ms-3">
                       <img
-                        src={profileInfo?.profileImg[0]}
+                        src={profileformik.values.profileImg}
                         alt=""
-                        className="avatar-md rounded-circle img-thumbnail"
+                        className="avatar-md rounded-circle img-thumbnail object-cover"
                       />
                     </div>
                     <div className="flex-grow-1 align-self-center">
