@@ -63,6 +63,7 @@ const Login = props => {
         const res = await axios.post(url, userInput)
         console.log("res", res)
         if (res.status === 200) {
+          localStorage.setItem("token", res.data.accessToken)
           navigate("/dashboard")
         }
       } catch (e) {

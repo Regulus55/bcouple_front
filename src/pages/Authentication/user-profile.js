@@ -28,6 +28,7 @@ import Breadcrumb from "../../components/Common/Breadcrumb"
 import avatar from "../../assets/images/users/avatar-1.jpg"
 // actions
 import { editProfile, resetProfileFlag } from "../../store/actions"
+import useProfile from "hooks/useProfile"
 
 const UserProfile = () => {
   //meta title
@@ -46,8 +47,13 @@ const UserProfile = () => {
       success: profile.success,
     })
   )
-
   const { error, success } = useSelector(ProfileProperties)
+
+  const {
+    data: profileData,
+    isLoading: profileLoading,
+    isError: profileError,
+  } = useProfile()
 
   useEffect(() => {
     if (localStorage.getItem("authUser")) {
