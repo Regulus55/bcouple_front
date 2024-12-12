@@ -1,23 +1,41 @@
-import React from "react"
-import { Form, Link, useLocation } from "react-router-dom"
+import PropTypes from "prop-types"
+import React, { useState } from "react"
 import {
+  Row,
+  Col,
   Alert,
   Card,
   CardBody,
-  Col,
   Container,
   FormFeedback,
   Input,
   Label,
-  Row,
+  Form,
 } from "reactstrap"
+
+//redux
+import { useSelector } from "react-redux"
+import { createSelector } from "reselect"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import withRouter from "components/Common/withRouter"
+
+// Formik changeformik
 import * as Yup from "yup"
 import { useFormik } from "formik"
 
-const ChangePasswordPage = () => {
+// import images
+import profile from "../../assets/images/profile-img.png"
+import axios from "axios"
+
+const ChangePassword = props => {
+  const navigate = useNavigate()
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
   const token = queryParams.get("token")
+
+  //meta title
+  document.title =
+    "Forget Password | BeeCouple - React Admin & Dashboard Template"
 
   const changeformik = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -38,14 +56,30 @@ const ChangePasswordPage = () => {
       }
       console.log("유저인풋", userInput)
       try {
-        // const url = "http://localhost/api/auth/change/password"
-        // const res = await axios.put(url, userInput)
-        // console.log("프로필 수정 res", res)
+        const url = "http://localhost/api/auth/change/password"
+        const res = await axios.put(url, userInput)
+        console.log("프로필 수정 res", res)
+        if (res.status === 200) {
+          alert("비밀번호 변경 성공")
+          navigate("/login")
+        }
       } catch (e) {
         console.log(e)
       }
     },
   })
+
+  const ForgotPasswordProperties = createSelector(
+    state => state.ForgetPassword,
+    forgetPassword => ({
+      forgetError: forgetPassword.forgetError,
+      forgetSuccessMsg: forgetPassword.forgetSuccessMsg,
+    })
+  )
+
+  const { forgetError, forgetSuccessMsg } = useSelector(
+    ForgotPasswordProperties
+  )
 
   return (
     <React.Fragment>
@@ -64,13 +98,26 @@ const ChangePasswordPage = () => {
                     <Col xs={7}>
                       <div className="text-primary p-4">
                         <h5 className="text-primary">Welcome Back !</h5>
-                        <p>Sign in to continue to Skote.</p>
+                        <p>Sign in to continue to BeeCouple.</p>
                       </div>
+                    </Col>
+                    <Col className="col-5 align-self-end">
+                      <img src={profile} alt="" className="img-fluid" />
                     </Col>
                   </Row>
                 </div>
                 <CardBody className="pt-2">
                   <div className="p-2">
+                    {forgetError && forgetError ? (
+                      <Alert color="danger" style={{ marginTop: "13px" }}>
+                        {forgetError}
+                      </Alert>
+                    ) : null}
+                    {forgetSuccessMsg ? (
+                      <Alert color="success" style={{ marginTop: "13px" }}>
+                        {forgetSuccessMsg}
+                      </Alert>
+                    ) : null}
                     <Form
                       className="form-horizontal"
                       onSubmit={e => {
@@ -80,11 +127,11 @@ const ChangePasswordPage = () => {
                       }}
                     >
                       <div className="mb-3">
-                        <Label className="form-label">Password</Label>
+                        <Label className="form-label">New Password</Label>
                         <Input
                           name="password"
                           className="form-control"
-                          placeholder="Enter Password"
+                          placeholder="Enter New Password"
                           type="password"
                           onChange={changeformik.handleChange}
                           onBlur={changeformik.handleBlur}
@@ -124,8 +171,8 @@ const ChangePasswordPage = () => {
                   </Link>{" "}
                 </p>
                 <p>
-                  © {new Date().getFullYear()} Skote. Crafted with{" "}
-                  <i className="mdi mdi-heart text-danger" /> by Themesbrand
+                  © {new Date().getFullYear()} BeeCouple. Crafted with{" "}
+                  <i className="mdi mdi-heart text-danger" /> by BeeCouple
                 </p>
               </div>
             </Col>
@@ -135,8 +182,9 @@ const ChangePasswordPage = () => {
     </React.Fragment>
   )
 }
-ForgetPasswordPage.propTypes = {
+
+ChangePassword.propTypes = {
   history: PropTypes.object,
 }
 
-export default withRouter(ChangePasswordPage)
+export default withRouter(ChangePassword)
