@@ -187,7 +187,7 @@ const RegistForm = ({ email }) => {
       })
     )
     setSelectedFiles(formattedFiles)
-    registerformik.setFieldValue("profileImg", formattedFiles) // Formik에 profileImg 업데이트
+    registerformik.setFieldValue("profileImg", formattedFiles)
   }
 
   function formatBytes(bytes, decimals = 2) {

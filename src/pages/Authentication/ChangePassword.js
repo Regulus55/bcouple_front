@@ -1,78 +1,51 @@
-import PropTypes from "prop-types"
-import React, { useState } from "react"
+import React from "react"
+import { Form, Link, useLocation } from "react-router-dom"
 import {
-  Row,
-  Col,
   Alert,
   Card,
   CardBody,
+  Col,
   Container,
   FormFeedback,
   Input,
   Label,
-  Form,
+  Row,
 } from "reactstrap"
-
-//redux
-import { useSelector, useDispatch } from "react-redux"
-import { createSelector } from "reselect"
-import { Link } from "react-router-dom"
-import withRouter from "components/Common/withRouter"
-
-// Formik sendformik
 import * as Yup from "yup"
 import { useFormik } from "formik"
 
-// action
-import { userForgetPassword } from "../../store/actions"
+const ChangePasswordPage = () => {
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const token = queryParams.get("token")
 
-// import images
-import profile from "../../assets/images/profile-img.png"
-import axios from "axios"
-
-const ForgetPasswordPage = props => {
-  //meta title
-  document.title = "Forget Password | Skote - React Admin & Dashboard Template"
-
-  const sendformik = useFormik({
+  const changeformik = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
 
     initialValues: {
-      email: "",
+      token: token,
+      password: "",
     },
-    sendformikSchema: Yup.object({
-      email: Yup.string().required("Please Enter Your Email"),
+    changeformikSchema: Yup.object({
+      token: Yup.string().required("Please Enter Your Toe"),
+      password: Yup.string().required("Please Enter Your New Password"),
     }),
     onSubmit: async values => {
       const userInput = {
-        email: values.email,
+        token,
+        password: values.password,
       }
-
+      console.log("유저인풋", userInput)
       try {
-        const url = "http://localhost/api/auth/find/password"
-        const res = await axios.post(url, userInput)
-        console.log("이멜보내기 res", res)
-        if (res.status === 201) {
-          console.log("이메일 발송 성공")
-        }
+        // const url = "http://localhost/api/auth/change/password"
+        // const res = await axios.put(url, userInput)
+        // console.log("프로필 수정 res", res)
       } catch (e) {
         console.log(e)
       }
     },
   })
-
-  const ForgotPasswordProperties = createSelector(
-    state => state.ForgetPassword,
-    forgetPassword => ({
-      forgetError: forgetPassword.forgetError,
-      forgetSuccessMsg: forgetPassword.forgetSuccessMsg,
-    })
-  )
-
-  const { forgetError, forgetSuccessMsg } = useSelector(
-    ForgotPasswordProperties
-  )
 
   return (
     <React.Fragment>
@@ -94,50 +67,39 @@ const ForgetPasswordPage = props => {
                         <p>Sign in to continue to Skote.</p>
                       </div>
                     </Col>
-                    <Col className="col-5 align-self-end">
-                      <img src={profile} alt="" className="img-fluid" />
-                    </Col>
                   </Row>
                 </div>
                 <CardBody className="pt-2">
                   <div className="p-2">
-                    {forgetError && forgetError ? (
-                      <Alert color="danger" style={{ marginTop: "13px" }}>
-                        {forgetError}
-                      </Alert>
-                    ) : null}
-                    {forgetSuccessMsg ? (
-                      <Alert color="success" style={{ marginTop: "13px" }}>
-                        {forgetSuccessMsg}
-                      </Alert>
-                    ) : null}
                     <Form
                       className="form-horizontal"
                       onSubmit={e => {
                         e.preventDefault()
-                        sendformik.handleSubmit()
+                        changeformik.handleSubmit()
                         return false
                       }}
                     >
                       <div className="mb-3">
-                        <Label className="form-label">Email</Label>
+                        <Label className="form-label">Password</Label>
                         <Input
-                          name="email"
+                          name="password"
                           className="form-control"
-                          placeholder="Enter email"
-                          type="email"
-                          onChange={sendformik.handleChange}
-                          onBlur={sendformik.handleBlur}
-                          value={sendformik.values.email || ""}
+                          placeholder="Enter Password"
+                          type="password"
+                          onChange={changeformik.handleChange}
+                          onBlur={changeformik.handleBlur}
+                          value={changeformik.values.password || ""}
                           invalid={
-                            sendformik.touched.email && sendformik.errors.email
+                            changeformik.touched.password &&
+                            changeformik.errors.password
                               ? true
                               : false
                           }
                         />
-                        {sendformik.touched.email && sendformik.errors.email ? (
+                        {changeformik.touched.password &&
+                        changeformik.errors.password ? (
                           <FormFeedback type="invalid">
-                            {sendformik.errors.email}
+                            {changeformik.errors.password}
                           </FormFeedback>
                         ) : null}
                       </div>
@@ -147,7 +109,7 @@ const ForgetPasswordPage = props => {
                           className="btn btn-primary btn-block"
                           type="submit"
                         >
-                          비밀번호 변경 이메일 보내기
+                          비밀번호 변경하기
                         </button>
                       </div>
                     </Form>
@@ -173,9 +135,8 @@ const ForgetPasswordPage = props => {
     </React.Fragment>
   )
 }
-
 ForgetPasswordPage.propTypes = {
   history: PropTypes.object,
 }
 
-export default withRouter(ForgetPasswordPage)
+export default withRouter(ChangePasswordPage)
