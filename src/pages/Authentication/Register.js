@@ -12,7 +12,7 @@ import {
   FormFeedback,
 } from "reactstrap"
 
-// Formik Validation
+// Formik registerformik
 import * as Yup from "yup"
 import { useFormik } from "formik"
 
@@ -35,9 +35,13 @@ const Register = props => {
   //meta title
   document.title = "Register | Skote - React Admin & Dashboard Template"
 
+  const [isSent, setIsSent] = useState(false)
+  const [isChecked, setIsChecked] = useState(false)
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  // 전체동의
   const agreements = [
     { id: 1, label: "14세 이상입니다(필수)", key: "overTwenty" },
     { id: 2, label: "이용약관(필수)", key: "agreeOfTerm" },
@@ -54,7 +58,7 @@ const Register = props => {
     { id: 5, label: "이벤트, 특가 알림 및 SMS 등 수신(선택)", key: "etc" },
   ]
 
-  const validation = useFormik({
+  const registerformik = useFormik({
     enableReinitialize: true,
 
     initialValues: {
@@ -76,7 +80,7 @@ const Register = props => {
         etc: true,
       },
     },
-    validationSchema: Yup.object({
+    registerformikSchema: Yup.object({
       email: Yup.string()
         .email("Invalid email format")
         .required("Please enter your email"),
@@ -119,15 +123,14 @@ const Register = props => {
       } catch (e) {
         console.log("회원가입 제출 에러", e)
       }
-      console.log("Serialized JSON:", JSON.stringify(userInput))
     },
   })
 
   const handleSingleCheck = (checked, key) => {
-    validation.setFieldValue(`consent.${key}`, checked)
+    registerformik.setFieldValue(`consent.${key}`, checked)
 
     const allChecked = Object.values({
-      ...validation.values.consent,
+      ...registerformik.values.consent,
       [key]: checked,
     }).every(Boolean)
 
@@ -139,7 +142,7 @@ const Register = props => {
       acc[cur.key] = checked
       return acc
     }, {})
-    validation.setFieldValue("consent", updatedConsent)
+    registerformik.setFieldValue("consent", updatedConsent)
   }
 
   // 이미지 업로드
@@ -208,7 +211,7 @@ const Register = props => {
                 <CardBody className="pt-0">
                   <Form
                     className="form-horizontal p-2"
-                    onSubmit={validation.handleSubmit}
+                    onSubmit={registerformik.handleSubmit}
                   >
                     {user && user ? (
                       <Alert color="success">Register User Successfully</Alert>
@@ -226,18 +229,20 @@ const Register = props => {
                         className="form-control"
                         placeholder="Enter email"
                         type="email"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values.email || ""}
+                        onChange={registerformik.handleChange}
+                        onBlur={registerformik.handleBlur}
+                        value={registerformik.values.email || ""}
                         invalid={
-                          validation.touched.email && validation.errors.email
+                          registerformik.touched.email &&
+                          registerformik.errors.email
                             ? true
                             : false
                         }
                       />
-                      {validation.touched.email && validation.errors.email ? (
+                      {registerformik.touched.email &&
+                      registerformik.errors.email ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.email}
+                          {registerformik.errors.email}
                         </FormFeedback>
                       ) : null}
                     </div>
@@ -248,20 +253,20 @@ const Register = props => {
                         name="nickName"
                         type="text"
                         placeholder="Enter nickname"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values.nickName || ""}
+                        onChange={registerformik.handleChange}
+                        onBlur={registerformik.handleBlur}
+                        value={registerformik.values.nickName || ""}
                         invalid={
-                          validation.touched.nickName &&
-                          validation.errors.nickName
+                          registerformik.touched.nickName &&
+                          registerformik.errors.nickName
                             ? true
                             : false
                         }
                       />
-                      {validation.touched.nickName &&
-                      validation.errors.nickName ? (
+                      {registerformik.touched.nickName &&
+                      registerformik.errors.nickName ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.nickName}
+                          {registerformik.errors.nickName}
                         </FormFeedback>
                       ) : null}
                     </div>
@@ -272,20 +277,20 @@ const Register = props => {
                         name="password"
                         type="password"
                         placeholder="Enter Password"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values.password || ""}
+                        onChange={registerformik.handleChange}
+                        onBlur={registerformik.handleBlur}
+                        value={registerformik.values.password || ""}
                         invalid={
-                          validation.touched.password &&
-                          validation.errors.password
+                          registerformik.touched.password &&
+                          registerformik.errors.password
                             ? true
                             : false
                         }
                       />
-                      {validation.touched.password &&
-                      validation.errors.password ? (
+                      {registerformik.touched.password &&
+                      registerformik.errors.password ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.password}
+                          {registerformik.errors.password}
                         </FormFeedback>
                       ) : null}
                     </div>
@@ -296,20 +301,20 @@ const Register = props => {
                         name="passwordconfirm"
                         type="password"
                         placeholder="Enter Password"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values.passwordconfirm || ""}
+                        onChange={registerformik.handleChange}
+                        onBlur={registerformik.handleBlur}
+                        value={registerformik.values.passwordconfirm || ""}
                         invalid={
-                          validation.touched.passwordconfirm &&
-                          validation.errors.passwordconfirm
+                          registerformik.touched.passwordconfirm &&
+                          registerformik.errors.passwordconfirm
                             ? true
                             : false
                         }
                       />
-                      {validation.touched.passwordconfirm &&
-                      validation.errors.passwordconfirm ? (
+                      {registerformik.touched.passwordconfirm &&
+                      registerformik.errors.passwordconfirm ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.passwordconfirm}
+                          {registerformik.errors.passwordconfirm}
                         </FormFeedback>
                       ) : null}
                     </div>
@@ -320,18 +325,20 @@ const Register = props => {
                         name="phone"
                         type="tel"
                         placeholder="01012345678"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values.phone || ""}
+                        onChange={registerformik.handleChange}
+                        onBlur={registerformik.handleBlur}
+                        value={registerformik.values.phone || ""}
                         invalid={
-                          validation.touched.phone && validation.errors.phone
+                          registerformik.touched.phone &&
+                          registerformik.errors.phone
                             ? true
                             : false
                         }
                       />
-                      {validation.touched.phone && validation.errors.phone ? (
+                      {registerformik.touched.phone &&
+                      registerformik.errors.phone ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.phone}
+                          {registerformik.errors.phone}
                         </FormFeedback>
                       ) : null}
                     </div>
@@ -404,7 +411,7 @@ const Register = props => {
                               className="form-check-input"
                               onChange={e => handleAllCheck(e.target.checked)}
                               checked={Object.values(
-                                validation.values.consent
+                                registerformik.values.consent
                               ).every(Boolean)}
                             />
                             <label
@@ -423,7 +430,9 @@ const Register = props => {
                                 type="checkbox"
                                 id={`agreement-${item.id}`}
                                 className="form-check-input"
-                                checked={validation.values.consent[item.key]}
+                                checked={
+                                  registerformik.values.consent[item.key]
+                                }
                                 onChange={e =>
                                   handleSingleCheck(e.target.checked, item.key)
                                 }
@@ -438,14 +447,15 @@ const Register = props => {
                           ))}
                         </div>
 
-                        {validation.touched.consent &&
-                          Object.keys(validation.errors.consent || {}).some(
+                        {registerformik.touched.consent &&
+                          Object.keys(registerformik.errors.consent || {}).some(
                             key =>
                               [
                                 "overTwenty",
                                 "agreeOfTerm",
                                 "agreeOfPersonalInfo",
-                              ].includes(key) && validation.errors.consent[key]
+                              ].includes(key) &&
+                              registerformik.errors.consent[key]
                           ) && (
                             <div className="text-danger mt-2">
                               Please agree to all the required terms.

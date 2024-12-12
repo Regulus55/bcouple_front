@@ -1,5 +1,5 @@
 import PropTypes from "prop-types"
-import React from "react"
+import React, { useState } from "react"
 import {
   Row,
   Col,
@@ -19,7 +19,7 @@ import { createSelector } from "reselect"
 import { Link } from "react-router-dom"
 import withRouter from "components/Common/withRouter"
 
-// Formik Validation
+// Formik sendformik
 import * as Yup from "yup"
 import { useFormik } from "formik"
 
@@ -29,28 +29,71 @@ import { userForgetPassword } from "../../store/actions"
 // import images
 import profile from "../../assets/images/profile-img.png"
 import logo from "../../assets/images/logo.svg"
+import axios from "axios"
 
 const ForgetPasswordPage = props => {
   //meta title
   document.title = "Forget Password | Skote - React Admin & Dashboard Template"
 
-  const dispatch = useDispatch()
+  const [checkEmail, setCheckEmail] = useState(false)
 
-  const validation = useFormik({
+  const sendformik = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
 
     initialValues: {
       email: "",
     },
-    validationSchema: Yup.object({
+    sendformikSchema: Yup.object({
       email: Yup.string().required("Please Enter Your Email"),
     }),
-    onSubmit: values => {
-      dispatch(userForgetPassword(values, props.history))
+    onSubmit: async values => {
+      console.log("이멜보내기 values", values)
+
+      try {
+        const url = "http://localhost/api/auth/email/send"
+        const res = await axios.post(url, values)
+        // console.log("이멜보내기 res", res)
+        if (res.status === 201) {
+          setCheckEmail(true)
+        }
+      } catch (e) {
+        console.log(e)
+      }
     },
   })
 
+  const checkformik = useFormik({
+    // enableReinitialize : use this flag when initial values needs to be changed
+    enableReinitialize: true,
+
+    initialValues: {
+      email: "",
+      code: "",
+    },
+    checkformikSchema: Yup.object({
+      email: Yup.string().required("Please Enter Your Email"),
+      code: Yup.string().required("Please Enter Code"),
+    }),
+    onSubmit: async values => {
+      const userInput = {
+        email: sendformik.values.email,
+        code: values.code.toString(),
+      }
+      console.log("이멜체크 values", userInput)
+
+      try {
+        const url = "http://localhost/api/auth/email/check"
+        const res = await axios.post(url, userInput)
+        console.log("이멜체크 res", res)
+        if (res.status === 201) {
+          console.log("인증ㅅㅇ공")
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    },
+  })
   const ForgotPasswordProperties = createSelector(
     state => state.ForgetPassword,
     forgetPassword => ({
@@ -88,21 +131,7 @@ const ForgetPasswordPage = props => {
                     </Col>
                   </Row>
                 </div>
-                <CardBody className="pt-0">
-                  <div>
-                    <Link to="/">
-                      <div className="avatar-md profile-user-wid mb-4">
-                        <span className="avatar-title rounded-circle bg-light">
-                          <img
-                            src={logo}
-                            alt=""
-                            className="rounded-circle"
-                            height="34"
-                          />
-                        </span>
-                      </div>
-                    </Link>
-                  </div>
+                <CardBody className="pt-2">
                   <div className="p-2">
                     {forgetError && forgetError ? (
                       <Alert color="danger" style={{ marginTop: "13px" }}>
@@ -115,48 +144,95 @@ const ForgetPasswordPage = props => {
                       </Alert>
                     ) : null}
 
-                    <Form
-                      className="form-horizontal"
-                      onSubmit={e => {
-                        e.preventDefault()
-                        validation.handleSubmit()
-                        return false
-                      }}
-                    >
-                      <div className="mb-3">
-                        <Label className="form-label">Email</Label>
-                        <Input
-                          name="email"
-                          className="form-control"
-                          placeholder="Enter email"
-                          type="email"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.email || ""}
-                          invalid={
-                            validation.touched.email && validation.errors.email
-                              ? true
-                              : false
-                          }
-                        />
-                        {validation.touched.email && validation.errors.email ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.email}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
+                    {checkEmail === false ? (
+                      <Form
+                        className="form-horizontal"
+                        onSubmit={e => {
+                          e.preventDefault()
+                          sendformik.handleSubmit()
+                          return false
+                        }}
+                      >
+                        <div className="mb-3">
+                          <Label className="form-label">Email</Label>
+                          <Input
+                            name="email"
+                            className="form-control"
+                            placeholder="Enter email"
+                            type="email"
+                            onChange={sendformik.handleChange}
+                            onBlur={sendformik.handleBlur}
+                            value={sendformik.values.email || ""}
+                            invalid={
+                              sendformik.touched.email &&
+                              sendformik.errors.email
+                                ? true
+                                : false
+                            }
+                          />
+                          {sendformik.touched.email &&
+                          sendformik.errors.email ? (
+                            <FormFeedback type="invalid">
+                              {sendformik.errors.email}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
 
-                      <div className="mb-3 d-grid">
-                        {/*<Col >*/}
-                        <button
-                          className="btn btn-primary btn-block"
-                          type="submit"
-                        >
-                          이메일로 인증코드 받기
-                        </button>
-                        {/*</Col>*/}
-                      </div>
-                    </Form>
+                        <div className="mb-3 d-grid">
+                          <button
+                            className="btn btn-primary btn-block"
+                            type="submit"
+                          >
+                            이메일로 인증코드 받기
+                          </button>
+                        </div>
+                      </Form>
+                    ) : (
+                      <Form
+                        className="form-horizontal"
+                        onSubmit={e => {
+                          e.preventDefault()
+                          checkformik.handleSubmit()
+                          return false
+                        }}
+                      >
+                        <div className="mb-3">
+                          <Label className="form-label">Code</Label>
+                          <Input
+                            name="code"
+                            className="form-control"
+                            placeholder="Enter Code"
+                            type="text"
+                            onChange={checkformik.handleChange}
+                            onBlur={checkformik.handleBlur}
+                            value={checkformik.values.code || ""}
+                            invalid={
+                              checkformik.touched.code &&
+                              checkformik.errors.code
+                                ? true
+                                : false
+                            }
+                          />
+                          {checkformik.touched.code &&
+                          checkformik.errors.code ? (
+                            <FormFeedback type="invalid">
+                              {checkformik.errors.code}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+
+                        <div className="mb-3 d-grid">
+                          {/*<Col >*/}
+                          <button
+                            className="btn btn-primary btn-block"
+                            type="submit"
+                          >
+                            인증코드 인증하기
+                          </button>
+                          {/*</Col>*/}
+                        </div>
+                      </Form>
+                    )}
                   </div>
                 </CardBody>
               </Card>
