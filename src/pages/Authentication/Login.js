@@ -64,6 +64,7 @@ const Login = props => {
         console.log("res", res)
         if (res.status === 200) {
           localStorage.setItem("token", res.data.accessToken)
+          localStorage.setItem("authUser", JSON.stringify(res.data.user)) // 사용자 정보 저장
           navigate("/dashboard")
         }
       } catch (e) {

@@ -264,7 +264,7 @@ const UserProfile = () => {
       }
       console.log("개인정보 인풋", userInput)
       try {
-        const url = "http://localhost/api/profile"
+        const url = "http://localhost/api/auth"
         const res = await axios.put(url, userInput)
         console.log("프로필 수정 res", res)
         if (res.status === 200) {
@@ -801,33 +801,30 @@ const UserProfile = () => {
                   ) : null}
                 </div>
 
-                <div className="form-group mb-2">
-                  <Label className="form-label">MBTI Type</Label>
-                  <div className="form-floating mb-3">
-                    <select
-                      className="form-select"
-                      name="mExperience"
-                      value={privacyformik.values.mExperience}
-                      onChange={privacyformik.handleChange}
-                      onBlur={privacyformik.handleBlur}
-                    >
-                      <option value="">
-                        Open this select your marriage info
-                      </option>
-                      <option value="1">이혼</option>
-                      <option value="2">사별</option>
-                      <option value="3">미혼</option>
-                    </select>
+                <div className="form-floating mb-3">
+                  <select
+                    className="form-select"
+                    name="mExperience"
+                    value={privacyformik.values.mExperience}
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                  >
+                    <option value="">
+                      Open this select your marriage info
+                    </option>
+                    <option value="1">이혼</option>
+                    <option value="2">사별</option>
+                    <option value="3">미혼</option>
+                  </select>
 
-                    <label htmlFor="reasonForDivorce">이혼 사유</label>
+                  <label htmlFor="reasonForDivorce">이혼 사유</label>
 
-                    {privacyformik.errors.mExperience &&
-                    privacyformik.touched.mExperience ? (
-                      <span className="text-danger">
-                        {privacyformik.errors.mExperience}
-                      </span>
-                    ) : null}
-                  </div>
+                  {privacyformik.errors.mExperience &&
+                  privacyformik.touched.mExperience ? (
+                    <span className="text-danger">
+                      {privacyformik.errors.mExperience}
+                    </span>
+                  ) : null}
                 </div>
 
                 <div className="form-group mb-2">
