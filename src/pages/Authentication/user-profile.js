@@ -112,6 +112,9 @@ const UserProfile = () => {
         const url = "http://localhost/api/member"
         const res = await axios.put(url, userInput, config)
         console.log("프로필 수정 res", res)
+        if (res.status === 200) {
+          alert("프로필 수정 완료")
+        }
       } catch (e) {
         console.log(e)
       }
@@ -186,6 +189,87 @@ const UserProfile = () => {
         const url = "http://localhost/api/consent"
         // const res = await axios.put(url, values.consent)
         // console.log("약관수정 res", res)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+  })
+
+  const privacyformik = useFormik({
+    // enableReinitialize : use this flag when initial values needs to be changed
+    enableReinitialize: true,
+
+    initialValues: {
+      country: profileInfo?.profile?.country || "",
+      gender: profileInfo?.profile?.gender || "",
+      birth: profileInfo?.profile?.birth || "",
+      age: profileInfo?.profile?.age || "",
+      height: profileInfo?.profile?.height || "",
+      bodyType: profileInfo?.profile?.bodyType || "",
+      addressOfHome: profileInfo?.profile?.addressOfHome || "",
+      activityArea: profileInfo?.profile?.activityArea || "",
+      bornArea: profileInfo?.profile?.bornArea || "",
+      bloodType: profileInfo?.profile?.bloodType || "",
+      mbtiType: profileInfo?.profile?.mbtiType || "",
+      drinking: profileInfo?.profile?.drinking || "",
+      smoking: profileInfo?.profile?.smoking || "",
+      selfIntroduce: profileInfo?.profile?.selfIntroduce || "",
+    },
+    privacyformikSchema: Yup.object({
+      nickName: Yup.string().required("Please Enter Your UserName"),
+      country: Yup.string().required("Please Enter Your Country"),
+      gender: Yup.string().required("Please Select Your Gender"),
+      birth: Yup.date().required("Please Enter Your Birth Date").nullable(),
+      age: Yup.number()
+        .min(0, "Age must be a positive number")
+        .required("Please Enter Your Age"),
+      height: Yup.number()
+        .min(0, "Height must be a positive number")
+        .required("Please Enter Your Height"),
+      bodyType: Yup.number()
+        .min(0, "Bodytype must be a positive number")
+        .required("Please Enter Your Bodytype"),
+      addressOfHome: Yup.string().required("Please Enter Your Address of Home"),
+      activityArea: Yup.string().required("Please Enter Your Activity Area"),
+      bornArea: Yup.string().required("Please Enter Your Born Area"),
+      bloodType: Yup.string().required("Please Enter Your Blood Type"),
+      mbtiType: Yup.string().required("Please Enter Your MBTI Type"),
+      drinking: Yup.string().required("Please Enter Your Drinking Habit"),
+      smoking: Yup.boolean()
+        .required("Please Specify If You Smoke")
+        .transform(value =>
+          value === "true" ? true : value === "false" ? false : value
+        ), // smoking 값을 boolean으로 변환
+      selfIntroduce: Yup.string().required(
+        "Please Enter Your Self Introduction"
+      ),
+    }),
+
+    onSubmit: async values => {
+      const userInput = {
+        country: values.country,
+        gender: values.gender,
+        birth: values.birth,
+        age: values.age,
+        height: values.height,
+        bodyType: values.bodyType,
+        addressOfHome: values.addressOfHome,
+        activityArea: values.activityArea,
+        bornArea: values.bornArea,
+        bloodType: values.bloodType,
+        mbtiType: values.mbtiType,
+        drinking: values.drinking,
+        smoking: values.smoking,
+        selfIntroduce: values.selfIntroduce,
+      }
+      console.log("개인정보 인풋", userInput)
+      try {
+        const url = "http://localhost/api/profile"
+        const res = await axios.put(url, userInput)
+        console.log("프로필 수정 res", res)
+        if (res.status === 200) {
+          alert("프로필 수정 완료")
+        }
       } catch (e) {
         console.log(e)
       }
@@ -403,6 +487,377 @@ const UserProfile = () => {
                 <div className="text-center mt-4">
                   <Button type="submit" color="primary">
                     Update Profile Info
+                  </Button>
+                </div>
+              </Form>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardBody>
+              <Form
+                className="form-horizontal"
+                onSubmit={e => {
+                  e.preventDefault()
+                  privacyformik.handleSubmit()
+                  return false
+                }}
+              >
+                <div className="form-group mb-2">
+                  <Label className="form-label">Country</Label>
+                  <Input
+                    name="country"
+                    // value={name}
+                    className="form-control"
+                    placeholder="Enter Country"
+                    type="text"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.country || ""}
+                    invalid={
+                      privacyformik.touched.country &&
+                      privacyformik.errors.country
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.country &&
+                  privacyformik.errors.country ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.country}
+                    </FormFeedback>
+                  ) : null}
+                  <Input name="idx" value={idx} type="hidden" />
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Gender</Label>
+                  <Input
+                    name="gender"
+                    className="form-control"
+                    placeholder="Enter Gender"
+                    type="text"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.gender || ""}
+                    invalid={
+                      privacyformik.touched.gender &&
+                      privacyformik.errors.gender
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.gender &&
+                  privacyformik.errors.gender ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.gender}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Birth</Label>
+                  <Input
+                    name="birth"
+                    className="form-control"
+                    placeholder="Enter Birth Date"
+                    type="date"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.birth || ""}
+                    invalid={
+                      privacyformik.touched.birth && privacyformik.errors.birth
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.birth && privacyformik.errors.birth ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.birth}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Age</Label>
+                  <Input
+                    name="age"
+                    className="form-control"
+                    placeholder="Enter Age"
+                    type="number"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.age || ""}
+                    invalid={
+                      privacyformik.touched.age && privacyformik.errors.age
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.age && privacyformik.errors.age ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.age}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Height</Label>
+                  <Input
+                    name="height"
+                    className="form-control"
+                    placeholder="Enter Height"
+                    type="number"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.height || ""}
+                    invalid={
+                      privacyformik.touched.height &&
+                      privacyformik.errors.height
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.height &&
+                  privacyformik.errors.height ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.height}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Body Type</Label>
+                  <Input
+                    name="bodyType"
+                    className="form-control"
+                    placeholder="Enter Body Type"
+                    type="text"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.bodyType || ""}
+                    invalid={
+                      privacyformik.touched.bodyType &&
+                      privacyformik.errors.bodyType
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.bodyType &&
+                  privacyformik.errors.bodyType ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.bodyType}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Address of Home</Label>
+                  <Input
+                    name="addressOfHome"
+                    className="form-control"
+                    placeholder="Enter Address of Home"
+                    type="text"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.addressOfHome || ""}
+                    invalid={
+                      privacyformik.touched.addressOfHome &&
+                      privacyformik.errors.addressOfHome
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.addressOfHome &&
+                  privacyformik.errors.addressOfHome ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.addressOfHome}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Activity Area</Label>
+                  <Input
+                    name="activityArea"
+                    className="form-control"
+                    placeholder="Enter Activity Area"
+                    type="text"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.activityArea || ""}
+                    invalid={
+                      privacyformik.touched.activityArea &&
+                      privacyformik.errors.activityArea
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.activityArea &&
+                  privacyformik.errors.activityArea ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.activityArea}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Born Area</Label>
+                  <Input
+                    name="bornArea"
+                    className="form-control"
+                    placeholder="Enter Born Area"
+                    type="text"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.bornArea || ""}
+                    invalid={
+                      privacyformik.touched.bornArea &&
+                      privacyformik.errors.bornArea
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.bornArea &&
+                  privacyformik.errors.bornArea ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.bornArea}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Blood Type</Label>
+                  <Input
+                    name="bloodType"
+                    className="form-control"
+                    placeholder="Enter Blood Type"
+                    type="text"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.bloodType || ""}
+                    invalid={
+                      privacyformik.touched.bloodType &&
+                      privacyformik.errors.bloodType
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.bloodType &&
+                  privacyformik.errors.bloodType ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.bloodType}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">MBTI Type</Label>
+                  <Input
+                    name="mbtiType"
+                    className="form-control"
+                    placeholder="Enter MBTI Type"
+                    type="text"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.mbtiType || ""}
+                    invalid={
+                      privacyformik.touched.mbtiType &&
+                      privacyformik.errors.mbtiType
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.mbtiType &&
+                  privacyformik.errors.mbtiType ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.mbtiType}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Drinking</Label>
+                  <Input
+                    name="drinking"
+                    className="form-control"
+                    placeholder="Enter Drinking Habit"
+                    type="text"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.drinking || ""}
+                    invalid={
+                      privacyformik.touched.drinking &&
+                      privacyformik.errors.drinking
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.drinking &&
+                  privacyformik.errors.drinking ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.drinking}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">MBTI Type</Label>
+                  <div className="form-floating mb-3">
+                    <select
+                      className="form-select"
+                      name="mExperience"
+                      value={privacyformik.values.mExperience}
+                      onChange={privacyformik.handleChange}
+                      onBlur={privacyformik.handleBlur}
+                    >
+                      <option value="">
+                        Open this select your marriage info
+                      </option>
+                      <option value="1">이혼</option>
+                      <option value="2">사별</option>
+                      <option value="3">미혼</option>
+                    </select>
+
+                    <label htmlFor="reasonForDivorce">이혼 사유</label>
+
+                    {privacyformik.errors.mExperience &&
+                    privacyformik.touched.mExperience ? (
+                      <span className="text-danger">
+                        {privacyformik.errors.mExperience}
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="form-group mb-2">
+                  <Label className="form-label">Self Introduction</Label>
+                  <Input
+                    name="selfIntroduce"
+                    className="form-control"
+                    placeholder="Enter Self Introduction"
+                    type="textarea"
+                    onChange={privacyformik.handleChange}
+                    onBlur={privacyformik.handleBlur}
+                    value={privacyformik.values.selfIntroduce || ""}
+                    invalid={
+                      privacyformik.touched.selfIntroduce &&
+                      privacyformik.errors.selfIntroduce
+                        ? true
+                        : false
+                    }
+                  />
+                  {privacyformik.touched.selfIntroduce &&
+                  privacyformik.errors.selfIntroduce ? (
+                    <FormFeedback type="invalid">
+                      {privacyformik.errors.selfIntroduce}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+
+                <div className="text-center mt-4">
+                  <Button type="submit" color="primary">
+                    Update Privacy Info
                   </Button>
                 </div>
               </Form>

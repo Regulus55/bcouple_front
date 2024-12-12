@@ -44,8 +44,8 @@ const Login = props => {
     enableReinitialize: true,
 
     initialValues: {
-      email: "",
-      password: "",
+      email: "qwe@qwe.com",
+      password: "qwe123!@#",
     },
     loginFormikSchema: Yup.object({
       email: Yup.string().required("Please Enter Your Email"),
