@@ -176,18 +176,57 @@ const EmailCheckForm = ({ email, onNext }) => {
 
 // 회원가입 폼
 const RegistForm = ({ email }) => {
+  // 이미지 업로드
+  const [selectedFiles, setSelectedFiles] = useState([])
+
+  const handleAcceptedFiles = files => {
+    const formattedFiles = files.map(file =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size),
+      })
+    )
+    setSelectedFiles(formattedFiles)
+    registerformik.setFieldValue("profileImg", formattedFiles) // Formik에 profileImg 업데이트
+  }
+
+  function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
+  }
+
+  const handleFileUpload = async files => {
+    const fileUrls = []
+
+    for (let file of files) {
+      try {
+        const formData = new FormData()
+        formData.append("file", file)
+        const res = await axios.post("http://localhost/api/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+
+        fileUrls.push(res.data.fileUrl)
+      } catch (e) {
+        console.error("파일 업로드 실패", e)
+      }
+    }
+
+    return fileUrls
+  }
+
+  // 제출
   const registerformik = useFormik({
     enableReinitialize: true,
-
     initialValues: {
-      // userName: "",
       nickName: "",
       email,
       phone: "",
-      // profileImg: [
-      // "https://example.com/profile1.jpg",
-      // "https://example.com/profile2.jpg",
-      // ],
+      profileImg: [],
       password: "",
       passwordconfirm: "",
       consent: {
@@ -210,7 +249,7 @@ const RegistForm = ({ email }) => {
         .required("Please confirm your password")
         .oneOf([Yup.ref("password"), null], "Passwords must match"),
       phone: Yup.string().required("Please Enter Your Phone"),
-      // profileImg: Yup.string().required("Please Upload Your Images"),
+      profileImg: Yup.array().min(1, "Please Upload Your Images"),
       consent: Yup.object({
         overTwenty: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
         agreeOfTerm: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
@@ -223,12 +262,20 @@ const RegistForm = ({ email }) => {
       }),
     }),
     onSubmit: async values => {
+      const fileUrls = await handleFileUpload(values.profileImg)
+
+      const formData = new FormData()
+      values.selectedFiles.forEach(file => {
+        formData.append("files", file)
+      })
+
       const userInput = {
         email,
         nickName: values.nickName,
         userName: values.nickName,
         password: values.password,
-        profileImg: ["https://example.com/profile1.jpg"],
+        // profileImg: ["https://example.com/profile1.jpg"],
+        profileImg: fileUrls,
         phone: values.phone,
         consent: values.consent,
       }
@@ -238,6 +285,10 @@ const RegistForm = ({ email }) => {
         const url = "http://localhost/api/auth/signup"
         const res = await axios.post(url, userInput)
         console.log("res", res)
+        if (res.status === 201) {
+          alert("회원가입 성공")
+          navigate("/login")
+        }
       } catch (e) {
         console.log("회원가입 제출 에러", e)
       }
@@ -277,19 +328,6 @@ const RegistForm = ({ email }) => {
       return acc
     }, {})
     registerformik.setFieldValue("consent", updatedConsent)
-  }
-
-  // 이미지 업로드
-  const [selectedFiles, setselectedFiles] = useState([])
-
-  function handleAcceptedFiles(files) {
-    files.map(file =>
-      Object.assign(file, {
-        preview: URL.createObjectURL(file),
-        formattedSize: formatBytes(file.size),
-      })
-    )
-    setselectedFiles(files)
   }
 
   return (
@@ -414,7 +452,7 @@ const RegistForm = ({ email }) => {
       <label className="form-label fw-bold">Images</label>
       <Dropzone
         onDrop={acceptedFiles => {
-          handleAcceptedFiles(acceptedFiles)
+          handleAcceptedFiles(acceptedFiles) // 선택한 파일을 handleAcceptedFiles로 처리
         }}
       >
         {({ getRootProps, getInputProps }) => (
@@ -429,6 +467,7 @@ const RegistForm = ({ email }) => {
           </div>
         )}
       </Dropzone>
+
       <div className="dropzone-previews mt-3" id="file-previews">
         {selectedFiles.map((f, i) => {
           return (
