@@ -140,8 +140,6 @@ const Dashboard = () => {
   // 기본정보
   const basicInfoFormik = useFormik({
     initialValues: {
-      // name: "",
-      // email: "",
       birth: "1970-01-01",
       height: 160,
       weight: 60,
@@ -150,31 +148,55 @@ const Dashboard = () => {
       textarea: "",
       addressOfHome: "",
       activityArea: "",
-      // select: "",
       bloodType: "",
-      mbti: "",
+      bodyType: "",
+      mbtiType: "",
+      smoking: "",
+      selfIntroduce: "",
     },
     validationSchema: Yup.object({
-      // name: Yup.string().required("This field is required"),
-      birth: Yup.string().required("This field is required"),
-      height: Yup.string().required("This field is required"),
-      weight: Yup.string().required("This field is required"),
+      birth: Yup.date()
+        .required("This field is required")
+        .typeError("Invalid date format"),
+      height: Yup.number()
+        .required("This field is required")
+        .typeError("Height must be a number"),
+      weight: Yup.number()
+        .required("This field is required")
+        .typeError("Weight must be a number"),
       bornArea: Yup.string().required("This field is required"),
       country: Yup.string().required("This field is required"),
       textarea: Yup.string().required("This field is required"),
-      // email: Yup.string()
-      //   .email()
-      //   .matches(/^(?!.*@[^,]*,)/)
-      //   .required("Please Enter Your Email"),
-      // select: Yup.string().required("This field is required"),
       addressOfHome: Yup.string().required("This field is required"),
       activityArea: Yup.string().required("This field is required"),
       bloodType: Yup.string().required("This field is required"),
-      mbti: Yup.string().required("This field is required"),
+      bodyType: Yup.number().required("This field is required"),
+      mbtiType: Yup.string().required("This field is required"),
+      smoking: Yup.boolean().required("This field is required"),
+      selfIntroduce: Yup.string().required("This field is required"),
     }),
-
     onSubmit: values => {
-      console.log("기본정보 values", values)
+      const currentYear = new Date().getFullYear()
+      const birthYear = parseInt(values.birth.split("-")[0], 10)
+      const age = currentYear - birthYear
+
+      const userInput = {
+        birth: values.birth,
+        age,
+        height: values.height,
+        weight: values.weight,
+        bornArea: values.bornArea,
+        country: values.country,
+        addressOfHome: values.addressOfHome,
+        activityArea: values.activityArea,
+        bloodType: values.bloodType,
+        bodyType: parseInt(values.bodyType, 10),
+        mbtiType: values.mbtiType,
+        drinking: values.drinking,
+        smoking: values.smoking === "true" || values.smoking === true,
+        selfIntroduce: values.selfIntroduce,
+      }
+      console.log("기본정보 values", userInput)
     },
   })
 
@@ -182,24 +204,9 @@ const Dashboard = () => {
   const floatingformik = useFormik({
     initialValues: {
       name: "",
-      email: "",
-      birth: "1970-01-01",
-      height: 160,
-      weight: 60,
-      bornArea: "",
-      addressOfHome: "",
-      activityArea: "",
-      select: "",
-      check: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("This field is required"),
-      email: Yup.string()
-        .email()
-        .matches(/^(?!.*@[^,]*,)/)
-        .required("Please Enter Your Email"),
-      select: Yup.string().required("This field is required"),
-      check: Yup.string().required("This field is required"),
     }),
 
     onSubmit: values => {
@@ -628,7 +635,7 @@ const Dashboard = () => {
                                 <select
                                   className="form-select"
                                   name="bloodType"
-                                  value={basicInfoFormik.values.select}
+                                  value={basicInfoFormik.values.bloodType}
                                   onChange={basicInfoFormik.handleChange}
                                   onBlur={basicInfoFormik.handleBlur}
                                 >
@@ -644,10 +651,10 @@ const Dashboard = () => {
                                   혈액형
                                 </label>
                                 <div>
-                                  {basicInfoFormik.errors.select &&
-                                  basicInfoFormik.touched.select ? (
+                                  {basicInfoFormik.errors.bloodType &&
+                                  basicInfoFormik.touched.bloodType ? (
                                     <span className="text-danger">
-                                      {basicInfoFormik.errors.select}
+                                      {basicInfoFormik.errors.bloodType}
                                     </span>
                                   ) : null}
                                 </div>
@@ -658,8 +665,8 @@ const Dashboard = () => {
                               <div className="form-floating mb-3">
                                 <select
                                   className="form-select"
-                                  name="mbti"
-                                  value={basicInfoFormik.values.select}
+                                  name="mbtiType"
+                                  value={basicInfoFormik.values.mbtiType}
                                   onChange={basicInfoFormik.handleChange}
                                   onBlur={basicInfoFormik.handleBlur}
                                 >
@@ -674,10 +681,105 @@ const Dashboard = () => {
                                 </select>
                                 <label htmlFor="floatingSelectGrid">MBTI</label>
                                 <div>
-                                  {basicInfoFormik.errors.select &&
-                                  basicInfoFormik.touched.select ? (
+                                  {basicInfoFormik.errors.mbtiType &&
+                                  basicInfoFormik.touched.mbtiType ? (
                                     <span className="text-danger">
-                                      {basicInfoFormik.errors.select}
+                                      {basicInfoFormik.errors.mbtiType}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </Col>
+                          </Row>
+
+                          <Row>
+                            <Col xl={6}>
+                              <div className="form-floating mb-3">
+                                <select
+                                  className="form-select"
+                                  name="drinking"
+                                  value={basicInfoFormik.values.drinking}
+                                  onChange={basicInfoFormik.handleChange}
+                                  onBlur={basicInfoFormik.handleBlur}
+                                >
+                                  <option defaultValue="0">
+                                    Open this select your Drinking Information
+                                  </option>
+                                  <option value={"1"}>아예 안마심</option>
+                                  <option value={"2"}>가끔 한두잔</option>
+                                  <option value={"3"}>주에 한번</option>
+                                  <option value={"4"}>주에 두번 이상</option>
+                                </select>
+                                <label htmlFor="floatingSelectGrid">
+                                  음주여부
+                                </label>
+                                <div>
+                                  {basicInfoFormik.errors.drinking &&
+                                  basicInfoFormik.touched.drinking ? (
+                                    <span className="text-danger">
+                                      {basicInfoFormik.errors.drinking}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </Col>
+
+                            <Col xl={6}>
+                              <div className="form-floating mb-3">
+                                <select
+                                  className="form-select"
+                                  name="smoking"
+                                  value={basicInfoFormik.values.smoking}
+                                  onChange={basicInfoFormik.handleChange}
+                                  onBlur={basicInfoFormik.handleBlur}
+                                >
+                                  <option defaultValue="">
+                                    Open this select your Smoking Status
+                                  </option>
+                                  <option value={true}>흡연자</option>
+                                  <option value={false}>비흡연자</option>
+                                </select>
+                                <label htmlFor="floatingSelectGrid">
+                                  흡연여부
+                                </label>
+                                <div>
+                                  {basicInfoFormik.errors.smoking &&
+                                  basicInfoFormik.touched.smoking ? (
+                                    <span className="text-danger">
+                                      {basicInfoFormik.errors.smoking}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </Col>
+                          </Row>
+
+                          <Row>
+                            <Col xl={6}>
+                              <div className="form-floating mb-3">
+                                <select
+                                  className="form-select"
+                                  name="bodyType"
+                                  value={basicInfoFormik.values.bodyType}
+                                  onChange={basicInfoFormik.handleChange}
+                                  onBlur={basicInfoFormik.handleBlur}
+                                >
+                                  <option defaultValue="">
+                                    Open this select your Body Type
+                                  </option>
+                                  <option value={"0"}>마름</option>
+                                  <option value={"1"}>슬림</option>
+                                  <option value={"2"}>보통</option>
+                                  <option value={"3"}>볼륨</option>
+                                  <option value={"4"}>근육</option>
+                                  <option value={"5"}>통통</option>
+                                </select>
+                                <label htmlFor="floatingSelectGrid">체형</label>
+                                <div>
+                                  {basicInfoFormik.errors.bodyType &&
+                                  basicInfoFormik.touched.bodyType ? (
+                                    <span className="text-danger">
+                                      {basicInfoFormik.errors.bodyType}
                                     </span>
                                   ) : null}
                                 </div>
@@ -693,50 +795,44 @@ const Dashboard = () => {
                                 </Label>
                                 <Input
                                   type="textarea"
-                                  name="textarea"
+                                  name="selfIntroduce"
                                   className="form-control"
                                   id="floatingnameInput"
                                   placeholder="자기소개"
-                                  value={basicInfoFormik.values.name}
+                                  value={basicInfoFormik.values.selfIntroduce}
                                   onChange={basicInfoFormik.handleChange}
                                   onBlur={basicInfoFormik.handleBlur}
                                 />
-                                {/*{textareabadge ? (*/}
-                                {/*  <span className="badgecount badge bg-success">*/}
-                                {/*    {" "}*/}
-                                {/*    {textcount} / 225{" "}*/}
-                                {/*  </span>*/}
-                                {/*) : null}*/}
                               </div>
                             </Col>
                           </Row>
 
-                          {/*<Row>*/}
-                          {/*  <Col xl={12}>*/}
-                          {/*    <div className="form-floating mt-3">*/}
-                          {/*      <input*/}
-                          {/*        type="text"*/}
-                          {/*        name="bornArea"*/}
-                          {/*        className="form-control"*/}
-                          {/*        id="floatingnameInput"*/}
-                          {/*        placeholder="bornArea"*/}
-                          {/*        value={basicInfoFormik.values.bornArea}*/}
-                          {/*        onChange={basicInfoFormik.handleChange}*/}
-                          {/*        onBlur={basicInfoFormik.handleBlur}*/}
-                          {/*      />*/}
-                          {/*      <label htmlFor="floatingnameInput">*/}
-                          {/*        매칭에서 거절할 전화번호 (ex. 3개까지 등록*/}
-                          {/*        가능)*/}
-                          {/*      </label>*/}
-                          {/*      {basicInfoFormik.errors.bornArea &&*/}
-                          {/*      basicInfoFormik.touched.bornArea ? (*/}
-                          {/*        <span className="text-danger">*/}
-                          {/*          {basicInfoFormik.errors.bornArea}*/}
-                          {/*        </span>*/}
-                          {/*      ) : null}*/}
-                          {/*    </div>*/}
-                          {/*  </Col>*/}
-                          {/*</Row>*/}
+                          {/* <Row>
+                            <Col xl={12}>
+                              <div className="form-floating mt-3">
+                                <Input
+                                  type="text"
+                                  name="bornArea"
+                                  className="form-control"
+                                  id="floatingnameInput"
+                                  placeholder="bornArea"
+                                  value={basicInfoFormik.values.bornArea}
+                                  onChange={basicInfoFormik.handleChange}
+                                  onBlur={basicInfoFormik.handleBlur}
+                                />
+                                <label htmlFor="floatingnameInput">
+                                  매칭에서 거절할 전화번호 (ex. 3개까지 등록
+                                  가능)
+                                </label>
+                                {basicInfoFormik.errors.bornArea &&
+                                basicInfoFormik.touched.bornArea ? (
+                                  <span className="text-danger">
+                                    {basicInfoFormik.errors.bornArea}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row> */}
 
                           <div className={"mt-3"}>
                             <button
