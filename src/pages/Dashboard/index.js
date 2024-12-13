@@ -31,6 +31,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 import img1 from "../../assets/images/product/img-1.png"
 import img7 from "../../assets/images/product/img-7.png"
 import Dropzone from "react-dropzone"
+import axios from "axios"
 
 const bloodTypeOptionGroup = [
   {
@@ -145,7 +146,6 @@ const Dashboard = () => {
       weight: 60,
       bornArea: "",
       country: "",
-      textarea: "",
       addressOfHome: "",
       activityArea: "",
       bloodType: "",
@@ -166,7 +166,6 @@ const Dashboard = () => {
         .typeError("Weight must be a number"),
       bornArea: Yup.string().required("This field is required"),
       country: Yup.string().required("This field is required"),
-      textarea: Yup.string().required("This field is required"),
       addressOfHome: Yup.string().required("This field is required"),
       activityArea: Yup.string().required("This field is required"),
       bloodType: Yup.string().required("This field is required"),
@@ -175,7 +174,7 @@ const Dashboard = () => {
       smoking: Yup.boolean().required("This field is required"),
       selfIntroduce: Yup.string().required("This field is required"),
     }),
-    onSubmit: values => {
+    onSubmit: async values => {
       const currentYear = new Date().getFullYear()
       const birthYear = parseInt(values.birth.split("-")[0], 10)
       const age = currentYear - birthYear
@@ -196,7 +195,28 @@ const Dashboard = () => {
         smoking: values.smoking === "true" || values.smoking === true,
         selfIntroduce: values.selfIntroduce,
       }
-      console.log("기본정보 values", userInput)
+      console.log("기본정보 userinput", userInput)
+      // console.log("기본정보 values", values)
+
+      try {
+        const token = localStorage.getItem("token")
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        const url = "http://localhost/api/profile"
+        const res = await axios.post(url, userInput, config)
+        console.log("기본정보 res", res)
+        if (res.status === 201) {
+          alert("기본정보 저장 성공")
+        }
+      } catch (e) {
+        console.log(e)
+        if (e?.response?.data?.message?.includes("already")) {
+          alert("이미 프로파일이 존재합니다")
+        }
+      }
     },
   })
 
