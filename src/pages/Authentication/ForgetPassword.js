@@ -29,6 +29,7 @@ import { userForgetPassword } from "../../store/actions"
 // import images
 import profile from "../../assets/images/profile-img.png"
 import axios from "axios"
+import Spinners from "components/Common/Spinner"
 
 const ForgetPasswordPage = props => {
   //meta title
@@ -55,7 +56,7 @@ const ForgetPasswordPage = props => {
         const res = await axios.post(url, userInput)
         console.log("이멜보내기 res", res)
         if (res.status === 201) {
-          console.log("이메일 발송 성공")
+          alert("이메일 발송 성공")
         }
       } catch (e) {
         console.log(e)
@@ -74,6 +75,12 @@ const ForgetPasswordPage = props => {
   const { forgetError, forgetSuccessMsg } = useSelector(
     ForgotPasswordProperties
   )
+
+  const [isLoading, setIsLoading] = useState(true)
+  if (isLoading) {
+    console.log("로딩중임다")
+    return <Spinners setLoading={setIsLoading} />
+  }
 
   return (
     <React.Fragment>

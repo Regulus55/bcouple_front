@@ -32,6 +32,7 @@ import img1 from "../../assets/images/product/img-1.png"
 import img7 from "../../assets/images/product/img-7.png"
 import Dropzone from "react-dropzone"
 import axios from "axios"
+import useProfile from "hooks/useProfile"
 
 const bloodTypeOptionGroup = [
   {
@@ -49,6 +50,18 @@ const mbtiTypeOptionGroup = [
   { label: "ENFJ", value: "ENFJ" },
   { label: "ENTP", value: "ENTP" },
   { label: "ENTJ", value: "ENTJ" },
+  { label: "INFP", value: "INFP" },
+  { label: "INFJ", value: "INFJ" },
+  { label: "INTP", value: "INTP" },
+  { label: "INTJ", value: "INTJ" },
+  { label: "ISFP", value: "ISFP" },
+  { label: "ISFJ", value: "ISFJ" },
+  { label: "ISTP", value: "ISTP" },
+  { label: "ISTJ", value: "ISTJ" },
+  { label: "ESFP", value: "ESFP" },
+  { label: "ESFJ", value: "ESFJ" },
+  { label: "ESTP", value: "ESTP" },
+  { label: "ESTJ", value: "ESTJ" },
 ]
 
 const orderSummary = [
@@ -65,6 +78,7 @@ const orderSummary = [
 const Dashboard = () => {
   //meta title
   document.title = "Checkout | Skote - React Admin & Dashboard Template"
+  const { data: profileInfo } = useProfile()
 
   const [activeTab, setActiveTab] = useState("1")
   const [textareabadge, settextareabadge] = useState(0)
@@ -137,7 +151,6 @@ const Dashboard = () => {
     )
     setselectedFiles(files)
   }
-
   // 기본정보
   const basicInfoFormik = useFormik({
     initialValues: {
@@ -182,8 +195,9 @@ const Dashboard = () => {
       const userInput = {
         birth: values.birth,
         age,
+        gender: "1",
         height: values.height,
-        weight: values.weight,
+        // weight: values.weight,
         bornArea: values.bornArea,
         country: values.country,
         addressOfHome: values.addressOfHome,
@@ -206,19 +220,46 @@ const Dashboard = () => {
           },
         }
         const url = "http://localhost/api/profile"
-        const res = await axios.post(url, userInput, config)
+        const method =
+          profileInfo?.profile !== null && profileInfo?.profile !== undefined
+            ? "put"
+            : "post"
+        const res = await axios[method](url, userInput, config)
         console.log("기본정보 res", res)
-        if (res.status === 201) {
+        if (method === "post" && res.status === 201) {
           alert("기본정보 저장 성공")
+        } else if (method === "put" && res.status === 200) {
+          alert("기본정보 수정 성공")
         }
       } catch (e) {
         console.log(e)
-        if (e?.response?.data?.message?.includes("already")) {
-          alert("이미 프로파일이 존재합니다")
-        }
       }
     },
   })
+
+  useEffect(() => {
+    if (profileInfo?.profile) {
+      basicInfoFormik.setValues({
+        birth: profileInfo.profile.birth
+          ? new Date(profileInfo.profile.birth).toISOString().split("T")[0]
+          : "1970-01-01",
+        height: profileInfo.profile.height || 160,
+        weight: profileInfo.profile.weight || 60,
+        bornArea: profileInfo.profile.bornArea || "",
+        country: profileInfo.profile.country || "",
+        addressOfHome: profileInfo.profile.addressOfHome || "",
+
+        activityArea: profileInfo.profile.activityArea || "",
+        bloodType: profileInfo.profile.bloodType || "",
+        bodyType: profileInfo.profile.bodyType || "",
+        mbtiType: profileInfo.profile.mbtiType || "",
+        smoking: profileInfo.profile.smoking || "",
+        selfIntroduce: profileInfo.profile.selfIntroduce || "",
+        drinking: profileInfo.profile.drinking || "",
+      })
+    }
+  }, [profileInfo])
+  console.log("바디", profileInfo?.profile?.smoking)
 
   //Floating labels forms
   const floatingformik = useFormik({
@@ -278,10 +319,6 @@ const Dashboard = () => {
     )
     marriageformik.setFieldValue("childrenInfo", updatedChildren)
   }
-
-  useEffect(() => {
-    console.log("adfasdfasdfqerqwerqwer", marriageformik.values.childrenInfo)
-  }, [marriageformik.values.childrenInfo])
 
   // 학력
   const handleEducationChange = e => {
@@ -483,12 +520,12 @@ const Dashboard = () => {
                                   onChange={basicInfoFormik.handleChange}
                                   onBlur={basicInfoFormik.handleBlur}
                                 >
-                                  <option defaultValue="0">
+                                  <option defaultValue="">
                                     Open this select Country
                                   </option>
-                                  <option value="1">한국</option>
-                                  <option value="2">일본</option>
-                                  <option value="3">미국</option>
+                                  <option value="한국">한국</option>
+                                  <option value="일본">일본</option>
+                                  <option value="미국">미국</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">국적</label>
                                 <div>
@@ -691,7 +728,7 @@ const Dashboard = () => {
                                   onBlur={basicInfoFormik.handleBlur}
                                 >
                                   <option defaultValue="0">
-                                    Open this select your Blood Type
+                                    Open this select your MBTI Type
                                   </option>
                                   {mbtiTypeOptionGroup.map((mbti, index) => (
                                     <option value={mbti.value} key={index}>
@@ -725,10 +762,10 @@ const Dashboard = () => {
                                   <option defaultValue="0">
                                     Open this select your Drinking Information
                                   </option>
-                                  <option value={"1"}>아예 안마심</option>
-                                  <option value={"2"}>가끔 한두잔</option>
-                                  <option value={"3"}>주에 한번</option>
-                                  <option value={"4"}>주에 두번 이상</option>
+                                  <option value="1">아예 안마심</option>
+                                  <option value="2">가끔 한두잔</option>
+                                  <option value="3">주에 한번</option>
+                                  <option value="4">주에 두번 이상</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">
                                   음주여부
@@ -784,15 +821,15 @@ const Dashboard = () => {
                                   onChange={basicInfoFormik.handleChange}
                                   onBlur={basicInfoFormik.handleBlur}
                                 >
-                                  <option defaultValue="">
+                                  <option value="">
                                     Open this select your Body Type
                                   </option>
-                                  <option value={"0"}>마름</option>
-                                  <option value={"1"}>슬림</option>
-                                  <option value={"2"}>보통</option>
-                                  <option value={"3"}>볼륨</option>
-                                  <option value={"4"}>근육</option>
-                                  <option value={"5"}>통통</option>
+                                  <option value={0}>마름</option>
+                                  <option value={1}>슬림</option>
+                                  <option value={2}>보통</option>
+                                  <option value={3}>볼륨</option>
+                                  <option value={4}>근육</option>
+                                  <option value={5}>통통</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">체형</label>
                                 <div>

@@ -44,10 +44,14 @@ const ChangePassword = props => {
     initialValues: {
       token: token,
       password: "",
+      passwordconfirm: "",
     },
     changeformikSchema: Yup.object({
       token: Yup.string().required("Please Enter Your Toe"),
       password: Yup.string().required("Please Enter Your New Password"),
+      passwordconfirm: Yup.string()
+        .required("Please confirm your password")
+        .oneOf([Yup.ref("password"), null], "Passwords must match"),
     }),
     onSubmit: async values => {
       const userInput = {
@@ -126,30 +130,62 @@ const ChangePassword = props => {
                         return false
                       }}
                     >
-                      <div className="mb-3">
-                        <Label className="form-label">New Password</Label>
-                        <Input
-                          name="password"
-                          className="form-control"
-                          placeholder="Enter New Password"
-                          type="password"
-                          onChange={changeformik.handleChange}
-                          onBlur={changeformik.handleBlur}
-                          value={changeformik.values.password || ""}
-                          invalid={
-                            changeformik.touched.password &&
-                            changeformik.errors.password
-                              ? true
-                              : false
-                          }
-                        />
-                        {changeformik.touched.password &&
-                        changeformik.errors.password ? (
-                          <FormFeedback type="invalid">
-                            {changeformik.errors.password}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
+                      <Row>
+                        <Col xl={12}>
+                          <div className="mb-3">
+                            <Label className="form-label">New Password</Label>
+                            <Input
+                              name="password"
+                              className="form-control"
+                              placeholder="Enter New Password"
+                              type="password"
+                              onChange={changeformik.handleChange}
+                              onBlur={changeformik.handleBlur}
+                              value={changeformik.values.password || ""}
+                              invalid={
+                                changeformik.touched.password &&
+                                changeformik.errors.password
+                                  ? true
+                                  : false
+                              }
+                            />
+                            {changeformik.touched.password &&
+                            changeformik.errors.password ? (
+                              <FormFeedback type="invalid">
+                                {changeformik.errors.password}
+                              </FormFeedback>
+                            ) : null}
+                          </div>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col xl={12}>
+                          <div className="mb-3">
+                            <Label className="form-label">
+                              Password Confirm
+                            </Label>
+                            <Input
+                              name="passwordconfirm"
+                              type="password"
+                              placeholder="Enter Password"
+                              onChange={changeformik.handleChange}
+                              onBlur={changeformik.handleBlur}
+                              value={changeformik.values.passwordconfirm || ""}
+                              invalid={
+                                changeformik.touched.passwordconfirm &&
+                                Boolean(changeformik.errors.passwordconfirm)
+                              }
+                            />
+                            {changeformik.touched.passwordconfirm &&
+                            changeformik.errors.passwordconfirm ? (
+                              <FormFeedback type="invalid">
+                                {changeformik.errors.passwordconfirm}
+                              </FormFeedback>
+                            ) : null}
+                          </div>
+                        </Col>
+                      </Row>
 
                       <div className="mb-3 d-grid">
                         <button
