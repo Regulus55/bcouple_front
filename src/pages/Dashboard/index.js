@@ -291,9 +291,7 @@ const Dashboard = () => {
             childrenGender: Yup.string().required(
               "Children gender is required"
             ),
-            childrenBirth: Yup.string().required(
-              "Children birth year is required"
-            ),
+            birthYear: Yup.string().required("Children birth year is required"),
             parentingStatus: Yup.string().required(
               "Parenting status is required"
             ),
@@ -301,8 +299,40 @@ const Dashboard = () => {
         )
         .min(1, "At least one child is required"),
     }),
-    onSubmit: values => {
-      console.log("결혼 관련 values", values)
+    onSubmit: async values => {
+      const userInput = {
+        mExperience: values.mExperience,
+        reasonForDivorce: values.reasonForDivorce,
+        childrenInfo: values.childrenInfo.map(child => ({
+          birthYear: child.birthYear,
+          childrenGender: child.childrenGender,
+          parentingStatus: child.parentingStatus,
+        })),
+      }
+      console.log("결혼 관련 userInput", userInput)
+
+      try {
+        const token = localStorage.getItem("token")
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        const method =
+          profileInfo?.profile !== null && profileInfo?.profile !== undefined
+            ? "post"
+            : "put"
+        const url = "http://localhost/api/marriage"
+        const res = await axios[method](url, userInput, config)
+        console.log("결혼 관련 res", res)
+        if (res.status === 201) {
+          alert("결혼관련 정보 생성 성공")
+        } else if (res.status === 200) {
+          alert("결혼관련 정보 수정 성공")
+        }
+      } catch (e) {
+        console.log("결혼 관련 e", e)
+      }
     },
   })
 
@@ -319,6 +349,20 @@ const Dashboard = () => {
     )
     marriageformik.setFieldValue("childrenInfo", updatedChildren)
   }
+  // useEffect(() => {
+  //   if (profileInfo?.profile) {
+  //     marriageformik.setValues({
+  //       mExperience: profileInfo.profile.mExperience || "",
+  //       reasonForDivorce: profileInfo.profile.reasonForDivorce || "",
+  //       childrenInfo:
+  //         profileInfo.profile.childrenInfo?.map(child => ({
+  //           birthYear: child.birthYear || "",
+  //           childrenGender: child.childrenGender || "",
+  //           parentingStatus: child.parentingStatus || "",
+  //         })) || [],
+  //     })
+  //   }
+  // }, [profileInfo])
 
   // 종교
   const religionformik = useFormik({
@@ -1009,7 +1053,12 @@ const Dashboard = () => {
                                 <select
                                   className="form-select"
                                   name="childrenInfo"
-                                  value={marriageformik.values.childrenInfo}
+                                  value={
+                                    marriageformik.values.childrenInfo.length >
+                                    0
+                                      ? 1
+                                      : 0
+                                  }
                                   onChange={e => {
                                     const value = e.target.value
                                     marriageformik.setFieldValue(
@@ -1020,8 +1069,8 @@ const Dashboard = () => {
                                   onBlur={marriageformik.handleBlur}
                                 >
                                   <option value="">Select Children</option>
-                                  <option value="1">있음</option>
-                                  <option value="2">없음</option>
+                                  <option value={1}>있음</option>
+                                  <option value={0}>없음</option>
                                 </select>
                                 <label htmlFor="childrenInfo">자녀 여부</label>
                                 {/* {marriageformik.errors.childrenInfo &&
@@ -1037,13 +1086,18 @@ const Dashboard = () => {
                               <button
                                 type="button"
                                 disabled={
-                                  marriageformik.values.childrenInfo === "1"
+                                  marriageformik.values.childrenInfo.length ===
+                                  0
                                     ? true
                                     : false
                                 }
                                 onClick={addChild}
                                 className="btn btn-primary w-100"
                               >
+                                {console.log(
+                                  "칠드런인포",
+                                  marriageformik.values.childrenInfo
+                                )}
                                 + 추가하기
                               </button>
                             </Col>
@@ -1074,8 +1128,8 @@ const Dashboard = () => {
                                     <input
                                       type="text"
                                       className="form-control"
-                                      name={`childrenInfo[${index}].childrenBirth`}
-                                      value={child.childrenBirth || ""}
+                                      name={`childrenInfo[${index}].birthYear`}
+                                      value={child.birthYear || ""}
                                       onChange={marriageformik.handleChange}
                                     />
                                   </div>
