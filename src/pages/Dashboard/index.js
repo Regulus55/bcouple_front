@@ -259,7 +259,7 @@ const Dashboard = () => {
       })
     }
   }, [profileInfo])
-  console.log("바디", profileInfo?.profile?.smoking)
+  // console.log("바디", profileInfo?.profile?.smoking)
 
   //Floating labels forms
   const floatingformik = useFormik({
@@ -320,6 +320,61 @@ const Dashboard = () => {
     marriageformik.setFieldValue("childrenInfo", updatedChildren)
   }
 
+  // 종교
+  const religionformik = useFormik({
+    initialValues: {
+      religionName: "",
+      attendanceAtReligious: "",
+    },
+    validationSchema: Yup.object({
+      religionName: Yup.string().required("Religion name is required"),
+      attendanceAtReligious: Yup.string().required(
+        "Attendance status is required"
+      ),
+    }),
+
+    onSubmit: async values => {
+      const userInput = {
+        religionName: values.religionName,
+        attendanceAtReligious: values.attendanceAtReligious,
+      }
+      console.log("종교 values", values)
+
+      try {
+        const token = localStorage.getItem("token")
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        const url = "http://localhost/api/religion"
+        const method =
+          profileInfo?.profile !== null && profileInfo?.profile !== undefined
+            ? "put"
+            : "post"
+        const res = await axios[method](url, userInput, config)
+        console.log("종교 res", res)
+        if (method === "post" && res.status === 201) {
+          alert("종교 내용 저장 성공")
+        } else if (method === "put" && res.status === 200) {
+          alert("종교 내용 수정 성공")
+        }
+      } catch (e) {
+        console.log("종교 error", e)
+      }
+      console.log("resrserserser", res)
+    },
+  })
+  useEffect(() => {
+    if (profileInfo?.profile) {
+      religionformik.setValues({
+        religionName: profileInfo.religionInfo.religionName || "",
+        attendanceAtReligious:
+          profileInfo.religionInfo.attendanceAtReligious || "",
+      })
+    }
+  }, [profileInfo])
+
   // 학력
   const handleEducationChange = e => {
     const value = e.target.value
@@ -377,24 +432,6 @@ const Dashboard = () => {
 
     onSubmit: values => {
       console.log("학력 values", values)
-    },
-  })
-
-  // 종교
-  const religionformik = useFormik({
-    initialValues: {
-      religionName: "",
-      attendanceAtReligious: "",
-    },
-    validationSchema: Yup.object({
-      religionName: Yup.string().required("Religion name is required"),
-      attendanceAtReligious: Yup.string().required(
-        "Attendance status is required"
-      ),
-    }),
-
-    onSubmit: values => {
-      console.log("종교 values", values)
     },
   })
 
