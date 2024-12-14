@@ -452,26 +452,31 @@ const Dashboard = () => {
     setEducationLevel(updatedEducationLevel)
   }
 
+  const addEducation = () => {
+    educationformik.setFieldValue("schoolInfos", [
+      ...educationformik.values.schoolInfos,
+      {},
+    ])
+  }
+
+  const removeEducation = index => {
+    const updatedSchools = educationformik.values.schoolInfos.filter(
+      (_, i) => i !== index
+    )
+    educationformik.setFieldValue("schoolInfos", updatedSchools)
+  }
+
   useEffect(() => {
     educationformik.setFieldValue("educationLevels", educationLevel)
   }, [educationLevel])
 
   const educationformik = useFormik({
     initialValues: {
-      finaledu: "",
-      schoolname: "",
-      major: "",
-      location: "",
-      type: "",
-      status: "",
+      finalEduLevel: "",
+      schoolInfos: [{ name: "", majors: [] }],
     },
     validationSchema: Yup.object({
-      finaledu: Yup.string().required("Final education level is required"),
-      schoolname: Yup.string().required("School name is required"),
-      major: Yup.string().required("Major is required"),
-      location: Yup.string().required("Campus location is required"),
-      type: Yup.string().required("Education type is required"),
-      status: Yup.string().required("Graduation status is required"),
+      finalEduLevel: Yup.string().required("Final education level is required"),
     }),
 
     onSubmit: values => {
@@ -1283,7 +1288,7 @@ const Dashboard = () => {
                                   className="form-select"
                                   name="finaledu"
                                   value={educationformik.values.finaledu}
-                                  onChange={handleEducationChange} // 변경된 함수
+                                  onChange={handleEducationChange}
                                   onBlur={educationformik.handleBlur}
                                 >
                                   <option value="">
@@ -1303,10 +1308,10 @@ const Dashboard = () => {
                                   최종학력
                                 </label>
                                 <div>
-                                  {educationformik.errors.finaledu &&
-                                  educationformik.touched.finaledu ? (
+                                  {educationformik.errors.finalEduLevel &&
+                                  educationformik.touched.finalEduLevel ? (
                                     <span className="text-danger">
-                                      {educationformik.errors.finaledu}
+                                      {educationformik.errors.finaleduLevel}
                                     </span>
                                   ) : null}
                                 </div>
@@ -1333,15 +1338,15 @@ const Dashboard = () => {
                                   <div className="form-floating mb-3">
                                     <input
                                       type="text"
-                                      name={`educationLevel[${index}].schoolname`}
+                                      name={`educationLevel[${index}].name`}
                                       className="form-control"
                                       placeholder="School Name"
-                                      value={edu.schoolname}
+                                      value={edu.name}
                                       onChange={e => {
                                         const updatedFields = [
                                           ...educationLevel,
                                         ]
-                                        updatedFields[index].schoolname =
+                                        updatedFields[index].name =
                                           e.target.value
                                         setEducationLevel(updatedFields)
                                       }}
@@ -1350,19 +1355,21 @@ const Dashboard = () => {
                                   </div>
                                 </Col>
 
+                                {console.log("학교이름잉야", educationLevel)}
+
                                 <Col xl={4}>
                                   <div className="form-floating mb-3">
                                     <input
                                       type="text"
-                                      name={`educationLevel[${index}].major`}
+                                      name={`educationLevel[${index}].majors`}
                                       className="form-control"
                                       placeholder="Major"
-                                      value={edu.major}
+                                      value={edu.majors}
                                       onChange={e => {
                                         const updatedFields = [
                                           ...educationLevel,
                                         ]
-                                        updatedFields[index].major =
+                                        updatedFields[index].majors =
                                           e.target.value
                                         setEducationLevel(updatedFields)
                                       }}
