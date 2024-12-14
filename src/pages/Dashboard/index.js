@@ -438,28 +438,28 @@ const Dashboard = () => {
       .map((_, index) => ({
         finaledu: value,
         educationLevels: [],
-        //  schoolname: "",
-        // major: "",
-        // location: "",
-        // type: "",
-        // status: "",
+        schoolname: "",
+        major: "",
+        location: "",
+        type: "",
+        status: "",
       }))
 
     setEducationLevel(newFields)
   }
-  const removeEducationLevel = index => {
-    const updatedEducationLevel = educationLevel.filter((_, i) => i !== index)
-    setEducationLevel(updatedEducationLevel)
-  }
+  // const removeEducationLevel = index => {
+  //   const updatedEducationLevel = educationLevel.filter((_, i) => i !== index)
+  //   setEducationLevel(updatedEducationLevel)
+  // }
 
-  const addEducation = () => {
+  const addSchools = () => {
     educationformik.setFieldValue("schoolInfos", [
       ...educationformik.values.schoolInfos,
       {},
     ])
   }
 
-  const removeEducation = index => {
+  const removeSchools = index => {
     const updatedSchools = educationformik.values.schoolInfos.filter(
       (_, i) => i !== index
     )
@@ -1286,8 +1286,8 @@ const Dashboard = () => {
                               <div className="form-floating mb-3">
                                 <select
                                   className="form-select"
-                                  name="finaledu"
-                                  value={educationformik.values.finaledu}
+                                  name="finalEduLevel"
+                                  value={educationformik.values.finalEduLevel}
                                   onChange={handleEducationChange}
                                   onBlur={educationformik.handleBlur}
                                 >
@@ -1311,7 +1311,7 @@ const Dashboard = () => {
                                   {educationformik.errors.finalEduLevel &&
                                   educationformik.touched.finalEduLevel ? (
                                     <span className="text-danger">
-                                      {educationformik.errors.finaleduLevel}
+                                      {educationformik.errors.finalEduLevel}
                                     </span>
                                   ) : null}
                                 </div>
@@ -1321,9 +1321,7 @@ const Dashboard = () => {
                             <Col xl={3}>
                               <button
                                 type="button"
-                                onClick={() =>
-                                  setEducationLevel([...educationLevel, "1"])
-                                }
+                                onClick={addSchools}
                                 className="btn btn-primary w-100"
                               >
                                 +<div>추가하기</div>
@@ -1331,138 +1329,105 @@ const Dashboard = () => {
                             </Col>
                           </Row>
 
-                          {educationLevel.map((edu, index) => (
-                            <div key={index}>
-                              <Row>
-                                <Col xl={4}>
-                                  <div className="form-floating mb-3">
-                                    <input
-                                      type="text"
-                                      name={`educationLevel[${index}].name`}
-                                      className="form-control"
-                                      placeholder="School Name"
-                                      value={edu.name}
-                                      onChange={e => {
-                                        const updatedFields = [
-                                          ...educationLevel,
-                                        ]
-                                        updatedFields[index].name =
-                                          e.target.value
-                                        setEducationLevel(updatedFields)
-                                      }}
-                                    />
-                                    <label>학교 이름</label>
-                                  </div>
-                                </Col>
+                          {educationformik.values.schoolInfos.map(
+                            (edu, index) => (
+                              <div key={index}>
+                                <Row>
+                                  <Col xl={4}>
+                                    <div className="form-floating mb-3">
+                                      <input
+                                        type="text"
+                                        name={`schoolInfos[${index}].name`}
+                                        className="form-control"
+                                        placeholder="School Name"
+                                        value={edu.name}
+                                        onChange={educationformik.handleChange}
+                                      />
+                                      <label>학교 이름</label>
+                                    </div>
+                                  </Col>
 
-                                {console.log("학교이름잉야", educationLevel)}
+                                  {console.log("학교이름잉야", educationLevel)}
 
-                                <Col xl={4}>
-                                  <div className="form-floating mb-3">
-                                    <input
-                                      type="text"
-                                      name={`educationLevel[${index}].majors`}
-                                      className="form-control"
-                                      placeholder="Major"
-                                      value={edu.majors}
-                                      onChange={e => {
-                                        const updatedFields = [
-                                          ...educationLevel,
-                                        ]
-                                        updatedFields[index].majors =
-                                          e.target.value
-                                        setEducationLevel(updatedFields)
-                                      }}
-                                    />
-                                    <label>전공</label>
-                                  </div>
-                                </Col>
+                                  <Col xl={4}>
+                                    <div className="form-floating mb-3">
+                                      <input
+                                        type="text"
+                                        name={`schoolInfos[${index}].majors`}
+                                        className="form-control"
+                                        placeholder="Majors"
+                                        value={edu.majors}
+                                        onChange={educationformik.handleChange}
+                                      />
+                                      <label>전공</label>
+                                    </div>
+                                  </Col>
 
-                                <Col xl={4}>
-                                  <div className="form-floating mb-3">
-                                    <input
-                                      type="text"
-                                      name={`educationLevel[${index}].location`}
-                                      className="form-control"
-                                      placeholder="Campus Location"
-                                      value={edu.location}
-                                      onChange={e => {
-                                        const updatedFields = [
-                                          ...educationLevel,
-                                        ]
-                                        updatedFields[index].location =
-                                          e.target.value
-                                        setEducationLevel(updatedFields)
-                                      }}
-                                    />
-                                    <label>캠퍼스 위치</label>
-                                  </div>
-                                </Col>
+                                  <Col xl={4}>
+                                    <div className="form-floating mb-3">
+                                      <input
+                                        type="text"
+                                        name={`schoolInfos[${index}].location`}
+                                        className="form-control"
+                                        placeholder="Campus Location"
+                                        value={edu.location}
+                                        onChange={educationformik.handleChange}
+                                      />
+                                      <label>캠퍼스 위치</label>
+                                    </div>
+                                  </Col>
 
-                                <Col xl={5}>
-                                  <div className="form-floating mb-3">
-                                    <select
-                                      className="form-select"
-                                      name={`educationLevel[${index}].type`}
-                                      value={edu.type}
-                                      onChange={e => {
-                                        const updatedFields = [
-                                          ...educationLevel,
-                                        ]
-                                        updatedFields[index].type =
-                                          e.target.value
-                                        setEducationLevel(updatedFields)
-                                      }}
+                                  <Col xl={5}>
+                                    <div className="form-floating mb-3">
+                                      <select
+                                        className="form-select"
+                                        name={`schoolInfos[${index}].type`}
+                                        value={edu.type}
+                                        onChange={educationformik.handleChange}
+                                      >
+                                        <option value="">
+                                          Select Education Type
+                                        </option>
+                                        <option value="1">고등학교 졸업</option>
+                                        <option value="2">대학 중퇴</option>
+                                        <option value="3">전문대 졸업</option>
+                                      </select>
+                                      <label>학력 구분</label>
+                                    </div>
+                                  </Col>
+
+                                  <Col xl={5}>
+                                    <div className="form-floating mb-3">
+                                      <select
+                                        className="form-select"
+                                        name={`schoolInfos[${index}].status`}
+                                        value={edu.status}
+                                        onChange={educationformik.handleChange}
+                                      >
+                                        <option value="">
+                                          Select Graduation Status
+                                        </option>
+                                        <option value="1">졸업</option>
+                                        <option value="2">재학</option>
+                                        <option value="3">자퇴</option>
+                                      </select>
+                                      <label>졸업 구분</label>
+                                    </div>
+                                  </Col>
+
+                                  <Col xl={2}>
+                                    <button
+                                      type="button"
+                                      className="btn btn-danger w-100"
+                                      onClick={() => removeSchools(index)}
                                     >
-                                      <option value="">
-                                        Select Education Type
-                                      </option>
-                                      <option value="1">고등학교 졸업</option>
-                                      <option value="2">대학 중퇴</option>
-                                      <option value="3">전문대 졸업</option>
-                                    </select>
-                                    <label>학력 구분</label>
-                                  </div>
-                                </Col>
-
-                                <Col xl={5}>
-                                  <div className="form-floating mb-3">
-                                    <select
-                                      className="form-select"
-                                      name={`educationLevel[${index}].status`}
-                                      value={edu.status}
-                                      onChange={e => {
-                                        const updatedFields = [
-                                          ...educationLevel,
-                                        ]
-                                        updatedFields[index].status =
-                                          e.target.value
-                                        setEducationLevel(updatedFields)
-                                      }}
-                                    >
-                                      <option value="">
-                                        Select Graduation Status
-                                      </option>
-                                      <option value="1">졸업</option>
-                                      <option value="2">재학</option>
-                                      <option value="3">자퇴</option>
-                                    </select>
-                                    <label>졸업 구분</label>
-                                  </div>
-                                </Col>
-
-                                <Col xl={2}>
-                                  <button
-                                    type="button"
-                                    className="btn btn-danger w-100"
-                                    onClick={() => removeEducationLevel(index)}
-                                  >
-                                    -<div>삭제하기</div>
-                                  </button>
-                                </Col>
-                              </Row>
-                            </div>
-                          ))}
+                                      -<div>삭제하기</div>
+                                    </button>
+                                  </Col>
+                                </Row>
+                              </div>
+                            )
+                          )}
 
                           <div>
                             <button
