@@ -29,7 +29,8 @@ import { userForgetPassword } from "../../store/actions"
 // import images
 import profile from "../../assets/images/profile-img.png"
 import axios from "axios"
-import Spinners from "components/Common/Spinner"
+import { toast, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 const ForgetPasswordPage = props => {
   //meta title
@@ -51,12 +52,27 @@ const ForgetPasswordPage = props => {
         email: values.email,
       }
 
+      const url = "http://localhost/api/auth/find/passwordd"
+      const promise = axios.post(url, userInput)
+      toast.promise(
+        promise,
+        {
+          pending: "로딩 중...",
+          success: "이메일 발송 성공",
+          error: "요청 실패",
+        },
+        {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+        }
+      )
+
       try {
-        const url = "http://localhost/api/auth/find/password"
-        const res = await axios.post(url, userInput)
-        console.log("이멜보내기 res", res)
+        const res = await promise
         if (res.status === 201) {
-          alert("이메일 발송 성공")
+          toast.success("메일 발송 성공")
         }
       } catch (e) {
         console.log(e)
@@ -75,12 +91,6 @@ const ForgetPasswordPage = props => {
   const { forgetError, forgetSuccessMsg } = useSelector(
     ForgotPasswordProperties
   )
-
-  const [isLoading, setIsLoading] = useState(true)
-  if (isLoading) {
-    console.log("로딩중임다")
-    return <Spinners setLoading={setIsLoading} />
-  }
 
   return (
     <React.Fragment>
@@ -178,6 +188,7 @@ const ForgetPasswordPage = props => {
           </Row>
         </Container>
       </div>
+      <ToastContainer />
     </React.Fragment>
   )
 }
