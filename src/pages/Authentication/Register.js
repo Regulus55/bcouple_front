@@ -28,6 +28,8 @@ import { Link, useNavigate } from "react-router-dom"
 // import images
 import profileImg from "../../assets/images/profile-img.png"
 import logoImg from "../../assets/images/logo.svg"
+import { toast, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 import Dropzone from "react-dropzone"
 import axios from "axios"
 
@@ -44,11 +46,25 @@ const EmailSendForm = ({ email, setEmail, onNext }) => {
       email: Yup.string().required("Please Enter Your Email"),
     }),
     onSubmit: async values => {
-      console.log("이멜보내기 values", values)
+      const url = "http://localhost/api/auth/email/send"
+      const promise = axios.post(url, values)
+      toast.promise(
+        promise,
+        {
+          pending: "로딩 중...",
+          success: "이메일 발송 성공",
+          error: "요청 실패",
+        },
+        {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+        }
+      )
 
       try {
-        const url = "http://localhost/api/auth/email/send"
-        const res = await axios.post(url, values)
+        const res = await promise
         // console.log("이멜보내기 res", res)
         if (res.status === 201) {
           console.log("발송성공")
@@ -279,15 +295,14 @@ const RegistForm = ({ email }) => {
         phone: values.phone,
         consent: values.consent,
       }
-      console.log("userInput", userInput)
 
       try {
         const url = "http://localhost/api/auth/signup"
-        const res = await axios.post(url, userInput)
+        const res = axios.post(url, userInput)
         console.log("res", res)
         if (res.status === 201) {
-          alert("회원가입 성공")
-          navigate("/login")
+          console.log("회원가입 성공")
+          // navigate("/login")
         }
       } catch (e) {
         console.log("회원가입 제출 에러", e)
@@ -655,6 +670,7 @@ const Register = props => {
           </Row>
         </Container>
       </div>
+      <ToastContainer />
     </React.Fragment>
   )
 }

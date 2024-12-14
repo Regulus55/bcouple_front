@@ -52,7 +52,7 @@ const ForgetPasswordPage = props => {
         email: values.email,
       }
 
-      const url = "http://localhost/api/auth/find/passwordd"
+      const url = "http://localhost/api/auth/find/password"
       const promise = axios.post(url, userInput)
       toast.promise(
         promise,
@@ -72,7 +72,7 @@ const ForgetPasswordPage = props => {
       try {
         const res = await promise
         if (res.status === 201) {
-          toast.success("메일 발송 성공")
+          console.log("발송성공")
         }
       } catch (e) {
         console.log(e)
