@@ -3,7 +3,6 @@ import {
   Container,
   Row,
   Col,
-  Table,
   Input,
   Nav,
   NavItem,
@@ -12,12 +11,10 @@ import {
   TabPane,
   Card,
   Form,
-  FormGroup,
-  FormFeedback,
   Label,
   CardBody,
   CardTitle,
-  CardSubtitle,
+  CardSubtitle
 } from "reactstrap"
 import { Link } from "react-router-dom"
 import { useFormik } from "formik"
@@ -28,11 +25,11 @@ import classnames from "classnames"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 
 //Import Images
-import img1 from "../../assets/images/product/img-1.png"
-import img7 from "../../assets/images/product/img-7.png"
+
 import Dropzone from "react-dropzone"
 import axios from "axios"
 import useProfile from "hooks/useProfile"
+import { exercises, hobbies, interestedWithMovie, interestedWithMusic, interestedWithTV } from "../../common/datas"
 
 const bloodTypeOptionGroup = [
   {
@@ -41,9 +38,9 @@ const bloodTypeOptionGroup = [
       { label: "A형", value: "A형" },
       { label: "B형", value: "B형" },
       { label: "AB형", value: "AB형" },
-      { label: "O형", value: "O형" },
-    ],
-  },
+      { label: "O형", value: "O형" }
+    ]
+  }
 ]
 const mbtiTypeOptionGroup = [
   { label: "ENFP", value: "ENFP" },
@@ -61,18 +58,7 @@ const mbtiTypeOptionGroup = [
   { label: "ESFP", value: "ESFP" },
   { label: "ESFJ", value: "ESFJ" },
   { label: "ESTP", value: "ESTP" },
-  { label: "ESTJ", value: "ESTJ" },
-]
-
-const orderSummary = [
-  {
-    id: 1,
-    img: img1,
-    productTitle: "Half sleeve T-shirt (64GB)",
-    price: 450,
-    qty: 1,
-  },
-  { id: 2, img: img7, productTitle: "Wireless Headphone", price: 225, qty: 1 },
+  { label: "ESTJ", value: "ESTJ" }
 ]
 
 const Dashboard = () => {
@@ -85,36 +71,49 @@ const Dashboard = () => {
   const [selectedGroup, setselectedGroup] = useState(null)
   const [selectedMulti, setselectedMulti] = useState(null)
   const [educationLevel, setEducationLevel] = useState([])
+  // 전공여러개 선택
+  const [inputValue, setInputValue] = useState("")
+  const [arrayResult, setArrayResult] = useState([])
 
-  // 데이트하고싶은거 버튼
-  const wannaDoWithYou = [
-    { label: "slideshow", value: "TV 보기", index: 0 },
-    { label: "walk", value: "산책", index: 1 },
-    { label: "slideshow", value: "TV 보기", index: 2 },
-    { label: "walk", value: "산책", index: 3 },
-    { label: "slideshow", value: "TV 보기", index: 4 },
-    { label: "walk", value: "산책", index: 5 },
-    { label: "slideshow", value: "TV 보기", index: 6 },
-    { label: "walk", value: "산책", index: 7 },
-    { label: "slideshow", value: "TV 보기", index: 8 },
-    { label: "walk", value: "산책", index: 9 },
-    { label: "slideshow", value: "TV 보기", index: 10 },
-    { label: "walk", value: "산책", index: 11 },
-    { label: "slideshow", value: "TV 보기", index: 12 },
-    { label: "walk", value: "산책", index: 13 },
-    { label: "slideshow", value: "TV 보기", index: 14 },
-    { label: "walk", value: "산책", index: 15 },
-    { label: "slideshow", value: "TV 보기", index: 16 },
-    { label: "walk", value: "산책", index: 17 },
+
+  const hobbies = [
+    { label: "slideshow", value: "공연/전시회 관람", id: 0 },
+    { label: "slideshow", value: "맛집체험", id: 1 },
+    { label: "slideshow", value: "스포츠 관람", id: 2 },
+    { label: "slideshow", value: "드라이브", id: 3 },
+    { label: "slideshow", value: "독서", id: 4 },
+    { label: "slideshow", value: "요리", id: 5 },
+    { label: "slideshow", value: "악기연주/노래", id: 6 },
+    { label: "slideshow", value: "봉사활동", id: 7 },
+    { label: "slideshow", value: "글쓰기/블로그", id: 8 },
+    { label: "slideshow", value: "그림", id: 9 },
+    { label: "slideshow", value: "웹서핑", id: 10 },
+    { label: "slideshow", value: "보드게임", id: 11 },
+    { label: "slideshow", value: "PC/모바일게임", id: 12 },
+    { label: "slideshow", value: "콘솔게임", id: 13 },
+    { label: "slideshow", value: "TV/영화", id: 14 },
+    { label: "slideshow", value: "국내여행", id: 15 },
+    { label: "slideshow", value: "해외여행", id: 16 },
+    { label: "slideshow", value: "테마파크", id: 17 },
+    { label: "slideshow", value: "사진촬영", id: 18 },
+    { label: "slideshow", value: "동호회/소모임", id: 19 },
+    { label: "slideshow", value: "반려동물", id: 20 },
+    { label: "slideshow", value: "아이템수집", id: 21 },
+    { label: "slideshow", value: "소품만들기", id: 22 },
+    { label: "slideshow", value: "홈인테리아", id: 23 },
+    { label: "slideshow", value: "서예/캘리그라피", id: 24 },
+    { label: "slideshow", value: "명상", id: 25 }
   ]
-  const [isActive, setIsActive] = useState({})
+
+  const [isActive, setisActive] = useState({})
+  const [isHobbiesActive, setisHobbiesActive] = useState({})
   const handleToggle = value => {
-    setIsActive(
-      Object.values(isActive).reduce((a, item) => a + item, 0) < 5
+    setisHobbiesActive(
+      Object.values(isHobbiesActive).reduce((a, item) => a + item, 0) < 5
         ? prevState => ({
-            ...prevState,
-            [value]: !prevState[value],
-          })
+          ...prevState,
+          [value]: !prevState[value]
+        })
         : console.log(value)
     )
   }
@@ -146,26 +145,29 @@ const Dashboard = () => {
     files.map(file =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-        formattedSize: formatBytes(file.size),
+        formattedSize: formatBytes(file.size)
       })
     )
     setselectedFiles(files)
   }
+
   // 기본정보
   const basicInfoFormik = useFormik({
     initialValues: {
       birth: "1970-01-01",
       height: 160,
       weight: 60,
+      gender: "",
       bornArea: "",
       country: "",
       addressOfHome: "",
       activityArea: "",
-      bloodType: "",
+      bloodType: 0,
       bodyType: "",
       mbtiType: "",
       smoking: "",
-      selfIntroduce: "",
+      drinking: 0,
+      selfIntroduce: ""
     },
     validationSchema: Yup.object({
       birth: Yup.date()
@@ -177,15 +179,25 @@ const Dashboard = () => {
       weight: Yup.number()
         .required("This field is required")
         .typeError("Weight must be a number"),
+      gender: Yup.number()
+        .required("This field is required")
+        .typeError("Gender must be a number"),
       bornArea: Yup.string().required("This field is required"),
       country: Yup.string().required("This field is required"),
       addressOfHome: Yup.string().required("This field is required"),
       activityArea: Yup.string().required("This field is required"),
-      bloodType: Yup.string().required("This field is required"),
-      bodyType: Yup.number().required("This field is required"),
+      bloodType: Yup.number()
+        .required("This field is required")
+        .typeError("Blood Type must be a number"),
+      bodyType: Yup.number()
+        .required("This field is required")
+        .typeError("Body Type must be a number"),
       mbtiType: Yup.string().required("This field is required"),
       smoking: Yup.boolean().required("This field is required"),
-      selfIntroduce: Yup.string().required("This field is required"),
+      drinking: Yup.number()
+        .required("This field is required")
+        .typeError("Drinking must be a number"),
+      selfIntroduce: Yup.string().required("This field is required")
     }),
     onSubmit: async values => {
       const currentYear = new Date().getFullYear()
@@ -195,19 +207,19 @@ const Dashboard = () => {
       const userInput = {
         birth: values.birth,
         age,
-        gender: "1",
+        gender: parseInt(values.gender, 10),
         height: values.height,
-        // weight: values.weight,
+        weight: values.weight,
         bornArea: values.bornArea,
         country: values.country,
         addressOfHome: values.addressOfHome,
         activityArea: values.activityArea,
-        bloodType: values.bloodType,
+        bloodType: parseInt(values.bloodType, 10),
         bodyType: parseInt(values.bodyType, 10),
         mbtiType: values.mbtiType,
-        drinking: values.drinking,
+        drinking: parseInt(values.drinking, 10),
         smoking: values.smoking === "true" || values.smoking === true,
-        selfIntroduce: values.selfIntroduce,
+        selfIntroduce: values.selfIntroduce
       }
       console.log("기본정보 userinput", userInput)
       // console.log("기본정보 values", values)
@@ -216,25 +228,26 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
         const url = "http://localhost/api/profile"
-        const method =
-          profileInfo?.profile !== null && profileInfo?.profile !== undefined
-            ? "put"
-            : "post"
-        const res = await axios[method](url, userInput, config)
+        // const method =
+        //   profileInfo?.profile !== null && profileInfo?.profile !== undefined
+        //     ? "put"
+        //     : "post"
+        // const res = await axios[method](url, userInput, config)
+        const res = await axios.put(url, userInput, config)
         console.log("기본정보 res", res)
-        if (method === "post" && res.status === 201) {
-          alert("기본정보 저장 성공")
-        } else if (method === "put" && res.status === 200) {
-          alert("기본정보 수정 성공")
-        }
+        // if (method === "post" && res.status === 201) {
+        //   alert("기본정보 저장 성공")
+        // } else if (method === "put" && res.status === 200) {
+        //   alert("기본정보 수정 성공")
+        // }
       } catch (e) {
-        console.log(e)
+        console.log("기본정보 에러", e)
       }
-    },
+    }
   })
 
   useEffect(() => {
@@ -255,59 +268,65 @@ const Dashboard = () => {
         mbtiType: profileInfo.profile.mbtiType || "",
         smoking: profileInfo.profile.smoking || "",
         selfIntroduce: profileInfo.profile.selfIntroduce || "",
-        drinking: profileInfo.profile.drinking || "",
+        drinking: profileInfo.profile.drinking || ""
       })
     }
   }, [profileInfo])
-  // console.log("바디", profileInfo?.profile?.smoking)
+  console.log("바디", profileInfo?.profile?.smoking)
 
   //Floating labels forms
   const floatingformik = useFormik({
     initialValues: {
-      name: "",
+      name: ""
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("This field is required"),
+      name: Yup.string().required("This field is required")
     }),
 
     onSubmit: values => {
       console.log("valuesssssdsssss", values)
-    },
+    }
   })
 
   // 결혼
   const marriageformik = useFormik({
     initialValues: {
-      mExperience: "",
-      reasonForDivorce: "",
-      childrenInfo: [],
+      isChild: false,
+      mExperience: 0,
+      reasonForDivorce: 0,
+      childrenInfo: []
     },
     validationSchema: Yup.object({
-      mExperience: Yup.string().required("Marriage experience is required"),
+      mExperience: Yup.number().required("Marriage experience is required"),
       reasonForDivorce: Yup.string().required("Reason for divorce is required"),
       childrenInfo: Yup.array()
         .of(
           Yup.object().shape({
-            childrenGender: Yup.string().required(
+            childrenGender: Yup.number().required(
               "Children gender is required"
             ),
-            birthYear: Yup.string().required("Children birth year is required"),
-            parentingStatus: Yup.string().required(
+            birthYear: Yup.number().required("Children birth year is required"),
+            parentingStatus: Yup.number().required(
               "Parenting status is required"
-            ),
+            )
           })
         )
-        .min(1, "At least one child is required"),
+        .min(1, "At least one child is required")
     }),
     onSubmit: async values => {
+      const currentYear = new Date().getFullYear()
+
       const userInput = {
-        mExperience: values.mExperience,
+        mExperience: parseInt(values.mExperience, 10),
         reasonForDivorce: values.reasonForDivorce,
-        childrenInfo: values.childrenInfo.map(child => ({
-          birthYear: child.birthYear,
-          childrenGender: child.childrenGender,
-          parentingStatus: child.parentingStatus,
-        })),
+        isChild: values.childrenInfo.length === 0 ? false : true,
+        // isChild: true,
+        childrenInfo: values.childrenInfo.map((child, index) => ({
+          age: currentYear - values.childrenInfo[index].birthYear,
+          birthYear: parseInt(child.birthYear, 10),
+          childrenGender: parseInt(child.childrenGender, 10),
+          parentingStatus: parseInt(child.parentingStatus, 10)
+        }))
       }
       console.log("결혼 관련 userInput", userInput)
 
@@ -315,31 +334,31 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
         const method =
           profileInfo?.profile !== null && profileInfo?.profile !== undefined
             ? "post"
             : "put"
         const url = "http://localhost/api/marriage"
-        const res = await axios[method](url, userInput, config)
-        console.log("결혼 관련 res", res)
-        if (res.status === 201) {
-          alert("결혼관련 정보 생성 성공")
-        } else if (res.status === 200) {
-          alert("결혼관련 정보 수정 성공")
-        }
+        // const res = await axios[method](url, userInput, config)
+        // console.log("결혼 관련 res", res)
+        // if (res.status === 201) {
+        //   alert("결혼관련 정보 생성 성공")
+        // } else if (res.status === 200) {
+        //   alert("결혼관련 정보 수정 성공")
+        // }
       } catch (e) {
         console.log("결혼 관련 e", e)
       }
-    },
+    }
   })
 
   const addChild = () => {
     marriageformik.setFieldValue("childrenInfo", [
       ...marriageformik.values.childrenInfo,
-      {},
+      {}
     ])
   }
 
@@ -367,57 +386,56 @@ const Dashboard = () => {
   // 종교
   const religionformik = useFormik({
     initialValues: {
-      religionName: "",
-      attendanceAtReligious: "",
+      religionName: 0,
+      attendanceAtReligious: 0
     },
     validationSchema: Yup.object({
-      religionName: Yup.string().required("Religion name is required"),
-      attendanceAtReligious: Yup.string().required(
+      religionName: Yup.number().required("Religion name is required"),
+      attendanceAtReligious: Yup.number().required(
         "Attendance status is required"
-      ),
+      )
     }),
 
     onSubmit: async values => {
       const userInput = {
-        religionName: values.religionName,
-        attendanceAtReligious: values.attendanceAtReligious,
+        religionName: parseInt(values.religionName, 10),
+        attendanceAtReligious: parseInt(values.attendanceAtReligious, 10)
       }
-      console.log("종교 values", values)
+      console.log("종교 values", userInput)
 
       try {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
         const url = "http://localhost/api/religion"
         const method =
           profileInfo?.profile !== null && profileInfo?.profile !== undefined
             ? "put"
             : "post"
-        const res = await axios[method](url, userInput, config)
-        console.log("종교 res", res)
-        if (method === "post" && res.status === 201) {
-          alert("종교 내용 저장 성공")
-        } else if (method === "put" && res.status === 200) {
-          alert("종교 내용 수정 성공")
-        }
+        // const res = await axios[method](url, userInput, config)
+        // console.log("종교 res", res)
+        // if (method === "post" && res.status === 201) {
+        //   alert("종교 내용 저장 성공")
+        // } else if (method === "put" && res.status === 200) {
+        //   alert("종교 내용 수정 성공")
+        // }
       } catch (e) {
         console.log("종교 error", e)
       }
-      console.log("resrserserser", res)
-    },
-  })
-  useEffect(() => {
-    if (profileInfo?.profile) {
-      religionformik.setValues({
-        religionName: profileInfo.religionInfo.religionName || "",
-        attendanceAtReligious:
-          profileInfo.religionInfo.attendanceAtReligious || "",
-      })
     }
-  }, [profileInfo])
+  })
+  // useEffect(() => {
+  //   if (profileInfo?.profile) {
+  //     religionformik.setValues({
+  //       religionName: profileInfo.religionInfo.religionName || "",
+  //       attendanceAtReligious:
+  //         profileInfo.religionInfo.attendanceAtReligious || "",
+  //     })
+  //   }
+  // }, [profileInfo])
 
   // 학력
   const handleEducationChange = e => {
@@ -425,24 +443,20 @@ const Dashboard = () => {
     educationformik.handleChange(e)
 
     let numberOfFields = 0
-    if (value === "1") {
+    if (value === 1) {
       numberOfFields = 1
-    } else if (["2", "3", "4", "5"].includes(value)) {
+    } else if ([2, 3, 4, 5].includes(value)) {
       numberOfFields = 2
-    } else if (value === "6") {
+    } else if (value === 6) {
       numberOfFields = 3
     }
 
     const newFields = Array(numberOfFields)
       .fill(null)
       .map((_, index) => ({
-        finaledu: value,
-        educationLevels: [],
-        schoolname: "",
-        major: "",
-        location: "",
-        type: "",
-        status: "",
+        finalEduLevel: value,
+        schoolInfos: []
+
       }))
 
     setEducationLevel(newFields)
@@ -455,7 +469,7 @@ const Dashboard = () => {
   const addSchools = () => {
     educationformik.setFieldValue("schoolInfos", [
       ...educationformik.values.schoolInfos,
-      {},
+      {}
     ])
   }
 
@@ -466,22 +480,72 @@ const Dashboard = () => {
     educationformik.setFieldValue("schoolInfos", updatedSchools)
   }
 
-  useEffect(() => {
-    educationformik.setFieldValue("educationLevels", educationLevel)
-  }, [educationLevel])
+  // useEffect(() => {
+  //   educationformik.setFieldValue("educationLevels", educationLevel)
+  // }, [educationLevel])
+
+  // 텍스트 필드 값 변경 핸들러
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value)
+  }
+  // 실시간 배열 추출
+  const getArrayResult = () => {
+    return inputValue.split(",").map((item) => item.trim())
+  }
 
   const educationformik = useFormik({
     initialValues: {
-      finalEduLevel: "",
-      schoolInfos: [{ name: "", majors: [] }],
+      finalEduLevel: 0,
+      schoolInfos: [{
+        name: "",
+        location: "",
+        educationLevel: 0,
+        isEducationLevel: 0
+        // majors: []
+      }]
     },
     validationSchema: Yup.object({
-      finalEduLevel: Yup.string().required("Final education level is required"),
+      finalEduLevel: Yup.string().required("Final education level is required")
+      // schoolInfos: Yup.array()
+      //   .of(
+      //     Yup.object().shape({
+      //       name: Yup.string().required(
+      //         "School Name is required"
+      //       ),
+      //       location: Yup.string().required("School Location is required"),
+      //       educationLevel: Yup.number().required(
+      //         "EducationLevel is required"
+      //       ),
+      //       isEducationLevel: Yup.number().required(
+      //         "isEducationLevel is required"
+      //       ),
+      //       majors: Yup.string().required("majors is required"),
+      //     })
+      //   )
+      //   .min(1, "At least one child is required")
+
+      // schoolInfos: values.schoolInfos.map(edu => ({
+      //   name: edu.name,
+      //   location: edu.location,
+      //   educationLevel: edu.educationLevel,
+      //   isEducationLevel: edu.isEducationLevel,
+      //   majors: []
+      // }))
     }),
 
     onSubmit: values => {
-      console.log("학력 values", values)
-    },
+
+      const userInput = {
+        finalEduLevel: parseInt(values.finalEduLevel, 10),
+        schoolInfos: values.schoolInfos.map(edu => ({
+          location: edu.location,
+          educationLevel: parseInt(edu.educationLevel, 10),
+          isEducationLevel: parseInt(edu.isEducationLevel, 10),
+          majors: getArrayResult()
+        }))
+      }
+      console.log("학력 userInput", userInput)
+    }
   })
 
   // 직업
@@ -493,7 +557,7 @@ const Dashboard = () => {
       addressOfCompany: "",
       salary: 0,
       additionalIncome: 0,
-      annualIncome: 0,
+      annualIncome: 0
     },
     validationSchema: Yup.object({
       jobName: Yup.string().required("Job name is required"),
@@ -508,12 +572,12 @@ const Dashboard = () => {
         .min(0, "Salary cannot be negative"),
       annualIncome: Yup.number()
         .required("Annual income is required")
-        .min(0, "Annual income cannot be negative"),
+        .min(0, "Annual income cannot be negative")
     }),
 
     onSubmit: values => {
       console.log("직업 values", values)
-    },
+    }
   })
 
   return (
@@ -782,13 +846,13 @@ const Dashboard = () => {
                                   onChange={basicInfoFormik.handleChange}
                                   onBlur={basicInfoFormik.handleBlur}
                                 >
-                                  <option defaultValue="0">
+                                  <option defaultValue="">
                                     Open this select your Blood Type
                                   </option>
-                                  <option value="1">A형</option>
-                                  <option value="2">B형</option>
-                                  <option value="3">AB형</option>
-                                  <option value="3">O형</option>
+                                  <option value={1}>A형</option>
+                                  <option value={2}>B형</option>
+                                  <option value={3}>AB형</option>
+                                  <option value={4}>O형</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">
                                   혈액형
@@ -845,13 +909,13 @@ const Dashboard = () => {
                                   onChange={basicInfoFormik.handleChange}
                                   onBlur={basicInfoFormik.handleBlur}
                                 >
-                                  <option defaultValue="0">
+                                  <option defaultValue="">
                                     Open this select your Drinking Information
                                   </option>
-                                  <option value="1">아예 안마심</option>
-                                  <option value="2">가끔 한두잔</option>
-                                  <option value="3">주에 한번</option>
-                                  <option value="4">주에 두번 이상</option>
+                                  <option value={1}>아예 안마심</option>
+                                  <option value={2}>가끔 한두잔</option>
+                                  <option value={3}>주에 한번</option>
+                                  <option value={4}>주에 두번 이상</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">
                                   음주여부
@@ -898,6 +962,34 @@ const Dashboard = () => {
                           </Row>
 
                           <Row>
+                            <Col xl={6}>
+                              <div className="form-floating mb-3">
+                                <select
+                                  className="form-select"
+                                  name="gender"
+                                  value={basicInfoFormik.values.gender}
+                                  onChange={basicInfoFormik.handleChange}
+                                  onBlur={basicInfoFormik.handleBlur}
+                                >
+                                  <option value="">
+                                    Open this select your Body Type
+                                  </option>
+                                  <option value={0}>남자</option>
+                                  <option value={1}>여자</option>
+                                  <option value={2}>중성</option>
+                                </select>
+                                <label htmlFor="floatingSelectGrid">성별</label>
+                                <div>
+                                  {basicInfoFormik.errors.gender &&
+                                  basicInfoFormik.touched.gender ? (
+                                    <span className="text-danger">
+                                      {basicInfoFormik.errors.gender}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </Col>
+
                             <Col xl={6}>
                               <div className="form-floating mb-3">
                                 <select
@@ -1099,11 +1191,7 @@ const Dashboard = () => {
                                 onClick={addChild}
                                 className="btn btn-primary w-100"
                               >
-                                {console.log(
-                                  "칠드런인포",
-                                  marriageformik.values.childrenInfo
-                                )}
-                                + 추가하기
+                                + <div>추가하기</div>
                               </button>
                             </Col>
                           </Row>
@@ -1113,7 +1201,6 @@ const Dashboard = () => {
                               <Row key={index}>
                                 <Col xl={3}>
                                   <div className="form-floating mb-3">
-                                    <label>자녀 성별</label>
                                     <select
                                       className="form-select"
                                       name={`childrenInfo[${index}].childrenGender`}
@@ -1124,12 +1211,12 @@ const Dashboard = () => {
                                       <option value="1">남자</option>
                                       <option value="2">여자</option>
                                     </select>
+                                    <label htmlFor="childrenInfo">자녀 성별</label>
                                   </div>
                                 </Col>
 
                                 <Col xl={3}>
                                   <div className="form-floating mb-3">
-                                    <label>자녀 출생연도</label>
                                     <input
                                       type="text"
                                       className="form-control"
@@ -1137,12 +1224,12 @@ const Dashboard = () => {
                                       value={child.birthYear || ""}
                                       onChange={marriageformik.handleChange}
                                     />
+                                    <label htmlFor="childrenInfo">자녀 출생연도</label>
                                   </div>
                                 </Col>
 
                                 <Col xl={3}>
                                   <div className="form-floating mb-3">
-                                    <label>양육 여부</label>
                                     <select
                                       className="form-select"
                                       name={`childrenInfo[${index}].parentingStatus`}
@@ -1153,6 +1240,8 @@ const Dashboard = () => {
                                       <option value="1">직접양육</option>
                                       <option value="2">배우자가 양육</option>
                                     </select>
+                                    <label htmlFor="childrenInfo">양육 여부</label>
+
                                   </div>
                                 </Col>
 
@@ -1162,7 +1251,7 @@ const Dashboard = () => {
                                     onClick={() => removeChild(index)}
                                     className="btn btn-danger w-100"
                                   >
-                                    - 삭제하기
+                                    - <div>삭제하기</div>
                                   </button>
                                 </Col>
                               </Row>
@@ -1196,14 +1285,14 @@ const Dashboard = () => {
                                   onChange={religionformik.handleChange}
                                   onBlur={religionformik.handleBlur}
                                 >
-                                  <option defaultValue="0">
+                                  <option defaultValue={0}>
                                     Open this select your religion
                                   </option>
-                                  <option value="1">개신교</option>
-                                  <option value="2">천주교</option>
-                                  <option value="3">불교</option>
-                                  <option value="4">무교</option>
-                                  <option value="5">기타</option>
+                                  <option value={1}>개신교</option>
+                                  <option value={2}>천주교</option>
+                                  <option value={3}>불교</option>
+                                  <option value={4}>무교</option>
+                                  <option value={5}>기타</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">
                                   종교 선택
@@ -1232,13 +1321,13 @@ const Dashboard = () => {
                                   onChange={religionformik.handleChange}
                                   onBlur={religionformik.handleBlur}
                                 >
-                                  <option defaultValue="0">
+                                  <option defaultValue={0}>
                                     Open this select attendance at religious
                                   </option>
-                                  <option value="1">매주 출석</option>
-                                  <option value="2">때때로 출석</option>
-                                  <option value="3">출석하지 않음</option>
-                                  <option value="3">해당사항 없음</option>
+                                  <option value={1}>매주 출석</option>
+                                  <option value={2}>때때로 출석</option>
+                                  <option value={3}>출석하지 않음</option>
+                                  <option value={4}>해당사항 없음</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">
                                   출석 상황
@@ -1278,6 +1367,7 @@ const Dashboard = () => {
                       <CardBody>
                         <CardTitle tag="h4" className={"mb-4"}>
                           학력관련
+                          {/*이상형 인터뷰*/}
                         </CardTitle>
 
                         <Form onSubmit={educationformik.handleSubmit}>
@@ -1294,14 +1384,14 @@ const Dashboard = () => {
                                   <option value="">
                                     Select your education level
                                   </option>
-                                  <option value="1">고등학교</option>
-                                  <option value="2">대학교(2년제)</option>
-                                  <option value="3">대학교(3년제)</option>
-                                  <option value="4">
+                                  <option value={1}>고등학교</option>
+                                  <option value={2}>대학교(2년제)</option>
+                                  <option value={3}>대학교(3년제)</option>
+                                  <option value={4}>
                                     방송통신대학/사이버대학
                                   </option>
-                                  <option value="5">대학교(4년제)</option>
-                                  <option value="6">대학원</option>
+                                  <option value={5}>대학교(4년제)</option>
+                                  <option value={6}>대학원</option>
                                 </select>
 
                                 <label htmlFor="floatingSelectGrid">
@@ -1324,7 +1414,8 @@ const Dashboard = () => {
                                 onClick={addSchools}
                                 className="btn btn-primary w-100"
                               >
-                                +<div>추가하기</div>
+                                +
+                                <div>추가하기</div>
                               </button>
                             </Col>
                           </Row>
@@ -1347,8 +1438,6 @@ const Dashboard = () => {
                                     </div>
                                   </Col>
 
-                                  {console.log("학교이름잉야", educationLevel)}
-
                                   <Col xl={4}>
                                     <div className="form-floating mb-3">
                                       <input
@@ -1356,9 +1445,12 @@ const Dashboard = () => {
                                         name={`schoolInfos[${index}].majors`}
                                         className="form-control"
                                         placeholder="Majors"
-                                        value={edu.majors}
-                                        onChange={educationformik.handleChange}
+                                        // value={edu.majors}
+                                        value={inputValue}
+                                        // onChange={educationformik.handleChange}
+                                        onChange={handleInputChange}
                                       />
+                                      {/*<p>추출된 배열: {JSON.stringify(getArrayResult())}</p>*/}
                                       <label>전공</label>
                                     </div>
                                   </Col>
@@ -1381,16 +1473,16 @@ const Dashboard = () => {
                                     <div className="form-floating mb-3">
                                       <select
                                         className="form-select"
-                                        name={`schoolInfos[${index}].type`}
-                                        value={edu.type}
+                                        name={`schoolInfos[${index}].educationLevel`}
+                                        value={edu.educationLevel}
                                         onChange={educationformik.handleChange}
                                       >
-                                        <option value="">
+                                        <option value={0}>
                                           Select Education Type
                                         </option>
-                                        <option value="1">고등학교 졸업</option>
-                                        <option value="2">대학 중퇴</option>
-                                        <option value="3">전문대 졸업</option>
+                                        <option value={1}>고등학교 졸업</option>
+                                        <option value={2}>대학 중퇴</option>
+                                        <option value={3}>전문대 졸업</option>
                                       </select>
                                       <label>학력 구분</label>
                                     </div>
@@ -1400,16 +1492,16 @@ const Dashboard = () => {
                                     <div className="form-floating mb-3">
                                       <select
                                         className="form-select"
-                                        name={`schoolInfos[${index}].status`}
-                                        value={edu.status}
+                                        name={`schoolInfos[${index}].isEducationLevel`}
+                                        value={edu.isEducationLevel}
                                         onChange={educationformik.handleChange}
                                       >
-                                        <option value="">
+                                        <option value={0}>
                                           Select Graduation Status
                                         </option>
-                                        <option value="1">졸업</option>
-                                        <option value="2">재학</option>
-                                        <option value="3">자퇴</option>
+                                        <option value={1}>졸업</option>
+                                        <option value={2}>재학</option>
+                                        <option value={3}>자퇴</option>
                                       </select>
                                       <label>졸업 구분</label>
                                     </div>
@@ -1421,7 +1513,8 @@ const Dashboard = () => {
                                       className="btn btn-danger w-100"
                                       onClick={() => removeSchools(index)}
                                     >
-                                      -<div>삭제하기</div>
+                                      -
+                                      <div>삭제하기</div>
                                     </button>
                                   </Col>
                                 </Row>
@@ -1636,111 +1729,239 @@ const Dashboard = () => {
                   <TabPane tabId="3" id="v-pills-confir" role="tabpanel">
                     <Card>
                       <CardBody>
-                        <CardTitle>이상형 인터뷰</CardTitle>
+                        <CardTitle tag="h4" className={"mb-4"}>
+                          이상형 인터뷰</CardTitle>
 
                         <Form onSubmit={floatingformik.handleSubmit}>
                           <Row>
                             <Col xl={12}>
-                              <div className="form-floating mb-3">
-                                <input
-                                  type="text"
-                                  name="bornArea"
+                              <div className="mb-4">
+                                <Label>
+                                  나를 한줄로 표현하면 (신체 특징이 아닌 나의 성격, 정체성 등) </Label>
+                                <Input
+                                  type="textarea"
+                                  name="selfIntroduce"
                                   className="form-control"
                                   id="floatingnameInput"
-                                  placeholder="bornArea"
-                                  value={floatingformik.values.bornArea}
+                                  placeholder="믿음직하고 주변을 즐겁게 하는 사람"
+                                  value={floatingformik.values.selfIntroduce}
                                   onChange={floatingformik.handleChange}
                                   onBlur={floatingformik.handleBlur}
                                 />
-                                <label htmlFor="floatingnameInput">
-                                  이상형 관련인터뷰 첫번째
-                                </label>
-                                {floatingformik.errors.bornArea &&
-                                floatingformik.touched.bornArea ? (
-                                  <span className="text-danger">
-                                    {floatingformik.errors.bornArea}
-                                  </span>
-                                ) : null}
                               </div>
                             </Col>
                           </Row>
 
                           <Row>
                             <Col xl={12}>
-                              <div className="form-floating mb-3">
-                                <input
-                                  type="text"
-                                  name="bornArea"
+                              <div className="mb-4">
+                                <Label>
+                                  나의 매력과 장점이 있다면
+                                </Label>
+                                <Input
+                                  type="textarea"
+                                  name="selfIntroduce"
                                   className="form-control"
                                   id="floatingnameInput"
-                                  placeholder="bornArea"
-                                  value={floatingformik.values.bornArea}
+                                  placeholder="주변 사람들과 잘 어울리고 사람들을 편하게 해주는 편입니다"
+                                  value={floatingformik.values.selfIntroduce}
                                   onChange={floatingformik.handleChange}
                                   onBlur={floatingformik.handleBlur}
                                 />
-                                <label htmlFor="floatingnameInput">
-                                  하고 싶은 데이트 (ex. 금요일 밤에 야간 까페
-                                  데이트)
-                                </label>
-                                {floatingformik.errors.bornArea &&
-                                floatingformik.touched.bornArea ? (
-                                  <span className="text-danger">
-                                    {floatingformik.errors.bornArea}
-                                  </span>
-                                ) : null}
                               </div>
                             </Col>
                           </Row>
 
                           <Row>
                             <Col xl={12}>
-                              <div className="form-floating mb-3">
-                                <input
-                                  type="text"
-                                  name="bornArea"
+                              <div className="mb-4">
+                                <Label>
+                                  나의 외모 특징은 무엇인가요?
+                                </Label>
+                                <Input
+                                  type="textarea"
+                                  name="selfIntroduce"
                                   className="form-control"
                                   id="floatingnameInput"
-                                  placeholder="bornArea"
-                                  value={floatingformik.values.bornArea}
+                                  placeholder="키가 크진 않지만 비율이 좋아서 생각보다 키가 커 보인다고 합니다"
+                                  value={floatingformik.values.selfIntroduce}
                                   onChange={floatingformik.handleChange}
                                   onBlur={floatingformik.handleBlur}
                                 />
-                                <label htmlFor="floatingnameInput">
-                                  취미 (ex. 캠핑, 영화보기, 자전거타기 등등)
-                                </label>
-                                {floatingformik.errors.bornArea &&
-                                floatingformik.touched.bornArea ? (
-                                  <span className="text-danger">
-                                    {floatingformik.errors.bornArea}
-                                  </span>
-                                ) : null}
                               </div>
                             </Col>
                           </Row>
 
-                          <div className="form-floating mb-3 container-fluid">
-                            <Row className="icon-demo-content gx-1">
-                              {wannaDoWithYou.map((icon, index) => (
-                                <Col xl={2} key={index} className="my-1">
-                                  <div
-                                    className="py-3 rounded-3 w-100 border-0"
-                                    onClick={() => handleToggle(icon.index)}
-                                    style={{
-                                      backgroundColor: isActive[icon.index]
-                                        ? "#D3D3D3"
-                                        : "#F5F5F5",
-                                    }}
-                                  >
-                                    <i
-                                      className={`bx bx-${icon.label} mb-1`}
-                                    ></i>
-                                    {icon.value}
-                                  </div>
-                                </Col>
-                              ))}
-                              <Col xl={2} className="my-1"></Col>
-                            </Row>
-                          </div>
+                          <Row>
+                            <Col xl={12}>
+                              <div className="mb-4">
+                                <Label>
+                                  지금 하는 일의 장점은 무엇인가요?
+                                </Label>
+                                <Input
+                                  type="textarea"
+                                  name="selfIntroduce"
+                                  className="form-control"
+                                  id="floatingnameInput"
+                                  placeholder="내 일만 열심히 하면 편하게 일할 수 있는 환경"
+                                  value={floatingformik.values.selfIntroduce}
+                                  onChange={floatingformik.handleChange}
+                                  onBlur={floatingformik.handleBlur}
+                                />
+                              </div>
+                            </Col>
+                          </Row>
+
+                          <Row>
+                            <Col xl={12}>
+                              <div className="mb-4">
+                                <Label>
+                                  앞으로 하고 싶은 일 (직업관, 안정성 vs. 진취성)
+                                </Label>
+                                <Input
+                                  type="textarea"
+                                  name="selfIntroduce"
+                                  className="form-control"
+                                  id="floatingnameInput"
+                                  placeholder="지금 하고 있는 일을 더욱 발전시켜 인정받고 싶습니다"
+                                  value={floatingformik.values.selfIntroduce}
+                                  onChange={floatingformik.handleChange}
+                                  onBlur={floatingformik.handleBlur}
+                                />
+                              </div>
+                            </Col>
+                          </Row>
+
+                          <Label>취미</Label>
+                          <Row className="icon-demo-content gx-1 mb-3">
+                            {hobbies.map((icon, index) => (
+                              <Col xl={2} key={index} className="my-1">
+                                <div
+                                  className="py-3 rounded-3 w-100 border-0"
+                                  onClick={() => handleToggle(icon.index)}
+                                  style={{
+                                    backgroundColor: isHobbiesActive[icon.index]
+                                      ? "#556EE6"
+                                      : "#F5F5F5",
+                                    color: isHobbiesActive[icon.index]
+                                      ? "white"
+                                      : "#2A3042"
+                                  }}
+                                >
+                                  <i
+                                    className={`bx bx-${icon.label} mb-1`}
+                                  ></i>
+                                  {icon.value}
+                                </div>
+                              </Col>
+                            ))}
+                            <Col xl={2} className="my-1"></Col>
+                          </Row>
+
+                          <Label>운동</Label>
+                          <Row className="icon-demo-content gx-1 mb-3">
+                            {exercises.map((icon, index) => (
+                              <Col xl={2} key={index} className="my-1">
+                                <div
+                                  className="py-3 rounded-3 w-100 border-0"
+                                  onClick={() => handleToggle(icon.index)}
+                                  style={{
+                                    backgroundColor: isActive[icon.index]
+                                      ? "#556EE6"
+                                      : "#F5F5F5",
+                                    color: isActive[icon.index]
+                                      ? "white"
+                                      : "#2A3042"
+                                  }}
+                                >
+                                  <i
+                                    className={`bx bx-${icon.label} mb-1`}
+                                  ></i>
+                                  {icon.value}
+                                </div>
+                              </Col>
+                            ))}
+                            <Col xl={2} className="my-1"></Col>
+                          </Row>
+
+                          <Label>관심사 (영화)</Label>
+                          <Row className="icon-demo-content gx-1 mb-3">
+                            {interestedWithMovie.map((icon, index) => (
+                              <Col xl={2} key={index} className="my-1">
+                                <div
+                                  className="py-3 rounded-3 w-100 border-0"
+                                  onClick={() => handleToggle(icon.index)}
+                                  style={{
+                                    backgroundColor: isActive[icon.index]
+                                      ? "#556EE6"
+                                      : "#F5F5F5",
+                                    color: isActive[icon.index]
+                                      ? "white"
+                                      : "#2A3042"
+                                  }}
+                                >
+                                  <i
+                                    className={`bx bx-${icon.label} mb-1`}
+                                  ></i>
+                                  {icon.value}
+                                </div>
+                              </Col>
+                            ))}
+                            <Col xl={2} className="my-1"></Col>
+                          </Row>
+
+                          <Label>관심사 (음악)</Label>
+                          <Row className="icon-demo-content gx-1 mb-3">
+                            {interestedWithMusic.map((icon, index) => (
+                              <Col xl={2} key={index} className="my-1">
+                                <div
+                                  className="py-3 rounded-3 w-100 border-0"
+                                  onClick={() => handleToggle(icon.index)}
+                                  style={{
+                                    backgroundColor: isActive[icon.index]
+                                      ? "#556EE6"
+                                      : "#F5F5F5",
+                                    color: isActive[icon.index]
+                                      ? "white"
+                                      : "#2A3042"
+                                  }}
+                                >
+                                  <i
+                                    className={`bx bx-${icon.label} mb-1`}
+                                  ></i>
+                                  {icon.value}
+                                </div>
+                              </Col>
+                            ))}
+                            <Col xl={2} className="my-1"></Col>
+                          </Row>
+
+                          <Label>관심사 (TV)</Label>
+                          <Row className="icon-demo-content gx-1 mb-3">
+                            {interestedWithTV.map((icon, index) => (
+                              <Col xl={2} key={index} className="my-1">
+                                <div
+                                  className="py-3 rounded-3 w-100 border-0"
+                                  onClick={() => handleToggle(icon.index)}
+                                  style={{
+                                    backgroundColor: isActive[icon.index]
+                                      ? "#556EE6"
+                                      : "#F5F5F5",
+                                    color: isActive[icon.index]
+                                      ? "white"
+                                      : "#2A3042"
+                                  }}
+                                >
+                                  <i
+                                    className={`bx bx-${icon.label} mb-1`}
+                                  ></i>
+                                  {icon.value}
+                                </div>
+                              </Col>
+                            ))}
+                            <Col xl={2} className="my-1"></Col>
+                          </Row>
+
                         </Form>
                       </CardBody>
                     </Card>
