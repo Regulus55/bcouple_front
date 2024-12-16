@@ -14,7 +14,7 @@ import {
   Label,
   CardBody,
   CardTitle,
-  CardSubtitle
+  CardSubtitle,
 } from "reactstrap"
 import { Link } from "react-router-dom"
 import { useFormik } from "formik"
@@ -29,7 +29,13 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 import Dropzone from "react-dropzone"
 import axios from "axios"
 import useProfile from "hooks/useProfile"
-import { exercises, hobbies, interestedWithMovie, interestedWithMusic, interestedWithTV } from "../../common/datas"
+import {
+  exercises,
+  hobbies,
+  interestedWithMovie,
+  interestedWithMusic,
+  interestedWithTV,
+} from "../../common/datas"
 
 const bloodTypeOptionGroup = [
   {
@@ -38,9 +44,9 @@ const bloodTypeOptionGroup = [
       { label: "A형", value: "A형" },
       { label: "B형", value: "B형" },
       { label: "AB형", value: "AB형" },
-      { label: "O형", value: "O형" }
-    ]
-  }
+      { label: "O형", value: "O형" },
+    ],
+  },
 ]
 const mbtiTypeOptionGroup = [
   { label: "ENFP", value: "ENFP" },
@@ -58,7 +64,7 @@ const mbtiTypeOptionGroup = [
   { label: "ESFP", value: "ESFP" },
   { label: "ESFJ", value: "ESFJ" },
   { label: "ESTP", value: "ESTP" },
-  { label: "ESTJ", value: "ESTJ" }
+  { label: "ESTJ", value: "ESTJ" },
 ]
 
 const Dashboard = () => {
@@ -67,76 +73,32 @@ const Dashboard = () => {
   const { data: profileInfo } = useProfile()
 
   const [activeTab, setActiveTab] = useState("1")
-  const [textareabadge, settextareabadge] = useState(0)
-  const [selectedGroup, setselectedGroup] = useState(null)
-  const [selectedMulti, setselectedMulti] = useState(null)
+
   const [educationLevel, setEducationLevel] = useState([])
   // 전공여러개 선택
   const [inputValue, setInputValue] = useState("")
   const [arrayResult, setArrayResult] = useState([])
 
-
-  const hobbies = [
-    { label: "slideshow", value: "공연/전시회 관람", id: 0 },
-    { label: "slideshow", value: "맛집체험", id: 1 },
-    { label: "slideshow", value: "스포츠 관람", id: 2 },
-    { label: "slideshow", value: "드라이브", id: 3 },
-    { label: "slideshow", value: "독서", id: 4 },
-    { label: "slideshow", value: "요리", id: 5 },
-    { label: "slideshow", value: "악기연주/노래", id: 6 },
-    { label: "slideshow", value: "봉사활동", id: 7 },
-    { label: "slideshow", value: "글쓰기/블로그", id: 8 },
-    { label: "slideshow", value: "그림", id: 9 },
-    { label: "slideshow", value: "웹서핑", id: 10 },
-    { label: "slideshow", value: "보드게임", id: 11 },
-    { label: "slideshow", value: "PC/모바일게임", id: 12 },
-    { label: "slideshow", value: "콘솔게임", id: 13 },
-    { label: "slideshow", value: "TV/영화", id: 14 },
-    { label: "slideshow", value: "국내여행", id: 15 },
-    { label: "slideshow", value: "해외여행", id: 16 },
-    { label: "slideshow", value: "테마파크", id: 17 },
-    { label: "slideshow", value: "사진촬영", id: 18 },
-    { label: "slideshow", value: "동호회/소모임", id: 19 },
-    { label: "slideshow", value: "반려동물", id: 20 },
-    { label: "slideshow", value: "아이템수집", id: 21 },
-    { label: "slideshow", value: "소품만들기", id: 22 },
-    { label: "slideshow", value: "홈인테리아", id: 23 },
-    { label: "slideshow", value: "서예/캘리그라피", id: 24 },
-    { label: "slideshow", value: "명상", id: 25 }
-  ]
-
   const [isActive, setisActive] = useState({})
-  const [isHobbiesActive, setisHobbiesActive] = useState({})
+  const [isHobbiesActive, setisHobbiesActive] = useState(
+    hobbies.reduce((acc, icon) => {
+      acc[icon.id] = false
+      return acc
+    }, {})
+  )
   const handleToggle = value => {
-    setisHobbiesActive(
-      Object.values(isHobbiesActive).reduce((a, item) => a + item, 0) < 5
-        ? prevState => ({
-          ...prevState,
-          [value]: !prevState[value]
-        })
-        : console.log(value)
-    )
-  }
+    const selectedCount = Object.values(isHobbiesActive).filter(
+      active => active
+    ).length
 
-  // 텍스트 에어리어
-  const [textcount, settextcount] = useState(0)
-
-  function textareachange(event) {
-    const count = event.target.value.length
-    if (count > 0) {
-      settextareabadge(true)
+    if (selectedCount < 5 || isHobbiesActive[value]) {
+      setisHobbiesActive(prevState => ({
+        ...prevState,
+        [value]: !prevState[value],
+      }))
     } else {
-      settextareabadge(false)
+      alert("5개 이상 선택할 수 없습니다.")
     }
-    settextcount(event.target.value.length)
-  }
-
-  function handleSelectGroup(selectedGroup) {
-    setselectedGroup(selectedGroup)
-  }
-
-  function handleMulti(selectedMulti) {
-    setselectedMulti(selectedMulti)
   }
 
   const [selectedFiles, setselectedFiles] = useState([])
@@ -145,7 +107,7 @@ const Dashboard = () => {
     files.map(file =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-        formattedSize: formatBytes(file.size)
+        formattedSize: formatBytes(file.size),
       })
     )
     setselectedFiles(files)
@@ -167,7 +129,7 @@ const Dashboard = () => {
       mbtiType: "",
       smoking: "",
       drinking: 0,
-      selfIntroduce: ""
+      selfIntroduce: "",
     },
     validationSchema: Yup.object({
       birth: Yup.date()
@@ -197,7 +159,7 @@ const Dashboard = () => {
       drinking: Yup.number()
         .required("This field is required")
         .typeError("Drinking must be a number"),
-      selfIntroduce: Yup.string().required("This field is required")
+      selfIntroduce: Yup.string().required("This field is required"),
     }),
     onSubmit: async values => {
       const currentYear = new Date().getFullYear()
@@ -219,7 +181,7 @@ const Dashboard = () => {
         mbtiType: values.mbtiType,
         drinking: parseInt(values.drinking, 10),
         smoking: values.smoking === "true" || values.smoking === true,
-        selfIntroduce: values.selfIntroduce
+        selfIntroduce: values.selfIntroduce,
       }
       console.log("기본정보 userinput", userInput)
       // console.log("기본정보 values", values)
@@ -228,26 +190,26 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
         const url = "http://localhost/api/profile"
-        // const method =
-        //   profileInfo?.profile !== null && profileInfo?.profile !== undefined
-        //     ? "put"
-        //     : "post"
-        // const res = await axios[method](url, userInput, config)
-        const res = await axios.put(url, userInput, config)
+        const method =
+          profileInfo?.profile !== null && profileInfo?.profile !== undefined
+            ? "put"
+            : "post"
+        const res = await axios[method](url, userInput, config)
+        // const res = await axios.put(url, userInput, config)
         console.log("기본정보 res", res)
-        // if (method === "post" && res.status === 201) {
-        //   alert("기본정보 저장 성공")
-        // } else if (method === "put" && res.status === 200) {
-        //   alert("기본정보 수정 성공")
-        // }
+        if (method === "post" && res.status === 201) {
+          alert("기본정보 저장 성공")
+        } else if (method === "put" && res.status === 200) {
+          alert("기본정보 수정 성공")
+        }
       } catch (e) {
         console.log("기본정보 에러", e)
       }
-    }
+    },
   })
 
   useEffect(() => {
@@ -268,7 +230,7 @@ const Dashboard = () => {
         mbtiType: profileInfo.profile.mbtiType || "",
         smoking: profileInfo.profile.smoking || "",
         selfIntroduce: profileInfo.profile.selfIntroduce || "",
-        drinking: profileInfo.profile.drinking || ""
+        drinking: profileInfo.profile.drinking || "",
       })
     }
   }, [profileInfo])
@@ -277,15 +239,15 @@ const Dashboard = () => {
   //Floating labels forms
   const floatingformik = useFormik({
     initialValues: {
-      name: ""
+      name: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("This field is required")
+      name: Yup.string().required("This field is required"),
     }),
 
     onSubmit: values => {
       console.log("valuesssssdsssss", values)
-    }
+    },
   })
 
   // 결혼
@@ -294,7 +256,7 @@ const Dashboard = () => {
       isChild: false,
       mExperience: 0,
       reasonForDivorce: 0,
-      childrenInfo: []
+      childrenInfo: [],
     },
     validationSchema: Yup.object({
       mExperience: Yup.number().required("Marriage experience is required"),
@@ -308,10 +270,10 @@ const Dashboard = () => {
             birthYear: Yup.number().required("Children birth year is required"),
             parentingStatus: Yup.number().required(
               "Parenting status is required"
-            )
+            ),
           })
         )
-        .min(1, "At least one child is required")
+        .min(1, "At least one child is required"),
     }),
     onSubmit: async values => {
       const currentYear = new Date().getFullYear()
@@ -325,8 +287,8 @@ const Dashboard = () => {
           age: currentYear - values.childrenInfo[index].birthYear,
           birthYear: parseInt(child.birthYear, 10),
           childrenGender: parseInt(child.childrenGender, 10),
-          parentingStatus: parseInt(child.parentingStatus, 10)
-        }))
+          parentingStatus: parseInt(child.parentingStatus, 10),
+        })),
       }
       console.log("결혼 관련 userInput", userInput)
 
@@ -334,8 +296,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
         const method =
           profileInfo?.profile !== null && profileInfo?.profile !== undefined
@@ -352,13 +314,13 @@ const Dashboard = () => {
       } catch (e) {
         console.log("결혼 관련 e", e)
       }
-    }
+    },
   })
 
   const addChild = () => {
     marriageformik.setFieldValue("childrenInfo", [
       ...marriageformik.values.childrenInfo,
-      {}
+      {},
     ])
   }
 
@@ -387,19 +349,19 @@ const Dashboard = () => {
   const religionformik = useFormik({
     initialValues: {
       religionName: 0,
-      attendanceAtReligious: 0
+      attendanceAtReligious: 0,
     },
     validationSchema: Yup.object({
       religionName: Yup.number().required("Religion name is required"),
       attendanceAtReligious: Yup.number().required(
         "Attendance status is required"
-      )
+      ),
     }),
 
     onSubmit: async values => {
       const userInput = {
         religionName: parseInt(values.religionName, 10),
-        attendanceAtReligious: parseInt(values.attendanceAtReligious, 10)
+        attendanceAtReligious: parseInt(values.attendanceAtReligious, 10),
       }
       console.log("종교 values", userInput)
 
@@ -407,8 +369,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
         const url = "http://localhost/api/religion"
         const method =
@@ -425,7 +387,7 @@ const Dashboard = () => {
       } catch (e) {
         console.log("종교 error", e)
       }
-    }
+    },
   })
   // useEffect(() => {
   //   if (profileInfo?.profile) {
@@ -455,8 +417,7 @@ const Dashboard = () => {
       .fill(null)
       .map((_, index) => ({
         finalEduLevel: value,
-        schoolInfos: []
-
+        schoolInfos: [],
       }))
 
     setEducationLevel(newFields)
@@ -469,7 +430,7 @@ const Dashboard = () => {
   const addSchools = () => {
     educationformik.setFieldValue("schoolInfos", [
       ...educationformik.values.schoolInfos,
-      {}
+      {},
     ])
   }
 
@@ -485,27 +446,29 @@ const Dashboard = () => {
   // }, [educationLevel])
 
   // 텍스트 필드 값 변경 핸들러
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     setInputValue(event.target.value)
   }
   // 실시간 배열 추출
   const getArrayResult = () => {
-    return inputValue.split(",").map((item) => item.trim())
+    return inputValue.split(",").map(item => item.trim())
   }
 
   const educationformik = useFormik({
     initialValues: {
       finalEduLevel: 0,
-      schoolInfos: [{
-        name: "",
-        location: "",
-        educationLevel: 0,
-        isEducationLevel: 0
-        // majors: []
-      }]
+      schoolInfos: [
+        {
+          name: "",
+          location: "",
+          educationLevel: 0,
+          isEducationLevel: 0,
+          // majors: []
+        },
+      ],
     },
     validationSchema: Yup.object({
-      finalEduLevel: Yup.string().required("Final education level is required")
+      finalEduLevel: Yup.string().required("Final education level is required"),
       // schoolInfos: Yup.array()
       //   .of(
       //     Yup.object().shape({
@@ -534,18 +497,17 @@ const Dashboard = () => {
     }),
 
     onSubmit: values => {
-
       const userInput = {
         finalEduLevel: parseInt(values.finalEduLevel, 10),
         schoolInfos: values.schoolInfos.map(edu => ({
           location: edu.location,
           educationLevel: parseInt(edu.educationLevel, 10),
           isEducationLevel: parseInt(edu.isEducationLevel, 10),
-          majors: getArrayResult()
-        }))
+          majors: getArrayResult(),
+        })),
       }
       console.log("학력 userInput", userInput)
-    }
+    },
   })
 
   // 직업
@@ -557,7 +519,7 @@ const Dashboard = () => {
       addressOfCompany: "",
       salary: 0,
       additionalIncome: 0,
-      annualIncome: 0
+      annualIncome: 0,
     },
     validationSchema: Yup.object({
       jobName: Yup.string().required("Job name is required"),
@@ -572,12 +534,12 @@ const Dashboard = () => {
         .min(0, "Salary cannot be negative"),
       annualIncome: Yup.number()
         .required("Annual income is required")
-        .min(0, "Annual income cannot be negative")
+        .min(0, "Annual income cannot be negative"),
     }),
 
     onSubmit: values => {
       console.log("직업 values", values)
-    }
+    },
   })
 
   return (
@@ -1211,7 +1173,9 @@ const Dashboard = () => {
                                       <option value="1">남자</option>
                                       <option value="2">여자</option>
                                     </select>
-                                    <label htmlFor="childrenInfo">자녀 성별</label>
+                                    <label htmlFor="childrenInfo">
+                                      자녀 성별
+                                    </label>
                                   </div>
                                 </Col>
 
@@ -1224,7 +1188,9 @@ const Dashboard = () => {
                                       value={child.birthYear || ""}
                                       onChange={marriageformik.handleChange}
                                     />
-                                    <label htmlFor="childrenInfo">자녀 출생연도</label>
+                                    <label htmlFor="childrenInfo">
+                                      자녀 출생연도
+                                    </label>
                                   </div>
                                 </Col>
 
@@ -1240,8 +1206,9 @@ const Dashboard = () => {
                                       <option value="1">직접양육</option>
                                       <option value="2">배우자가 양육</option>
                                     </select>
-                                    <label htmlFor="childrenInfo">양육 여부</label>
-
+                                    <label htmlFor="childrenInfo">
+                                      양육 여부
+                                    </label>
                                   </div>
                                 </Col>
 
@@ -1414,8 +1381,7 @@ const Dashboard = () => {
                                 onClick={addSchools}
                                 className="btn btn-primary w-100"
                               >
-                                +
-                                <div>추가하기</div>
+                                +<div>추가하기</div>
                               </button>
                             </Col>
                           </Row>
@@ -1513,8 +1479,7 @@ const Dashboard = () => {
                                       className="btn btn-danger w-100"
                                       onClick={() => removeSchools(index)}
                                     >
-                                      -
-                                      <div>삭제하기</div>
+                                      -<div>삭제하기</div>
                                     </button>
                                   </Col>
                                 </Row>
@@ -1730,14 +1695,17 @@ const Dashboard = () => {
                     <Card>
                       <CardBody>
                         <CardTitle tag="h4" className={"mb-4"}>
-                          이상형 인터뷰</CardTitle>
+                          이상형 인터뷰
+                        </CardTitle>
 
                         <Form onSubmit={floatingformik.handleSubmit}>
                           <Row>
                             <Col xl={12}>
                               <div className="mb-4">
                                 <Label>
-                                  나를 한줄로 표현하면 (신체 특징이 아닌 나의 성격, 정체성 등) </Label>
+                                  나를 한줄로 표현하면 (신체 특징이 아닌 나의
+                                  성격, 정체성 등){" "}
+                                </Label>
                                 <Input
                                   type="textarea"
                                   name="selfIntroduce"
@@ -1755,9 +1723,7 @@ const Dashboard = () => {
                           <Row>
                             <Col xl={12}>
                               <div className="mb-4">
-                                <Label>
-                                  나의 매력과 장점이 있다면
-                                </Label>
+                                <Label>나의 매력과 장점이 있다면</Label>
                                 <Input
                                   type="textarea"
                                   name="selfIntroduce"
@@ -1775,9 +1741,7 @@ const Dashboard = () => {
                           <Row>
                             <Col xl={12}>
                               <div className="mb-4">
-                                <Label>
-                                  나의 외모 특징은 무엇인가요?
-                                </Label>
+                                <Label>나의 외모 특징은 무엇인가요?</Label>
                                 <Input
                                   type="textarea"
                                   name="selfIntroduce"
@@ -1795,9 +1759,7 @@ const Dashboard = () => {
                           <Row>
                             <Col xl={12}>
                               <div className="mb-4">
-                                <Label>
-                                  지금 하는 일의 장점은 무엇인가요?
-                                </Label>
+                                <Label>지금 하는 일의 장점은 무엇인가요?</Label>
                                 <Input
                                   type="textarea"
                                   name="selfIntroduce"
@@ -1816,7 +1778,8 @@ const Dashboard = () => {
                             <Col xl={12}>
                               <div className="mb-4">
                                 <Label>
-                                  앞으로 하고 싶은 일 (직업관, 안정성 vs. 진취성)
+                                  앞으로 하고 싶은 일 (직업관, 안정성 vs.
+                                  진취성)
                                 </Label>
                                 <Input
                                   type="textarea"
@@ -1834,23 +1797,21 @@ const Dashboard = () => {
 
                           <Label>취미</Label>
                           <Row className="icon-demo-content gx-1 mb-3">
-                            {hobbies.map((icon, index) => (
-                              <Col xl={2} key={index} className="my-1">
+                            {hobbies.map((icon, id) => (
+                              <Col xl={2} key={id} className="my-1">
                                 <div
                                   className="py-3 rounded-3 w-100 border-0"
-                                  onClick={() => handleToggle(icon.index)}
+                                  onClick={() => handleToggle(icon.id)}
                                   style={{
-                                    backgroundColor: isHobbiesActive[icon.index]
+                                    backgroundColor: isHobbiesActive[icon.id]
                                       ? "#556EE6"
                                       : "#F5F5F5",
-                                    color: isHobbiesActive[icon.index]
+                                    color: isHobbiesActive[icon.id]
                                       ? "white"
-                                      : "#2A3042"
+                                      : "#2A3042",
                                   }}
                                 >
-                                  <i
-                                    className={`bx bx-${icon.label} mb-1`}
-                                  ></i>
+                                  <i className={`bx bx-${icon.label} mb-1`}></i>
                                   {icon.value}
                                 </div>
                               </Col>
@@ -1864,19 +1825,17 @@ const Dashboard = () => {
                               <Col xl={2} key={index} className="my-1">
                                 <div
                                   className="py-3 rounded-3 w-100 border-0"
-                                  onClick={() => handleToggle(icon.index)}
+                                  onClick={() => handleToggle(icon.id)}
                                   style={{
-                                    backgroundColor: isActive[icon.index]
+                                    backgroundColor: isHobbiesActive[icon.id]
                                       ? "#556EE6"
                                       : "#F5F5F5",
-                                    color: isActive[icon.index]
+                                    color: isHobbiesActive[icon.id]
                                       ? "white"
-                                      : "#2A3042"
+                                      : "#2A3042",
                                   }}
                                 >
-                                  <i
-                                    className={`bx bx-${icon.label} mb-1`}
-                                  ></i>
+                                  <i className={`bx bx-${icon.label} mb-1`}></i>
                                   {icon.value}
                                 </div>
                               </Col>
@@ -1897,12 +1856,10 @@ const Dashboard = () => {
                                       : "#F5F5F5",
                                     color: isActive[icon.index]
                                       ? "white"
-                                      : "#2A3042"
+                                      : "#2A3042",
                                   }}
                                 >
-                                  <i
-                                    className={`bx bx-${icon.label} mb-1`}
-                                  ></i>
+                                  <i className={`bx bx-${icon.label} mb-1`}></i>
                                   {icon.value}
                                 </div>
                               </Col>
@@ -1923,12 +1880,10 @@ const Dashboard = () => {
                                       : "#F5F5F5",
                                     color: isActive[icon.index]
                                       ? "white"
-                                      : "#2A3042"
+                                      : "#2A3042",
                                   }}
                                 >
-                                  <i
-                                    className={`bx bx-${icon.label} mb-1`}
-                                  ></i>
+                                  <i className={`bx bx-${icon.label} mb-1`}></i>
                                   {icon.value}
                                 </div>
                               </Col>
@@ -1949,19 +1904,16 @@ const Dashboard = () => {
                                       : "#F5F5F5",
                                     color: isActive[icon.index]
                                       ? "white"
-                                      : "#2A3042"
+                                      : "#2A3042",
                                   }}
                                 >
-                                  <i
-                                    className={`bx bx-${icon.label} mb-1`}
-                                  ></i>
+                                  <i className={`bx bx-${icon.label} mb-1`}></i>
                                   {icon.value}
                                 </div>
                               </Col>
                             ))}
                             <Col xl={2} className="my-1"></Col>
                           </Row>
-
                         </Form>
                       </CardBody>
                     </Card>
