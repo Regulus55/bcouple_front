@@ -35,23 +35,13 @@ toast.configure()
 import useProfile from "hooks/useProfile"
 import {
   exercises,
+  favoriteCategories,
   hobbies,
   interestedWithMovie,
   interestedWithMusic,
   interestedWithTV,
 } from "../../common/datas"
 
-const bloodTypeOptionGroup = [
-  {
-    label: "BloodType",
-    options: [
-      { label: "A형", value: "A형" },
-      { label: "B형", value: "B형" },
-      { label: "AB형", value: "AB형" },
-      { label: "O형", value: "O형" },
-    ],
-  },
-]
 const mbtiTypeOptionGroup = [
   { label: "ENFP", value: "ENFP" },
   { label: "ENFJ", value: "ENFJ" },
@@ -83,22 +73,29 @@ const Dashboard = () => {
   const [inputValue, setInputValue] = useState("")
   const [arrayResult, setArrayResult] = useState([])
 
-  const [isActive, setisActive] = useState({})
-  const [isHobbiesActive, setisHobbiesActive] = useState(
-    hobbies.reduce((acc, icon) => {
-      acc[icon.id] = false
+  const [activeStates, setActiveStates] = useState(
+    Object.keys(favoriteCategories).reduce((acc, categoryKey) => {
+      const items = favoriteCategories[categoryKey].items || []
+      acc[categoryKey] = items.reduce((stateAcc, item) => {
+        stateAcc[item.id] = false
+        return stateAcc
+      }, {})
       return acc
     }, {})
   )
-  const handleToggle = value => {
-    const selectedCount = Object.values(isHobbiesActive).filter(
+
+  const handleToggle = (category, id) => {
+    const selectedCount = Object.values(activeStates[category]).filter(
       active => active
     ).length
 
-    if (selectedCount < 5 || isHobbiesActive[value]) {
-      setisHobbiesActive(prevState => ({
+    if (selectedCount < 5 || activeStates[category][id]) {
+      setActiveStates(prevState => ({
         ...prevState,
-        [value]: !prevState[value],
+        [category]: {
+          ...prevState[category],
+          [id]: !prevState[category][id],
+        },
       }))
     } else {
       toast.error("5개 이상 선택할 수 없습니다.", {
@@ -1804,125 +1801,47 @@ const Dashboard = () => {
                             </Col>
                           </Row>
 
-                          <Label>취미</Label>
-                          <Row className="icon-demo-content gx-1 mb-3">
-                            {hobbies.map((icon, id) => (
-                              <Col xl={2} key={id} className="my-1">
-                                <div
-                                  className="py-3 rounded-3 w-100 border-0"
-                                  onClick={() => handleToggle(icon.id)}
-                                  style={{
-                                    backgroundColor: isHobbiesActive[icon.id]
-                                      ? "#556EE6"
-                                      : "#F5F5F5",
-                                    color: isHobbiesActive[icon.id]
-                                      ? "white"
-                                      : "#2A3042",
-                                  }}
-                                >
-                                  <i className={`bx bx-${icon.label} mb-1`}></i>
-                                  {icon.value}
-                                </div>
-                              </Col>
-                            ))}
-                            <Col xl={2} className="my-1"></Col>
-                          </Row>
-
-                          <Label>운동</Label>
-                          <Row className="icon-demo-content gx-1 mb-3">
-                            {exercises.map((icon, index) => (
-                              <Col xl={2} key={index} className="my-1">
-                                <div
-                                  className="py-3 rounded-3 w-100 border-0"
-                                  onClick={() => handleToggle(icon.id)}
-                                  style={{
-                                    backgroundColor: isHobbiesActive[icon.id]
-                                      ? "#556EE6"
-                                      : "#F5F5F5",
-                                    color: isHobbiesActive[icon.id]
-                                      ? "white"
-                                      : "#2A3042",
-                                  }}
-                                >
-                                  <i className={`bx bx-${icon.label} mb-1`}></i>
-                                  {icon.value}
-                                </div>
-                              </Col>
-                            ))}
-                            <Col xl={2} className="my-1"></Col>
-                          </Row>
-
-                          <Label>관심사 (영화)</Label>
-                          <Row className="icon-demo-content gx-1 mb-3">
-                            {interestedWithMovie.map((icon, index) => (
-                              <Col xl={2} key={index} className="my-1">
-                                <div
-                                  className="py-3 rounded-3 w-100 border-0"
-                                  onClick={() => handleToggle(icon.index)}
-                                  style={{
-                                    backgroundColor: isActive[icon.index]
-                                      ? "#556EE6"
-                                      : "#F5F5F5",
-                                    color: isActive[icon.index]
-                                      ? "white"
-                                      : "#2A3042",
-                                  }}
-                                >
-                                  <i className={`bx bx-${icon.label} mb-1`}></i>
-                                  {icon.value}
-                                </div>
-                              </Col>
-                            ))}
-                            <Col xl={2} className="my-1"></Col>
-                          </Row>
-
-                          <Label>관심사 (음악)</Label>
-                          <Row className="icon-demo-content gx-1 mb-3">
-                            {interestedWithMusic.map((icon, index) => (
-                              <Col xl={2} key={index} className="my-1">
-                                <div
-                                  className="py-3 rounded-3 w-100 border-0"
-                                  onClick={() => handleToggle(icon.index)}
-                                  style={{
-                                    backgroundColor: isActive[icon.index]
-                                      ? "#556EE6"
-                                      : "#F5F5F5",
-                                    color: isActive[icon.index]
-                                      ? "white"
-                                      : "#2A3042",
-                                  }}
-                                >
-                                  <i className={`bx bx-${icon.label} mb-1`}></i>
-                                  {icon.value}
-                                </div>
-                              </Col>
-                            ))}
-                            <Col xl={2} className="my-1"></Col>
-                          </Row>
-
-                          <Label>관심사 (TV)</Label>
-                          <Row className="icon-demo-content gx-1 mb-3">
-                            {interestedWithTV.map((icon, index) => (
-                              <Col xl={2} key={index} className="my-1">
-                                <div
-                                  className="py-3 rounded-3 w-100 border-0"
-                                  onClick={() => handleToggle(icon.index)}
-                                  style={{
-                                    backgroundColor: isActive[icon.index]
-                                      ? "#556EE6"
-                                      : "#F5F5F5",
-                                    color: isActive[icon.index]
-                                      ? "white"
-                                      : "#2A3042",
-                                  }}
-                                >
-                                  <i className={`bx bx-${icon.label} mb-1`}></i>
-                                  {icon.value}
-                                </div>
-                              </Col>
-                            ))}
-                            <Col xl={2} className="my-1"></Col>
-                          </Row>
+                          {Object.keys(favoriteCategories).map(categoryKey => (
+                            <>
+                              <Label>
+                                {favoriteCategories[categoryKey].title}
+                              </Label>
+                              <Row
+                                key={categoryKey}
+                                className="icon-demo-content gx-1 mb-3"
+                              >
+                                {favoriteCategories[categoryKey].items.map(
+                                  item => (
+                                    <Col xl={2} key={item.id} className="my-1">
+                                      <div
+                                        className="py-3 rounded-3 w-100 border-0"
+                                        onClick={() =>
+                                          handleToggle(categoryKey, item.id)
+                                        }
+                                        style={{
+                                          backgroundColor: activeStates[
+                                            categoryKey
+                                          ]?.[item.id]
+                                            ? "#556EE6"
+                                            : "#F5F5F5",
+                                          color: activeStates[categoryKey]?.[
+                                            item.id
+                                          ]
+                                            ? "white"
+                                            : "#2A3042",
+                                        }}
+                                      >
+                                        <i
+                                          className={`bx bx-${item.label} mb-1`}
+                                        ></i>
+                                        {item.value}
+                                      </div>
+                                    </Col>
+                                  )
+                                )}
+                              </Row>
+                            </>
+                          ))}
                         </Form>
                       </CardBody>
                     </Card>
