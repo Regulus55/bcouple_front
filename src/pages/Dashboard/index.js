@@ -20,7 +20,7 @@ import { Link } from "react-router-dom"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import classnames from "classnames"
-
+import "boxicons"
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 
@@ -1725,7 +1725,6 @@ const Dashboard = () => {
                               </div>
                             </Col>
                           </Row>
-
                           <Row>
                             <Col xl={12}>
                               <div className="mb-4">
@@ -1743,7 +1742,6 @@ const Dashboard = () => {
                               </div>
                             </Col>
                           </Row>
-
                           <Row>
                             <Col xl={12}>
                               <div className="mb-4">
@@ -1761,7 +1759,6 @@ const Dashboard = () => {
                               </div>
                             </Col>
                           </Row>
-
                           <Row>
                             <Col xl={12}>
                               <div className="mb-4">
@@ -1779,7 +1776,6 @@ const Dashboard = () => {
                               </div>
                             </Col>
                           </Row>
-
                           <Row>
                             <Col xl={12}>
                               <div className="mb-4">
@@ -1801,6 +1797,12 @@ const Dashboard = () => {
                             </Col>
                           </Row>
 
+                          <div>
+                            <i className="bx bx-cat" type="solid"></i>ddd
+                            <box-icon name="dog" type="solid"></box-icon>
+                            <box-icon name="walk" type="solid"></box-icon>
+                          </div>
+
                           {Object.keys(favoriteCategories).map(categoryKey => (
                             <>
                               <Label>
@@ -1814,7 +1816,7 @@ const Dashboard = () => {
                                   item => (
                                     <Col xl={2} key={item.id} className="my-1">
                                       <div
-                                        className="py-3 rounded-3 w-100 border-0"
+                                        className="py-3 rounded-3 w-100 border-0 "
                                         onClick={() =>
                                           handleToggle(categoryKey, item.id)
                                         }
@@ -1828,13 +1830,20 @@ const Dashboard = () => {
                                             item.id
                                           ]
                                             ? "white"
-                                            : "#2A3042",
+                                            : "black",
                                         }}
                                       >
-                                        <i
-                                          className={`bx bx-${item.label} mb-1`}
-                                        ></i>
-                                        {item.value}
+                                        <box-icon
+                                          className="mb-1"
+                                          name={item.label}
+                                          type="solid"
+                                          color={
+                                            activeStates[categoryKey]?.[item.id]
+                                              ? "white"
+                                              : "gray"
+                                          }
+                                        ></box-icon>
+                                        <div>{item.value}</div>
                                       </div>
                                     </Col>
                                   )
