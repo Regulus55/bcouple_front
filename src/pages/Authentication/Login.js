@@ -87,10 +87,26 @@ const Login = props => {
   }
 
   //for facebook and google authentication
-  const socialResponse = type => {
-    signIn(type)
-  }
-
+  // const socialResponse = type => {
+  //   signIn(type)
+  // }
+  const socialInfos = [
+    {
+      title: "google",
+      img: "/images/google.png",
+      func: () => console.log("google"),
+    },
+    {
+      title: "kakao",
+      img: "/images/kakao.png",
+      func: () => console.log("kakao"),
+    },
+    {
+      title: "naver",
+      img: "/images/naver.png",
+      func: () => console.log("naver"),
+    },
+  ]
   //handleTwitterLoginResponse
   // const twitterResponse = e => {}
 
@@ -129,6 +145,7 @@ const Login = props => {
                       </div>
                     </Link>
                   </div>
+
                   <div className="p-2">
                     <Form
                       className="form-horizontal"
@@ -215,40 +232,22 @@ const Login = props => {
                       <div className="mt-4 text-center">
                         <h5 className="font-size-14 mb-3">Sign in with</h5>
 
-                        <ul className="list-inline">
+                        {/* <ul className="list-inline">
                           <li className="list-inline-item">
-                            <Link
-                              to="#"
-                              className="social-list-item bg-primary text-white border-primary"
-                              onClick={e => {
-                                e.preventDefault()
-                                socialResponse("facebook")
-                              }}
+                            <button
+                              // onClick={signWithGoogle}
+                              icon={() => (
+                                <img
+                                  src="/images/google.png"
+                                  className="mr-2 w-7 h-7"
+                                />
+                              )}
+                              className="mt-6 w-full max-w-sm rounded-lg border border-gray-300 bg-white py-4 font-semibold text-slate-500 hover:bg-gray-50"
                             >
-                              <i className="mdi mdi-facebook" />
-                            </Link>
+                              Sign with Google
+                            </button>
                           </li>
-                          {/*<li className="list-inline-item">*/}
-                          {/*  <TwitterLogin*/}
-                          {/*    loginUrl={*/}
-                          {/*      "http://localhost:4000/api/v1/auth/twitter"*/}
-                          {/*    }*/}
-                          {/*    onSuccess={this.twitterResponse}*/}
-                          {/*    onFailure={this.onFailure}*/}
-                          {/*    requestTokenUrl={*/}
-                          {/*      "http://localhost:4000/api/v1/auth/twitter/revers"*/}
-                          {/*    }*/}
-                          {/*    showIcon={false}*/}
-                          {/*    tag={"div"}*/}
-                          {/*  >*/}
-                          {/*    <a*/}
-                          {/*      href=""*/}
-                          {/*      className="social-list-item bg-info text-white border-info"*/}
-                          {/*    >*/}
-                          {/*      <i className="mdi mdi-twitter"/>*/}
-                          {/*    </a>*/}
-                          {/*  </TwitterLogin>*/}
-                          {/*</li>*/}
+
                           <li className="list-inline-item">
                             <Link
                               to="#"
@@ -261,7 +260,36 @@ const Login = props => {
                               <i className="mdi mdi-google" />
                             </Link>
                           </li>
-                        </ul>
+                        </ul> */}
+                        {/*소셜로그인*/}
+                        <div className="d-flex justify-content-center align-items-center">
+                          {socialInfos?.map(social => (
+                            <div
+                              className="border-0 bg-white mx-2 rounded-lg"
+                              onClick={social.func}
+                              key={social.title}
+                              style={{
+                                transition: "filter 0.3s ease",
+                                cursor: "pointer",
+                              }}
+                              onMouseOver={e =>
+                                (e.currentTarget.style.filter =
+                                  "brightness(0.9)")
+                              }
+                              onMouseOut={e =>
+                                (e.currentTarget.style.filter = "brightness(1)")
+                              }
+                            >
+                              <img
+                                src={social.img}
+                                className="img-fluid rounded-circle"
+                                width="40"
+                                height="40"
+                                alt={social.title}
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
 
                       <Row>

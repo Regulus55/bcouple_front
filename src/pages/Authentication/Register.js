@@ -34,7 +34,7 @@ import Dropzone from "react-dropzone"
 import axios from "axios"
 
 // 이메일보내기
-const EmailSendForm = ({ email, setEmail, onNext }) => {
+const EmailSendForm = ({ setEmail, setCheckedEmail }) => {
   const sendformik = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
@@ -68,7 +68,7 @@ const EmailSendForm = ({ email, setEmail, onNext }) => {
         // console.log("이멜보내기 res", res)
         if (res.status === 201) {
           console.log("발송성공")
-          onNext()
+          setCheckedEmail(true)
         }
       } catch (e) {
         console.log(e)
@@ -85,7 +85,7 @@ const EmailSendForm = ({ email, setEmail, onNext }) => {
         return false
       }}
     >
-      <div className="mb-3">
+      <div className="mb-2">
         <Label className="form-label">Email</Label>
         <Input
           name="email"
@@ -107,7 +107,7 @@ const EmailSendForm = ({ email, setEmail, onNext }) => {
         ) : null}
       </div>
 
-      <div className="mb-3 d-grid">
+      <div className="mb-2 d-grid">
         <button className="btn btn-primary btn-block" type="submit">
           이메일로 인증코드 받기
         </button>
@@ -117,7 +117,7 @@ const EmailSendForm = ({ email, setEmail, onNext }) => {
 }
 
 // 이메일 체크
-const EmailCheckForm = ({ email, onNext }) => {
+const EmailCheckForm = ({ email, setCheckedEmail }) => {
   const checkformik = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
@@ -135,15 +135,30 @@ const EmailCheckForm = ({ email, onNext }) => {
         email,
         code: values.code.toString(),
       }
-      console.log("이멜체크 values", userInput)
+      // console.log("이멜체크 values", userInput)
 
+      const url = "http://localhost/api/auth/email/check"
+      const promise = axios.post(url, userInput)
+      toast.promise(
+        promise,
+        {
+          pending: "로딩 중...",
+          success: "이메일 인증 성공",
+          error: "인증 실패",
+        },
+        {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+        }
+      )
       try {
-        const url = "http://localhost/api/auth/email/check"
-        const res = await axios.post(url, userInput)
+        const res = await promise
         console.log("이멜체크 res", res)
         if (res.status === 201) {
           console.log("인증성공")
-          onNext()
+          setCheckedEmail(false)
         }
       } catch (e) {
         console.log(e)
@@ -278,32 +293,32 @@ const RegistForm = ({ email }) => {
       }),
     }),
     onSubmit: async values => {
-      const fileUrls = await handleFileUpload(values.profileImg)
+      const fileUrls = handleFileUpload(values.profileImg)
 
-      const formData = new FormData()
-      values.selectedFiles.forEach(file => {
-        formData.append("files", file)
-      })
+      // const formData = new FormData()
+      // values.selectedFiles.forEach(file => {
+      //   formData.append("files", file)
+      // })
 
       const userInput = {
         email,
         nickName: values.nickName,
         userName: values.nickName,
         password: values.password,
-        // profileImg: ["https://example.com/profile1.jpg"],
-        profileImg: fileUrls,
+        profileImg: ["https://example.com/profile1.jpg"],
+        // profileImg: fileUrls,
         phone: values.phone,
         consent: values.consent,
       }
-
+      console.log("유저인풋", userInput)
       try {
         const url = "http://localhost/api/auth/signup"
-        const res = axios.post(url, userInput)
+        const res = await axios.post(url, userInput)
         console.log("res", res)
-        if (res.status === 201) {
-          console.log("회원가입 성공")
-          // navigate("/login")
-        }
+        // if (res.status === 201) {
+        //   alert("회원가입 성공")
+        //   navigate("/login")
+        // }
       } catch (e) {
         console.log("회원가입 제출 에러", e)
       }
@@ -350,7 +365,7 @@ const RegistForm = ({ email }) => {
       className="form-horizontal p-2"
       onSubmit={registerformik.handleSubmit}
     >
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <Label className="form-label">Email</Label>
         <Input
           id="email"
@@ -372,7 +387,7 @@ const RegistForm = ({ email }) => {
             {registerformik.errors.email}
           </FormFeedback>
         ) : null}
-      </div>
+      </div> */}
 
       <div className="mb-3">
         <Label className="form-label">Nickname</Label>
@@ -586,8 +601,8 @@ const Register = props => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const [step, setStep] = useState(1)
   const [email, setEmail] = useState("")
+  const [checkedEmail, setCheckedEmail] = useState(false)
 
   const AccountProperties = createSelector(
     state => state.Account,
@@ -640,17 +655,20 @@ const Register = props => {
                   </Row>
                 </div>
                 <CardBody className="pt-2">
-                  {step === 1 && (
-                    <EmailSendForm
+                  <EmailSendForm
+                    email={email}
+                    setEmail={setEmail}
+                    setCheckedEmail={setCheckedEmail}
+                  />
+
+                  {checkedEmail && (
+                    <EmailCheckForm
                       email={email}
-                      setEmail={setEmail}
-                      onNext={() => setStep(2)}
+                      setCheckedEmail={setCheckedEmail}
                     />
                   )}
-                  {step === 2 && (
-                    <EmailCheckForm email={email} onNext={() => setStep(3)} />
-                  )}
-                  {step === 3 && <RegistForm email={email} />}
+
+                  <RegistForm email={email} />
                 </CardBody>
               </Card>
               <div className="mt-5 text-center">
