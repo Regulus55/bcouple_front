@@ -1797,12 +1797,6 @@ const Dashboard = () => {
                             </Col>
                           </Row>
 
-                          <div>
-                            <i className="bx bx-cat" type="solid"></i>ddd
-                            <box-icon name="dog" type="solid"></box-icon>
-                            <box-icon name="walk" type="solid"></box-icon>
-                          </div>
-
                           {Object.keys(favoriteCategories).map(categoryKey => (
                             <>
                               <Label>
@@ -1851,6 +1845,17 @@ const Dashboard = () => {
                               </Row>
                             </>
                           ))}
+
+                          <Row>
+                            <Col xl={12}>
+                              <button
+                                type="submit"
+                                className="btn btn-primary w-md"
+                              >
+                                취미 / 운동 / 관심사 저장
+                              </button>
+                            </Col>
+                          </Row>
                         </Form>
                       </CardBody>
                     </Card>
