@@ -20,7 +20,10 @@ import { Link } from "react-router-dom"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import classnames from "classnames"
+
+// eslint-disable-next-line
 import "boxicons"
+
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 
@@ -262,6 +265,8 @@ const Dashboard = () => {
   })
 
   useEffect(() => {
+    console.log("스모킹", profileInfo?.profile?.country)
+    console.log("스모킹타입ㅂㅂㅂㅂ", typeof profileInfo?.profile?.country)
     if (profileInfo?.profile) {
       basicInfoFormik.setValues({
         birth: profileInfo.profile.birth
@@ -272,18 +277,17 @@ const Dashboard = () => {
         bornArea: profileInfo.profile.bornArea || "",
         country: profileInfo.profile.country || "",
         addressOfHome: profileInfo.profile.addressOfHome || "",
-
+        gender: profileInfo.profile.gender.toString() || "",
         activityArea: profileInfo.profile.activityArea || "",
         bloodType: profileInfo.profile.bloodType || "",
-        bodyType: profileInfo.profile.bodyType || "",
+        bodyType: profileInfo.profile.bodyType.toString() || "",
         mbtiType: profileInfo.profile.mbtiType || "",
-        smoking: profileInfo.profile.smoking || "",
+        smoking: profileInfo.profile.smoking.toString() || "",
         selfIntroduce: profileInfo.profile.selfIntroduce || "",
         drinking: profileInfo.profile.drinking || "",
       })
     }
   }, [profileInfo])
-  console.log("바디", profileInfo?.profile?.smoking)
 
   //Floating labels forms
   const floatingformik = useFormik({
@@ -677,7 +681,7 @@ const Dashboard = () => {
                                 <select
                                   className="form-select"
                                   name="country"
-                                  value={basicInfoFormik.values.select}
+                                  value={basicInfoFormik.values.country}
                                   onChange={basicInfoFormik.handleChange}
                                   onBlur={basicInfoFormik.handleBlur}
                                 >
@@ -690,10 +694,10 @@ const Dashboard = () => {
                                 </select>
                                 <label htmlFor="floatingSelectGrid">국적</label>
                                 <div>
-                                  {basicInfoFormik.errors.select &&
-                                  basicInfoFormik.touched.select ? (
+                                  {basicInfoFormik.errors.country &&
+                                  basicInfoFormik.touched.country ? (
                                     <span className="text-danger">
-                                      {basicInfoFormik.errors.select}
+                                      {basicInfoFormik.errors.country}
                                     </span>
                                   ) : null}
                                 </div>
@@ -947,15 +951,19 @@ const Dashboard = () => {
                                 <select
                                   className="form-select"
                                   name="smoking"
-                                  value={basicInfoFormik.values.smoking}
+                                  value={
+                                    basicInfoFormik.values.smoking === true
+                                      ? "true"
+                                      : "false"
+                                  }
                                   onChange={basicInfoFormik.handleChange}
                                   onBlur={basicInfoFormik.handleBlur}
                                 >
                                   <option defaultValue="">
                                     Open this select your Smoking Status
                                   </option>
-                                  <option value={true}>흡연자</option>
-                                  <option value={false}>비흡연자</option>
+                                  <option value="true">흡연자</option>
+                                  <option value="false">비흡연자</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">
                                   흡연여부
@@ -985,9 +993,9 @@ const Dashboard = () => {
                                   <option value="">
                                     Open this select your Body Type
                                   </option>
-                                  <option value={0}>남자</option>
-                                  <option value={1}>여자</option>
-                                  <option value={2}>중성</option>
+                                  <option value="0">남자</option>
+                                  <option value="1">여자</option>
+                                  <option value="2">중성</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">성별</label>
                                 <div>
@@ -1013,12 +1021,12 @@ const Dashboard = () => {
                                   <option value="">
                                     Open this select your Body Type
                                   </option>
-                                  <option value={0}>마름</option>
-                                  <option value={1}>슬림</option>
-                                  <option value={2}>보통</option>
-                                  <option value={3}>볼륨</option>
-                                  <option value={4}>근육</option>
-                                  <option value={5}>통통</option>
+                                  <option value="0">마름</option>
+                                  <option value="1">슬림</option>
+                                  <option value="2">보통</option>
+                                  <option value="3">볼륨</option>
+                                  <option value="4">근육</option>
+                                  <option value="5">통통</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">체형</label>
                                 <div>
