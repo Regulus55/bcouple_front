@@ -83,6 +83,35 @@ const Dashboard = () => {
       return acc
     }, {})
   )
+  const idealloveformik = useFormik({
+    initialValues: {
+      aaaaa: "",
+      bbbbb: "",
+      ccccc: "",
+      ddddd: "",
+      eeeee: "",
+      selectedItems: {},
+    },
+    validationSchema: Yup.object({
+      aaaaa: Yup.string().required("This field is required"),
+      bbbbb: Yup.string().required("This field is required"),
+      ccccc: Yup.string().required("This field is required"),
+      ddddd: Yup.string().required("This field is required"),
+      eeeee: Yup.string().required("This field is required"),
+    }),
+    onSubmit: values => {
+      const userInput = {
+        aaaaa: values.aaaaa,
+        bbbbb: values.bbbbb,
+        ccccc: values.ccccc,
+        ddddd: values.ddddd,
+        eeeee: values.eeeee,
+        selectedItems: values.selectedItems,
+      }
+
+      console.log("이상형 인터뷰 userInput", userInput)
+    },
+  })
 
   const handleToggle = (category, id) => {
     const selectedCount = Object.values(activeStates[category]).filter(
@@ -90,13 +119,27 @@ const Dashboard = () => {
     ).length
 
     if (selectedCount < 5 || activeStates[category][id]) {
-      setActiveStates(prevState => ({
-        ...prevState,
-        [category]: {
-          ...prevState[category],
-          [id]: !prevState[category][id],
-        },
-      }))
+      setActiveStates(prevState => {
+        const newActiveStates = {
+          ...prevState,
+          [category]: {
+            ...prevState[category],
+            [id]: !prevState[category][id],
+          },
+        }
+
+        idealloveformik.setFieldValue(
+          "selectedItems",
+          Object.keys(newActiveStates).reduce((acc, categoryKey) => {
+            acc[categoryKey] = Object.keys(newActiveStates[categoryKey]).filter(
+              itemId => newActiveStates[categoryKey][itemId]
+            )
+            return acc
+          }, {})
+        )
+
+        return newActiveStates
+      })
     } else {
       toast.error("5개 이상 선택할 수 없습니다.", {
         position: "top-left",
@@ -1704,7 +1747,7 @@ const Dashboard = () => {
                           이상형 인터뷰
                         </CardTitle>
 
-                        <Form onSubmit={floatingformik.handleSubmit}>
+                        <Form onSubmit={idealloveformik.handleSubmit}>
                           <Row>
                             <Col xl={12}>
                               <div className="mb-4">
@@ -1714,14 +1757,22 @@ const Dashboard = () => {
                                 </Label>
                                 <Input
                                   type="textarea"
-                                  name="selfIntroduce"
+                                  name="aaaaa"
                                   className="form-control"
-                                  id="floatingnameInput"
+                                  id="aaaaa"
                                   placeholder="믿음직하고 주변을 즐겁게 하는 사람"
-                                  value={floatingformik.values.selfIntroduce}
-                                  onChange={floatingformik.handleChange}
-                                  onBlur={floatingformik.handleBlur}
+                                  value={idealloveformik.values.aaaaa}
+                                  onChange={idealloveformik.handleChange}
+                                  onBlur={idealloveformik.handleBlur}
                                 />
+                                <div>
+                                  {idealloveformik.errors.aaaaa &&
+                                  idealloveformik.touched.aaaaa ? (
+                                    <span className="text-danger">
+                                      {idealloveformik.errors.aaaaa}
+                                    </span>
+                                  ) : null}
+                                </div>
                               </div>
                             </Col>
                           </Row>
@@ -1731,14 +1782,20 @@ const Dashboard = () => {
                                 <Label>나의 매력과 장점이 있다면</Label>
                                 <Input
                                   type="textarea"
-                                  name="selfIntroduce"
+                                  name="bbbbb"
                                   className="form-control"
-                                  id="floatingnameInput"
+                                  id="bbbbb"
                                   placeholder="주변 사람들과 잘 어울리고 사람들을 편하게 해주는 편입니다"
-                                  value={floatingformik.values.selfIntroduce}
-                                  onChange={floatingformik.handleChange}
-                                  onBlur={floatingformik.handleBlur}
+                                  value={idealloveformik.values.bbbbb}
+                                  onChange={idealloveformik.handleChange}
+                                  onBlur={idealloveformik.handleBlur}
                                 />
+                                {idealloveformik.errors.bbbbb &&
+                                idealloveformik.touched.bbbbb ? (
+                                  <span className="text-danger">
+                                    {idealloveformik.errors.bbbbb}
+                                  </span>
+                                ) : null}
                               </div>
                             </Col>
                           </Row>
@@ -1748,14 +1805,20 @@ const Dashboard = () => {
                                 <Label>나의 외모 특징은 무엇인가요?</Label>
                                 <Input
                                   type="textarea"
-                                  name="selfIntroduce"
+                                  name="ccccc"
                                   className="form-control"
-                                  id="floatingnameInput"
+                                  id="ccccc"
                                   placeholder="키가 크진 않지만 비율이 좋아서 생각보다 키가 커 보인다고 합니다"
-                                  value={floatingformik.values.selfIntroduce}
-                                  onChange={floatingformik.handleChange}
-                                  onBlur={floatingformik.handleBlur}
+                                  value={idealloveformik.values.ccccc}
+                                  onChange={idealloveformik.handleChange}
+                                  onBlur={idealloveformik.handleBlur}
                                 />
+                                {idealloveformik.errors.ccccc &&
+                                idealloveformik.touched.ccccc ? (
+                                  <span className="text-danger">
+                                    {idealloveformik.errors.ccccc}
+                                  </span>
+                                ) : null}
                               </div>
                             </Col>
                           </Row>
@@ -1765,14 +1828,20 @@ const Dashboard = () => {
                                 <Label>지금 하는 일의 장점은 무엇인가요?</Label>
                                 <Input
                                   type="textarea"
-                                  name="selfIntroduce"
+                                  name="ddddd"
                                   className="form-control"
-                                  id="floatingnameInput"
+                                  id="ddddd"
                                   placeholder="내 일만 열심히 하면 편하게 일할 수 있는 환경"
-                                  value={floatingformik.values.selfIntroduce}
-                                  onChange={floatingformik.handleChange}
-                                  onBlur={floatingformik.handleBlur}
+                                  value={idealloveformik.values.ddddd}
+                                  onChange={idealloveformik.handleChange}
+                                  onBlur={idealloveformik.handleBlur}
                                 />
+                                {idealloveformik.errors.ddddd &&
+                                idealloveformik.touched.ddddd ? (
+                                  <span className="text-danger">
+                                    {idealloveformik.errors.ddddd}
+                                  </span>
+                                ) : null}
                               </div>
                             </Col>
                           </Row>
@@ -1785,14 +1854,20 @@ const Dashboard = () => {
                                 </Label>
                                 <Input
                                   type="textarea"
-                                  name="selfIntroduce"
+                                  name="eeeee"
                                   className="form-control"
-                                  id="floatingnameInput"
+                                  id="eeeee"
                                   placeholder="지금 하고 있는 일을 더욱 발전시켜 인정받고 싶습니다"
-                                  value={floatingformik.values.selfIntroduce}
-                                  onChange={floatingformik.handleChange}
-                                  onBlur={floatingformik.handleBlur}
+                                  value={idealloveformik.values.eeeee}
+                                  onChange={idealloveformik.handleChange}
+                                  onBlur={idealloveformik.handleBlur}
                                 />
+                                {idealloveformik.errors.eeeee &&
+                                idealloveformik.touched.eeeee ? (
+                                  <span className="text-danger">
+                                    {idealloveformik.errors.eeeee}
+                                  </span>
+                                ) : null}
                               </div>
                             </Col>
                           </Row>
