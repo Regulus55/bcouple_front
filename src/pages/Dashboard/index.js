@@ -28,6 +28,10 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 
 import Dropzone from "react-dropzone"
 import axios from "axios"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+toast.configure()
+
 import useProfile from "hooks/useProfile"
 import {
   exercises,
@@ -97,7 +101,12 @@ const Dashboard = () => {
         [value]: !prevState[value],
       }))
     } else {
-      alert("5개 이상 선택할 수 없습니다.")
+      toast.error("5개 이상 선택할 수 없습니다.", {
+        position: "top-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+      })
     }
   }
 
@@ -128,7 +137,7 @@ const Dashboard = () => {
       bodyType: "",
       mbtiType: "",
       smoking: "",
-      drinking: 0,
+      drinking: "",
       selfIntroduce: "",
     },
     validationSchema: Yup.object({
@@ -874,10 +883,10 @@ const Dashboard = () => {
                                   <option defaultValue="">
                                     Open this select your Drinking Information
                                   </option>
-                                  <option value={1}>아예 안마심</option>
-                                  <option value={2}>가끔 한두잔</option>
-                                  <option value={3}>주에 한번</option>
-                                  <option value={4}>주에 두번 이상</option>
+                                  <option value={0}>아예 안마심</option>
+                                  <option value={1}>가끔 한두잔</option>
+                                  <option value={2}>주에 한번</option>
+                                  <option value={3}>주에 두번 이상</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">
                                   음주여부
