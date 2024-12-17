@@ -454,16 +454,16 @@ const Dashboard = () => {
     const value = e.target.value
     educationformik.handleChange(e)
 
-    let numberOfFields = 0
+    let graduatedSchoolsCount = 0
     if (value === "1") {
-      numberOfFields = 1
+      graduatedSchoolsCount = 1
     } else if (["2", "3", "4", "5"].includes(value)) {
-      numberOfFields = 2
+      graduatedSchoolsCount = 2
     } else if (value === "6") {
-      numberOfFields = 3
+      graduatedSchoolsCount = 3
     }
 
-    const newFields = Array(numberOfFields)
+    const newFields = Array(graduatedSchoolsCount)
       .fill(null)
       .map((_, index) => ({
         finalEduLevel: value,
@@ -485,7 +485,6 @@ const Dashboard = () => {
     )
     educationformik.setFieldValue("schoolInfos", updatedSchools)
   }
-
   const handleInputChange = (index, event) => {
     const value = event.target.value
     setInputValues(prev => ({
@@ -497,8 +496,6 @@ const Dashboard = () => {
       ...updatedSchoolInfos[index],
       majors: value.split(",").map(item => item.trim()),
     }
-
-    setTest(updatedSchoolInfos)
     educationformik.setFieldValue("schoolInfos", updatedSchoolInfos)
   }
 
