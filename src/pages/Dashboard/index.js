@@ -71,11 +71,6 @@ const Dashboard = () => {
 
   const [activeTab, setActiveTab] = useState("1")
 
-  const [educationLevel, setEducationLevel] = useState([])
-  // 전공여러개 선택
-  const [inputValue, setInputValue] = useState("")
-  const [arrayResult, setArrayResult] = useState([])
-
   const [activeStates, setActiveStates] = useState(
     Object.keys(favoriteCategories).reduce((acc, categoryKey) => {
       const items = favoriteCategories[categoryKey].items || []
@@ -308,7 +303,7 @@ const Dashboard = () => {
     initialValues: {
       isChild: false,
       mExperience: 0,
-      reasonForDivorce: 0,
+      reasonForDivorce: "",
       childrenInfo: [],
     },
     validationSchema: Yup.object({
@@ -335,7 +330,6 @@ const Dashboard = () => {
         mExperience: parseInt(values.mExperience, 10),
         reasonForDivorce: values.reasonForDivorce,
         isChild: values.childrenInfo.length === 0 ? false : true,
-        // isChild: true,
         childrenInfo: values.childrenInfo.map((child, index) => ({
           age: currentYear - values.childrenInfo[index].birthYear,
           birthYear: parseInt(child.birthYear, 10),
@@ -453,16 +447,19 @@ const Dashboard = () => {
   // }, [profileInfo])
 
   // 학력
+  const [educationLevel, setEducationLevel] = useState([])
+  const [inputValues, setInputValues] = useState({})
+
   const handleEducationChange = e => {
     const value = e.target.value
     educationformik.handleChange(e)
 
     let numberOfFields = 0
-    if (value === 1) {
+    if (value === "1") {
       numberOfFields = 1
-    } else if ([2, 3, 4, 5].includes(value)) {
+    } else if (["2", "3", "4", "5"].includes(value)) {
       numberOfFields = 2
-    } else if (value === 6) {
+    } else if (value === "6") {
       numberOfFields = 3
     }
 
@@ -475,10 +472,6 @@ const Dashboard = () => {
 
     setEducationLevel(newFields)
   }
-  // const removeEducationLevel = index => {
-  //   const updatedEducationLevel = educationLevel.filter((_, i) => i !== index)
-  //   setEducationLevel(updatedEducationLevel)
-  // }
 
   const addSchools = () => {
     educationformik.setFieldValue("schoolInfos", [
@@ -486,7 +479,6 @@ const Dashboard = () => {
       {},
     ])
   }
-
   const removeSchools = index => {
     const updatedSchools = educationformik.values.schoolInfos.filter(
       (_, i) => i !== index
@@ -494,17 +486,20 @@ const Dashboard = () => {
     educationformik.setFieldValue("schoolInfos", updatedSchools)
   }
 
-  // useEffect(() => {
-  //   educationformik.setFieldValue("educationLevels", educationLevel)
-  // }, [educationLevel])
+  const handleInputChange = (index, event) => {
+    const value = event.target.value
+    setInputValues(prev => ({
+      ...prev,
+      [index]: value,
+    }))
+    const updatedSchoolInfos = [...educationformik.values.schoolInfos]
+    updatedSchoolInfos[index] = {
+      ...updatedSchoolInfos[index],
+      majors: value.split(",").map(item => item.trim()),
+    }
 
-  // 텍스트 필드 값 변경 핸들러
-  const handleInputChange = event => {
-    setInputValue(event.target.value)
-  }
-  // 실시간 배열 추출
-  const getArrayResult = () => {
-    return inputValue.split(",").map(item => item.trim())
+    setTest(updatedSchoolInfos)
+    educationformik.setFieldValue("schoolInfos", updatedSchoolInfos)
   }
 
   const educationformik = useFormik({
@@ -516,7 +511,7 @@ const Dashboard = () => {
           location: "",
           educationLevel: 0,
           isEducationLevel: 0,
-          // majors: []
+          majors: [],
         },
       ],
     },
@@ -553,10 +548,11 @@ const Dashboard = () => {
       const userInput = {
         finalEduLevel: parseInt(values.finalEduLevel, 10),
         schoolInfos: values.schoolInfos.map(edu => ({
+          name: edu.name,
           location: edu.location,
           educationLevel: parseInt(edu.educationLevel, 10),
           isEducationLevel: parseInt(edu.isEducationLevel, 10),
-          majors: getArrayResult(),
+          majors: edu.majors,
         })),
       }
       console.log("학력 userInput", userInput)
@@ -1127,7 +1123,7 @@ const Dashboard = () => {
                                 </select>
 
                                 <label htmlFor="reasonForDivorce">
-                                  이혼 사유
+                                  결혼 여부
                                 </label>
 
                                 {marriageformik.errors.mExperience &&
@@ -1143,7 +1139,7 @@ const Dashboard = () => {
                           <Row>
                             <Col xl={12}>
                               <div className="form-floating mb-3">
-                                <input
+                                <Input
                                   type="text"
                                   name="reasonForDivorce"
                                   className="form-control"
@@ -1391,7 +1387,6 @@ const Dashboard = () => {
                       <CardBody>
                         <CardTitle tag="h4" className={"mb-4"}>
                           학력관련
-                          {/*이상형 인터뷰*/}
                         </CardTitle>
 
                         <Form onSubmit={educationformik.handleSubmit}>
@@ -1408,14 +1403,14 @@ const Dashboard = () => {
                                   <option value="">
                                     Select your education level
                                   </option>
-                                  <option value={1}>고등학교</option>
-                                  <option value={2}>대학교(2년제)</option>
-                                  <option value={3}>대학교(3년제)</option>
-                                  <option value={4}>
+                                  <option value="1">고등학교</option>
+                                  <option value="2">대학교(2년제)</option>
+                                  <option value="3">대학교(3년제)</option>
+                                  <option value="4">
                                     방송통신대학/사이버대학
                                   </option>
-                                  <option value={5}>대학교(4년제)</option>
-                                  <option value={6}>대학원</option>
+                                  <option value="5">대학교(4년제)</option>
+                                  <option value="6">대학원</option>
                                 </select>
 
                                 <label htmlFor="floatingSelectGrid">
@@ -1443,106 +1438,104 @@ const Dashboard = () => {
                             </Col>
                           </Row>
 
-                          {educationformik.values.schoolInfos.map(
-                            (edu, index) => (
-                              <div key={index}>
-                                <Row>
-                                  <Col xl={4}>
-                                    <div className="form-floating mb-3">
-                                      <input
-                                        type="text"
-                                        name={`schoolInfos[${index}].name`}
-                                        className="form-control"
-                                        placeholder="School Name"
-                                        value={edu.name}
-                                        onChange={educationformik.handleChange}
-                                      />
-                                      <label>학교 이름</label>
-                                    </div>
-                                  </Col>
+                          {educationLevel.map((edu, index) => (
+                            <div key={index}>
+                              <Row>
+                                <Col xl={4}>
+                                  <div className="form-floating mb-3">
+                                    <input
+                                      type="text"
+                                      name={`schoolInfos[${index}].name`}
+                                      className="form-control"
+                                      placeholder="School Name"
+                                      value={edu.name}
+                                      onChange={educationformik.handleChange}
+                                    />
+                                    <label>학교 이름</label>
+                                  </div>
+                                </Col>
 
-                                  <Col xl={4}>
-                                    <div className="form-floating mb-3">
-                                      <input
-                                        type="text"
-                                        name={`schoolInfos[${index}].majors`}
-                                        className="form-control"
-                                        placeholder="Majors"
-                                        // value={edu.majors}
-                                        value={inputValue}
-                                        // onChange={educationformik.handleChange}
-                                        onChange={handleInputChange}
-                                      />
-                                      {/*<p>추출된 배열: {JSON.stringify(getArrayResult())}</p>*/}
-                                      <label>전공</label>
-                                    </div>
-                                  </Col>
+                                <Col xl={4}>
+                                  <div className="form-floating mb-3">
+                                    <input
+                                      type="text"
+                                      name={`schoolInfos[${index}].majors`}
+                                      className="form-control"
+                                      placeholder="Majors"
+                                      value={inputValues[index] || ""}
+                                      onChange={e =>
+                                        handleInputChange(index, e)
+                                      }
+                                    />
+                                    {/*<p>추출된 배열: {JSON.stringify(getArrayResult())}</p>*/}
+                                    <label>전공</label>
+                                  </div>
+                                </Col>
 
-                                  <Col xl={4}>
-                                    <div className="form-floating mb-3">
-                                      <input
-                                        type="text"
-                                        name={`schoolInfos[${index}].location`}
-                                        className="form-control"
-                                        placeholder="Campus Location"
-                                        value={edu.location}
-                                        onChange={educationformik.handleChange}
-                                      />
-                                      <label>캠퍼스 위치</label>
-                                    </div>
-                                  </Col>
+                                <Col xl={4}>
+                                  <div className="form-floating mb-3">
+                                    <input
+                                      type="text"
+                                      name={`schoolInfos[${index}].location`}
+                                      className="form-control"
+                                      placeholder="Campus Location"
+                                      value={edu.location}
+                                      onChange={educationformik.handleChange}
+                                    />
+                                    <label>캠퍼스 위치</label>
+                                  </div>
+                                </Col>
 
-                                  <Col xl={5}>
-                                    <div className="form-floating mb-3">
-                                      <select
-                                        className="form-select"
-                                        name={`schoolInfos[${index}].educationLevel`}
-                                        value={edu.educationLevel}
-                                        onChange={educationformik.handleChange}
-                                      >
-                                        <option value={0}>
-                                          Select Education Type
-                                        </option>
-                                        <option value={1}>고등학교 졸업</option>
-                                        <option value={2}>대학 중퇴</option>
-                                        <option value={3}>전문대 졸업</option>
-                                      </select>
-                                      <label>학력 구분</label>
-                                    </div>
-                                  </Col>
-
-                                  <Col xl={5}>
-                                    <div className="form-floating mb-3">
-                                      <select
-                                        className="form-select"
-                                        name={`schoolInfos[${index}].isEducationLevel`}
-                                        value={edu.isEducationLevel}
-                                        onChange={educationformik.handleChange}
-                                      >
-                                        <option value={0}>
-                                          Select Graduation Status
-                                        </option>
-                                        <option value={1}>졸업</option>
-                                        <option value={2}>재학</option>
-                                        <option value={3}>자퇴</option>
-                                      </select>
-                                      <label>졸업 구분</label>
-                                    </div>
-                                  </Col>
-
-                                  <Col xl={2}>
-                                    <button
-                                      type="button"
-                                      className="btn btn-danger w-100"
-                                      onClick={() => removeSchools(index)}
+                                <Col xl={5}>
+                                  <div className="form-floating mb-3">
+                                    <select
+                                      className="form-select"
+                                      name={`schoolInfos[${index}].educationLevel`}
+                                      value={edu.educationLevel}
+                                      onChange={educationformik.handleChange}
                                     >
-                                      -<div>삭제하기</div>
-                                    </button>
-                                  </Col>
-                                </Row>
-                              </div>
-                            )
-                          )}
+                                      <option value={0}>
+                                        Select Education Type
+                                      </option>
+                                      <option value={1}>고등학교 졸업</option>
+                                      <option value={2}>대학 중퇴</option>
+                                      <option value={3}>전문대 졸업</option>
+                                    </select>
+                                    <label>학력 구분</label>
+                                  </div>
+                                </Col>
+
+                                <Col xl={5}>
+                                  <div className="form-floating mb-3">
+                                    <select
+                                      className="form-select"
+                                      name={`schoolInfos[${index}].isEducationLevel`}
+                                      value={edu.isEducationLevel}
+                                      onChange={educationformik.handleChange}
+                                    >
+                                      <option value={0}>
+                                        Select Graduation Status
+                                      </option>
+                                      <option value={1}>졸업</option>
+                                      <option value={2}>재학</option>
+                                      <option value={3}>자퇴</option>
+                                    </select>
+                                    <label>졸업 구분</label>
+                                  </div>
+                                </Col>
+
+                                <Col xl={2}>
+                                  <button
+                                    type="button"
+                                    className="btn btn-danger w-100"
+                                    onClick={() => removeSchools(index)}
+                                  >
+                                    -<div>삭제하기</div>
+                                  </button>
+                                </Col>
+                              </Row>
+                            </div>
+                          ))}
 
                           <div>
                             <button
