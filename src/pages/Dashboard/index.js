@@ -80,12 +80,49 @@ const Dashboard = () => {
     Object.keys(favoriteCategories).reduce((acc, categoryKey) => {
       const items = favoriteCategories[categoryKey].items || []
       acc[categoryKey] = items.reduce((stateAcc, item) => {
-        stateAcc[item.id] = false
+        stateAcc[item.value] = false
         return stateAcc
       }, {})
       return acc
     }, {})
   )
+  const handleToggle = (category, value) => {
+    const selectedCount = Object.values(activeStates[category]).filter(
+      active => active
+    ).length
+
+    if (selectedCount < 5 || activeStates[category][value]) {
+      setActiveStates(prevState => {
+        const newActiveStates = {
+          ...prevState,
+          [category]: {
+            ...prevState[category],
+            [value]: !prevState[category][value],
+          },
+        }
+
+        idealloveformik.setFieldValue(
+          "selectedItems",
+          Object.keys(newActiveStates).reduce((acc, categoryKey) => {
+            acc[categoryKey] = Object.keys(newActiveStates[categoryKey]).filter(
+              itemValue => newActiveStates[categoryKey][itemValue]
+            )
+            return acc
+          }, {})
+        )
+
+        return newActiveStates
+      })
+    } else {
+      toast.error("5개 이상 선택할 수 없습니다.", {
+        position: "top-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+      })
+    }
+  }
+
   const idealloveformik = useFormik({
     initialValues: {
       aaaaa: "",
@@ -115,43 +152,6 @@ const Dashboard = () => {
       console.log("이상형 인터뷰 userInput", userInput)
     },
   })
-
-  const handleToggle = (category, id) => {
-    const selectedCount = Object.values(activeStates[category]).filter(
-      active => active
-    ).length
-
-    if (selectedCount < 5 || activeStates[category][id]) {
-      setActiveStates(prevState => {
-        const newActiveStates = {
-          ...prevState,
-          [category]: {
-            ...prevState[category],
-            [id]: !prevState[category][id],
-          },
-        }
-
-        idealloveformik.setFieldValue(
-          "selectedItems",
-          Object.keys(newActiveStates).reduce((acc, categoryKey) => {
-            acc[categoryKey] = Object.keys(newActiveStates[categoryKey]).filter(
-              itemId => newActiveStates[categoryKey][itemId]
-            )
-            return acc
-          }, {})
-        )
-
-        return newActiveStates
-      })
-    } else {
-      toast.error("5개 이상 선택할 수 없습니다.", {
-        position: "top-left",
-        autoClose: 3000,
-        hideProgressBar: false,
-        draggable: true,
-      })
-    }
-  }
 
   const [selectedFiles, setselectedFiles] = useState([])
 
@@ -1895,16 +1895,16 @@ const Dashboard = () => {
                                       <div
                                         className="py-3 rounded-3 w-100 border-0 "
                                         onClick={() =>
-                                          handleToggle(categoryKey, item.id)
+                                          handleToggle(categoryKey, item.value)
                                         }
                                         style={{
                                           backgroundColor: activeStates[
                                             categoryKey
-                                          ]?.[item.id]
+                                          ]?.[item.value]
                                             ? "#556EE6"
                                             : "#F5F5F5",
                                           color: activeStates[categoryKey]?.[
-                                            item.id
+                                            item.value
                                           ]
                                             ? "white"
                                             : "black",
@@ -1915,7 +1915,9 @@ const Dashboard = () => {
                                           name={item.label}
                                           type="solid"
                                           color={
-                                            activeStates[categoryKey]?.[item.id]
+                                            activeStates[categoryKey]?.[
+                                              item.value
+                                            ]
                                               ? "white"
                                               : "gray"
                                           }
