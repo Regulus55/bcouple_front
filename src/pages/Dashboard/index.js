@@ -449,7 +449,10 @@ const Dashboard = () => {
   // 학력
   const [educationLevel, setEducationLevel] = useState([])
   const [inputValues, setInputValues] = useState({})
-
+  useEffect(() => {
+    console.log("에듀레벨ㄹㄹㄹ", educationLevel)
+    console.log("포믹의schoolInfos", educationformik.values.schoolInfos)
+  }, [educationLevel])
   const handleEducationChange = e => {
     const value = e.target.value
     educationformik.handleChange(e)
@@ -474,17 +477,18 @@ const Dashboard = () => {
   }
 
   const addSchools = () => {
-    educationformik.setFieldValue("schoolInfos", [
-      ...educationformik.values.schoolInfos,
-      {},
-    ])
+    setEducationLevel([...educationLevel, {}])
   }
+  // const [ttt, sss] = useState()
   const removeSchools = index => {
-    const updatedSchools = educationformik.values.schoolInfos.filter(
-      (_, i) => i !== index
-    )
-    educationformik.setFieldValue("schoolInfos", updatedSchools)
+    // sss(educationformik.values.schoolInfos)
+    const updatedEducationLevel = educationLevel.filter((_, i) => i !== index)
+    // educationformik.setFieldValue("schoolInfos", updatedSchools)
+    setEducationLevel(updatedEducationLevel)
   }
+  // useEffect(() => {
+  //   console.log("테테테테스트", ttt)
+  // }, [ttt])
   const handleInputChange = (index, event) => {
     const value = event.target.value
     setInputValues(prev => ({
@@ -1525,7 +1529,10 @@ const Dashboard = () => {
                                   <button
                                     type="button"
                                     className="btn btn-danger w-100"
-                                    onClick={() => removeSchools(index)}
+                                    onClick={() => {
+                                      console.log("인덱스스스스스스", index)
+                                      removeSchools(index)
+                                    }}
                                   >
                                     -<div>삭제하기</div>
                                   </button>
