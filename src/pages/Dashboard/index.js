@@ -370,7 +370,6 @@ const Dashboard = () => {
       {},
     ])
   }
-
   const removeChild = index => {
     const updatedChildren = marriageformik.values.childrenInfo.filter(
       (_, i) => i !== index
@@ -460,15 +459,20 @@ const Dashboard = () => {
       graduatedSchoolsCount = 3
     }
 
+    const currentFields = educationformik.values.schoolInfos
     const newFields = Array(graduatedSchoolsCount)
       .fill(null)
-      .map(() => ({
-        name: "",
-        location: "",
-        educationLevel: 0,
-        isEducationLevel: 0,
-        majors: [],
-      }))
+      .map((_, index) => {
+        return (
+          currentFields[index] || {
+            name: "",
+            location: "",
+            educationLevel: 0,
+            isEducationLevel: 0,
+            majors: [],
+          }
+        )
+      })
 
     educationformik.setFieldValue("schoolInfos", newFields)
   }
@@ -552,6 +556,11 @@ const Dashboard = () => {
     },
   })
 
+  useEffect(() => {
+    if (educationformik.values.schoolInfos.length === 0) {
+      educationformik.setFieldValue("finalEduLevel", "0")
+    }
+  }, [educationformik.values.schoolInfos])
   // 직업
   const jobformik = useFormik({
     initialValues: {
@@ -1393,7 +1402,7 @@ const Dashboard = () => {
                                   onChange={handleEducationChange}
                                   onBlur={educationformik.handleBlur}
                                 >
-                                  <option value="">
+                                  <option value={0}>
                                     Select your education level
                                   </option>
                                   <option value="1">고등학교</option>
@@ -1423,6 +1432,12 @@ const Dashboard = () => {
                             <Col xl={3}>
                               <button
                                 type="button"
+                                disabled={
+                                  educationformik.values.schoolInfos.length ===
+                                  0
+                                    ? true
+                                    : false
+                                }
                                 onClick={addSchools}
                                 className="btn btn-primary w-100"
                               >
