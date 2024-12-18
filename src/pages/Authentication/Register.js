@@ -17,7 +17,7 @@ import * as Yup from "yup"
 import { useFormik } from "formik"
 
 // action
-import { registerUser, apiError } from "../../store/actions"
+import { apiError } from "../../store/actions"
 
 //redux
 import { useSelector, useDispatch } from "react-redux"
@@ -27,7 +27,6 @@ import { Link, useNavigate } from "react-router-dom"
 
 // import images
 import profileImg from "../../assets/images/profile-img.png"
-import logoImg from "../../assets/images/logo.svg"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import Dropzone from "react-dropzone"
@@ -86,11 +85,11 @@ const EmailSendForm = ({ setEmail, setCheckedEmail }) => {
       }}
     >
       <div className="mb-2">
-        <Label className="form-label">Email</Label>
+        <Label className="form-label">이메일</Label>
         <Input
           name="email"
           className="form-control"
-          placeholder="Enter email"
+          placeholder="이메일"
           type="email"
           onChange={e => {
             sendformik.handleChange(e)
@@ -108,7 +107,7 @@ const EmailSendForm = ({ setEmail, setCheckedEmail }) => {
       </div>
 
       <div className="mb-2 d-grid">
-        <button className="btn btn-primary btn-block" type="submit">
+        <button className="btn btn-primary btn-block fs-5" type="submit">
           이메일로 인증코드 받기
         </button>
       </div>
@@ -176,11 +175,13 @@ const EmailCheckForm = ({ email, setCheckedEmail }) => {
       }}
     >
       <div className="mb-3">
-        <Label className="form-label">Code</Label>
+        <Label className="form-label">
+          이메일로 받은 인증코드를 입력해주세요
+        </Label>
         <Input
           name="code"
           className="form-control"
-          placeholder="Enter Code"
+          placeholder="인증코드 6자리"
           type="text"
           onChange={checkformik.handleChange}
           onBlur={checkformik.handleBlur}
@@ -196,7 +197,7 @@ const EmailCheckForm = ({ email, setCheckedEmail }) => {
 
       <div className="mb-3 d-grid">
         {/*<Col >*/}
-        <button className="btn btn-primary btn-block" type="submit">
+        <button className="btn btn-primary btn-block fs-5" type="submit">
           인증코드 인증하기
         </button>
         {/*</Col>*/}
@@ -207,57 +208,12 @@ const EmailCheckForm = ({ email, setCheckedEmail }) => {
 
 // 회원가입 폼
 const RegistForm = ({ email }) => {
-  // 이미지 업로드
-  const [selectedFiles, setSelectedFiles] = useState([])
-
-  const handleAcceptedFiles = files => {
-    const formattedFiles = files.map(file =>
-      Object.assign(file, {
-        preview: URL.createObjectURL(file),
-        formattedSize: formatBytes(file.size),
-      })
-    )
-    setSelectedFiles(formattedFiles)
-    registerformik.setFieldValue("profileImg", formattedFiles)
-  }
-
-  function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const dm = decimals < 0 ? 0 : decimals
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
-  }
-
-  const handleFileUpload = async files => {
-    const fileUrls = []
-
-    for (let file of files) {
-      try {
-        const formData = new FormData()
-        formData.append("file", file)
-        const res = await axios.post("http://localhost/api/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-
-        fileUrls.push(res.data.fileUrl)
-      } catch (e) {
-        console.error("파일 업로드 실패", e)
-      }
-    }
-
-    return fileUrls
-  }
-
-  // 제출
   const registerformik = useFormik({
     enableReinitialize: true,
     initialValues: {
       nickName: "",
       email,
       phone: "",
-      profileImg: [],
       password: "",
       passwordconfirm: "",
       consent: {
@@ -280,7 +236,6 @@ const RegistForm = ({ email }) => {
         .required("Please confirm your password")
         .oneOf([Yup.ref("password"), null], "Passwords must match"),
       phone: Yup.string().required("Please Enter Your Phone"),
-      profileImg: Yup.array().min(1, "Please Upload Your Images"),
       consent: Yup.object({
         overTwenty: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
         agreeOfTerm: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
@@ -293,20 +248,11 @@ const RegistForm = ({ email }) => {
       }),
     }),
     onSubmit: async values => {
-      const fileUrls = handleFileUpload(values.profileImg)
-
-      // const formData = new FormData()
-      // values.selectedFiles.forEach(file => {
-      //   formData.append("files", file)
-      // })
-
       const userInput = {
         email,
         nickName: values.nickName,
         userName: values.nickName,
         password: values.password,
-        profileImg: ["https://example.com/profile1.jpg"],
-        // profileImg: fileUrls,
         phone: values.phone,
         consent: values.consent,
       }
@@ -315,10 +261,10 @@ const RegistForm = ({ email }) => {
         const url = "http://localhost/api/auth/signup"
         const res = await axios.post(url, userInput)
         console.log("res", res)
-        // if (res.status === 201) {
-        //   alert("회원가입 성공")
-        //   navigate("/login")
-        // }
+        if (res.status === 201) {
+          alert("회원가입 성공")
+          navigate("/login")
+        }
       } catch (e) {
         console.log("회원가입 제출 에러", e)
       }
@@ -365,36 +311,20 @@ const RegistForm = ({ email }) => {
       className="form-horizontal p-2"
       onSubmit={registerformik.handleSubmit}
     >
-      {/* <div className="mb-3">
-        <Label className="form-label">Email</Label>
-        <Input
-          id="email"
-          name="email"
-          className="form-control"
-          placeholder={email}
-          type="email"
-          onChange={registerformik.handleChange}
-          onBlur={registerformik.handleBlur}
-          value={registerformik.values.email || ""}
-          invalid={
-            registerformik.touched.email && registerformik.errors.email
-              ? true
-              : false
-          }
-        />
-        {registerformik.touched.email && registerformik.errors.email ? (
-          <FormFeedback type="invalid">
-            {registerformik.errors.email}
-          </FormFeedback>
-        ) : null}
-      </div> */}
-
       <div className="mb-3">
-        <Label className="form-label">Nickname</Label>
+        <Label className="form-label">
+          닉네임
+          <div
+            className="text-secondary "
+            style={{ opacity: "0.5", fontSize: "0.75rem" }}
+          >
+            다른유저와 겹치지 않도록 입력해주세요. (2~20자)
+          </div>
+        </Label>
         <Input
           name="nickName"
           type="text"
-          placeholder="Enter nickname"
+          placeholder="별명 (2~20자)"
           onChange={registerformik.handleChange}
           onBlur={registerformik.handleBlur}
           value={registerformik.values.nickName || ""}
@@ -412,11 +342,19 @@ const RegistForm = ({ email }) => {
       </div>
 
       <div className="mb-3">
-        <Label className="form-label">Password</Label>
+        <Label className="form-label">
+          비밀번호
+          <div
+            className="text-secondary "
+            style={{ opacity: "0.5", fontSize: "0.75rem" }}
+          >
+            영문, 숫자를 포함한 8자 이상의 비밀번호를 입력해주세요.
+          </div>
+        </Label>
         <Input
           name="password"
           type="password"
-          placeholder="Enter Password"
+          placeholder="비밀번호"
           onChange={registerformik.handleChange}
           onBlur={registerformik.handleBlur}
           value={registerformik.values.password || ""}
@@ -434,11 +372,11 @@ const RegistForm = ({ email }) => {
       </div>
 
       <div className="mb-3">
-        <Label className="form-label">Password Confirm</Label>
+        <Label className="form-label">비밀번호 확인</Label>
         <Input
           name="passwordconfirm"
           type="password"
-          placeholder="Enter Password"
+          placeholder="비밀번호 확인"
           onChange={registerformik.handleChange}
           onBlur={registerformik.handleBlur}
           value={registerformik.values.passwordconfirm || ""}
@@ -458,11 +396,11 @@ const RegistForm = ({ email }) => {
       </div>
 
       <div className="mb-3">
-        <Label className="form-label">Phone</Label>
+        <Label className="form-label">전화번호</Label>
         <Input
           name="phone"
           type="tel"
-          placeholder="01012345678"
+          placeholder="전화번호"
           onChange={registerformik.handleChange}
           onBlur={registerformik.handleBlur}
           value={registerformik.values.phone || ""}
@@ -479,61 +417,9 @@ const RegistForm = ({ email }) => {
         ) : null}
       </div>
 
-      <label className="form-label fw-bold">Images</label>
-      <Dropzone
-        onDrop={acceptedFiles => {
-          handleAcceptedFiles(acceptedFiles) // 선택한 파일을 handleAcceptedFiles로 처리
-        }}
-      >
-        {({ getRootProps, getInputProps }) => (
-          <div className="dropzone">
-            <div className="dz-message needsclick mt-2" {...getRootProps()}>
-              <input {...getInputProps()} />
-              <div className="mb-3">
-                <i className="display-4 text-muted bx bxs-cloud-upload" />
-              </div>
-              <h4>Drop files here or click to upload.</h4>
-            </div>
-          </div>
-        )}
-      </Dropzone>
-
-      <div className="dropzone-previews mt-3" id="file-previews">
-        {selectedFiles.map((f, i) => {
-          return (
-            <Card
-              className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
-              key={i + "-file"}
-            >
-              <div className="p-2">
-                <Row className="align-items-center">
-                  <Col className="col-auto">
-                    <img
-                      data-dz-thumbnail=""
-                      height="80"
-                      className="avatar-sm rounded bg-light"
-                      alt={f.name}
-                      src={f.preview}
-                    />
-                  </Col>
-                  <Col>
-                    <Link to="#" className="text-muted font-weight-bold">
-                      {f.name}
-                    </Link>
-                    <p className="mb-0">
-                      <strong>{f.formattedSize}</strong>
-                    </p>
-                  </Col>
-                </Row>
-              </div>
-            </Card>
-          )
-        })}
-      </div>
-
       <Row>
         <Col xl={12}>
-          <label className="form-label fw-bold">Consent</label>
+          <label className="form-label fw-bold">약관동의</label>
           <div className="signup-consent p-3 border border-2 rounded">
             <div className="form-check">
               <input
@@ -546,7 +432,13 @@ const RegistForm = ({ email }) => {
                 )}
               />
               <label htmlFor="select-all" className="form-check-label">
-                전체 선택
+                전체 선택{" "}
+                <span
+                  className="text-secondary "
+                  style={{ opacity: "0.5", fontSize: "0.75rem" }}
+                >
+                  선택항목에 대한 동의 포함
+                </span>
               </label>
             </div>
 
@@ -586,8 +478,8 @@ const RegistForm = ({ email }) => {
       </Row>
 
       <div className="mt-4 d-grid">
-        <button className="btn btn-primary btn-block" type="submit">
-          Register
+        <button className="btn btn-primary btn-block fs-5" type="submit">
+          회원가입하기
         </button>
       </div>
     </Form>
@@ -645,7 +537,7 @@ const Register = props => {
                   <Row>
                     <Col className="col-7">
                       <div className="text-primary p-4">
-                        <h5 className="text-primary">Free Register</h5>
+                        <h5 className="text-primary">회원가입</h5>
                         <p>Get your free BeeCouple account now.</p>
                       </div>
                     </Col>
@@ -673,10 +565,13 @@ const Register = props => {
               </Card>
               <div className="mt-5 text-center">
                 <p>
-                  Already have an account ?{" "}
-                  <Link to="/login" className="font-weight-medium text-primary">
+                  이미 아이디가 있으신가요?{" "}
+                  <Link
+                    to="/login"
+                    className="font-weight-medium text-primary text-decoration-underline fw-bold"
+                  >
                     {" "}
-                    Login
+                    로그인
                   </Link>{" "}
                 </p>
                 <p>

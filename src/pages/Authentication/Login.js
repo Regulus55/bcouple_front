@@ -64,7 +64,7 @@ const Login = props => {
         console.log("res", res)
         if (res.status === 200) {
           localStorage.setItem("token", res.data.accessToken)
-          localStorage.setItem("authUser", JSON.stringify(res.data.user)) // 사용자 정보 저장
+          localStorage.setItem("authUser", JSON.stringify(res.data.user))
           navigate("/dashboard")
         }
       } catch (e) {
@@ -86,10 +86,6 @@ const Login = props => {
     dispatch(socialLogin(type, props.router.navigate))
   }
 
-  //for facebook and google authentication
-  // const socialResponse = type => {
-  //   signIn(type)
-  // }
   const socialInfos = [
     {
       title: "google",
@@ -107,8 +103,6 @@ const Login = props => {
       func: () => console.log("naver"),
     },
   ]
-  //handleTwitterLoginResponse
-  // const twitterResponse = e => {}
 
   return (
     <React.Fragment>
@@ -121,7 +115,7 @@ const Login = props => {
                   <Row>
                     <Col className="col-7">
                       <div className="text-primary p-4">
-                        <h5 className="text-primary">Welcome Back !</h5>
+                        <h5 className="text-primary">로그인</h5>
                         <p>Sign in to continue to BeeCouple.</p>
                       </div>
                     </Col>
@@ -158,11 +152,11 @@ const Login = props => {
                       {error ? <Alert color="danger">{error}</Alert> : null}
 
                       <div className="mb-3">
-                        <Label className="form-label">Email</Label>
+                        <Label className="form-label">이메일</Label>
                         <Input
                           name="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="이메일"
                           type="email"
                           onChange={loginFormik.handleChange}
                           onBlur={loginFormik.handleBlur}
@@ -183,12 +177,12 @@ const Login = props => {
                       </div>
 
                       <div className="mb-3">
-                        <Label className="form-label">Password</Label>
+                        <Label className="form-label">비밀번호</Label>
                         <Input
                           name="password"
                           value={loginFormik.values.password || ""}
                           type="password"
-                          placeholder="Enter Password"
+                          placeholder="비밀번호"
                           onChange={loginFormik.handleChange}
                           onBlur={loginFormik.handleBlur}
                           invalid={
@@ -216,21 +210,23 @@ const Login = props => {
                           className="form-check-label"
                           htmlFor="customControlInline"
                         >
-                          Remember me
+                          나를 기억해줘
                         </label>
                       </div>
 
                       <div className="mt-3 d-grid">
                         <button
-                          className="btn btn-primary btn-block"
+                          className="btn btn-primary btn-block fs-5"
                           type="submit"
                         >
-                          Log In
+                          로그인
                         </button>
                       </div>
 
                       <div className="mt-4 text-center">
-                        <h5 className="font-size-14 mb-3">Sign in with</h5>
+                        <h5 className="font-size-13 mb-3 text-muted">
+                          SNS계정으로 간편 로그인/회원가입
+                        </h5>
 
                         {/* <ul className="list-inline">
                           <li className="list-inline-item">
@@ -297,7 +293,7 @@ const Login = props => {
                           <div className="mt-4 text-center">
                             <Link to="/forgot-email" className="text-muted">
                               <i className="mdi mdi-lock me-1" />
-                              Forgot your email?
+                              이메일 찾기
                             </Link>
                           </div>
                         </Col>
@@ -306,7 +302,7 @@ const Login = props => {
                           <div className="mt-4 text-center">
                             <Link to="/forgot-password" className="text-muted">
                               <i className="mdi mdi-lock me-1" />
-                              Forgot your password?
+                              비밀번호 찾기
                             </Link>
                           </div>
                         </Col>
@@ -317,10 +313,13 @@ const Login = props => {
               </Card>
               <div className="mt-5 text-center">
                 <p>
-                  Don&#39;t have an account ?{" "}
-                  <Link to="/register" className="fw-medium text-primary">
+                  아직 아이디가 없으신가요?{" "}
+                  <Link
+                    to="/register"
+                    className="font-weight-medium text-primary text-decoration-underline fw-bold"
+                  >
                     {" "}
-                    Signup now{" "}
+                    회원가입
                   </Link>{" "}
                 </p>
                 <p>

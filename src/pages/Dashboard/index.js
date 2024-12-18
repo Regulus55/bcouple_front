@@ -260,8 +260,6 @@ const Dashboard = () => {
   })
 
   useEffect(() => {
-    console.log("스모킹", profileInfo?.profile?.country)
-    console.log("스모킹타입ㅂㅂㅂㅂ", typeof profileInfo?.profile?.country)
     if (profileInfo?.profile) {
       basicInfoFormik.setValues({
         birth: profileInfo.profile.birth
@@ -309,19 +307,19 @@ const Dashboard = () => {
     validationSchema: Yup.object({
       mExperience: Yup.number().required("Marriage experience is required"),
       reasonForDivorce: Yup.string().required("Reason for divorce is required"),
-      childrenInfo: Yup.array()
-        .of(
-          Yup.object().shape({
-            childrenGender: Yup.number().required(
-              "Children gender is required"
-            ),
-            birthYear: Yup.number().required("Children birth year is required"),
-            parentingStatus: Yup.number().required(
-              "Parenting status is required"
-            ),
-          })
-        )
-        .min(1, "At least one child is required"),
+      // childrenInfo: Yup.array()
+      //   .of(
+      //     Yup.object().shape({
+      //       childrenGender: Yup.number().required(
+      //         "Children gender is required"
+      //       ),
+      //       birthYear: Yup.number().required("Children birth year is required"),
+      //       parentingStatus: Yup.number().required(
+      //         "Parenting status is required"
+      //       ),
+      //     })
+      //   )
+      //   .min(1, "At least one child is required"),
     }),
     onSubmit: async values => {
       const currentYear = new Date().getFullYear()
@@ -330,12 +328,22 @@ const Dashboard = () => {
         mExperience: parseInt(values.mExperience, 10),
         reasonForDivorce: values.reasonForDivorce,
         isChild: values.childrenInfo.length === 0 ? false : true,
-        childrenInfo: values.childrenInfo.map((child, index) => ({
-          age: currentYear - values.childrenInfo[index].birthYear,
-          birthYear: parseInt(child.birthYear, 10),
-          childrenGender: parseInt(child.childrenGender, 10),
-          parentingStatus: parseInt(child.parentingStatus, 10),
-        })),
+        childrenInfo:
+          values.childrenInfo.length > 0
+            ? values.childrenInfo.map((child, index) => ({
+                age: currentYear - values.childrenInfo[index].birthYear,
+                birthYear: parseInt(child.birthYear, 10),
+                childrenGender: parseInt(child.childrenGender, 10),
+                parentingStatus: parseInt(child.parentingStatus, 10),
+              }))
+            : [
+                {
+                  age: 0,
+                  birthYear: 0,
+                  childrenGender: 0,
+                  parentingStatus: 0,
+                },
+              ],
       }
       console.log("결혼 관련 userInput", userInput)
 
@@ -347,17 +355,18 @@ const Dashboard = () => {
           },
         }
         const method =
-          profileInfo?.profile !== null && profileInfo?.profile !== undefined
+          profileInfo?.marriageInfo !== null &&
+          profileInfo?.marriageInfo !== undefined
             ? "post"
             : "put"
         const url = "http://localhost/api/marriage"
-        // const res = await axios[method](url, userInput, config)
-        // console.log("결혼 관련 res", res)
-        // if (res.status === 201) {
-        //   alert("결혼관련 정보 생성 성공")
-        // } else if (res.status === 200) {
-        //   alert("결혼관련 정보 수정 성공")
-        // }
+        const res = await axios[method](url, userInput, config)
+        console.log("결혼 관련 res", res)
+        if (res.status === 201) {
+          alert("결혼관련 정보 생성 성공")
+        } else if (res.status === 200) {
+          alert("결혼관련 정보 수정 성공")
+        }
       } catch (e) {
         console.log("결혼 관련 e", e)
       }
@@ -454,9 +463,9 @@ const Dashboard = () => {
     let graduatedSchoolsCount = 0
     if (value === "1") {
       graduatedSchoolsCount = 1
-    } else if (["2", "3", "4", "5"].includes(value)) {
+    } else if (["2", "3", "4"].includes(value)) {
       graduatedSchoolsCount = 2
-    } else if (value === "6") {
+    } else if (value === "5") {
       graduatedSchoolsCount = 3
     }
 
@@ -515,23 +524,19 @@ const Dashboard = () => {
     },
     validationSchema: Yup.object({
       finalEduLevel: Yup.string().required("Final education level is required"),
-      // schoolInfos: Yup.array()
-      //   .of(
-      //     Yup.object().shape({
-      //       name: Yup.string().required(
-      //         "School Name is required"
-      //       ),
-      //       location: Yup.string().required("School Location is required"),
-      //       educationLevel: Yup.number().required(
-      //         "EducationLevel is required"
-      //       ),
-      //       isEducationLevel: Yup.number().required(
-      //         "isEducationLevel is required"
-      //       ),
-      //       majors: Yup.string().required("majors is required"),
-      //     })
-      //   )
-      //   .min(1, "At least one child is required")
+      schoolInfos: Yup.array()
+        .of(
+          Yup.object().shape({
+            name: Yup.string().required("School Name is required"),
+            location: Yup.string().required("School Location is required"),
+            educationLevel: Yup.number().required("EducationLevel is required"),
+            isEducationLevel: Yup.number().required(
+              "isEducationLevel is required"
+            ),
+            majors: Yup.string().required("majors is required"),
+          })
+        )
+        .min(1, "At least one child is required"),
 
       // schoolInfos: values.schoolInfos.map(edu => ({
       //   name: edu.name,
@@ -1207,7 +1212,7 @@ const Dashboard = () => {
                                     : false
                                 }
                                 onClick={addChild}
-                                className="btn btn-primary w-100"
+                                className="btn btn-primary w-100 mb-3"
                               >
                                 + <div>추가하기</div>
                               </button>
@@ -1272,7 +1277,7 @@ const Dashboard = () => {
                                   <button
                                     type="button"
                                     onClick={() => removeChild(index)}
-                                    className="btn btn-danger w-100"
+                                    className="btn btn-danger w-100 mb-3"
                                   >
                                     - <div>삭제하기</div>
                                   </button>
@@ -1409,11 +1414,8 @@ const Dashboard = () => {
                                   <option value="1">고등학교</option>
                                   <option value="2">대학교(2년제)</option>
                                   <option value="3">대학교(3년제)</option>
-                                  <option value="4">
-                                    방송통신대학/사이버대학
-                                  </option>
-                                  <option value="5">대학교(4년제)</option>
-                                  <option value="6">대학원</option>
+                                  <option value="4">대학교(4년제)</option>
+                                  <option value="5">대학원</option>
                                 </select>
 
                                 <label htmlFor="floatingSelectGrid">
@@ -1509,9 +1511,7 @@ const Dashboard = () => {
                                         <option value={1}>고등학교 졸업</option>
                                         <option value={2}>대학 중퇴</option>
                                         <option value={3}>전문대 졸업</option>
-                                        <option value={4}>
-                                          방통대/사이버대학 졸업
-                                        </option>
+
                                         <option value={5}>대학교</option>
                                         <option value={6}>대학원 졸업</option>
                                       </select>
@@ -1779,6 +1779,7 @@ const Dashboard = () => {
                                   name="aaaaa"
                                   className="form-control"
                                   id="aaaaa"
+                                  rows="3"
                                   placeholder="믿음직하고 주변을 즐겁게 하는 사람"
                                   value={idealloveformik.values.aaaaa}
                                   onChange={idealloveformik.handleChange}
@@ -1804,6 +1805,7 @@ const Dashboard = () => {
                                   name="bbbbb"
                                   className="form-control"
                                   id="bbbbb"
+                                  rows="3"
                                   placeholder="주변 사람들과 잘 어울리고 사람들을 편하게 해주는 편입니다"
                                   value={idealloveformik.values.bbbbb}
                                   onChange={idealloveformik.handleChange}
@@ -1827,6 +1829,7 @@ const Dashboard = () => {
                                   name="ccccc"
                                   className="form-control"
                                   id="ccccc"
+                                  rows="3"
                                   placeholder="키가 크진 않지만 비율이 좋아서 생각보다 키가 커 보인다고 합니다"
                                   value={idealloveformik.values.ccccc}
                                   onChange={idealloveformik.handleChange}
@@ -1850,6 +1853,7 @@ const Dashboard = () => {
                                   name="ddddd"
                                   className="form-control"
                                   id="ddddd"
+                                  rows="3"
                                   placeholder="내 일만 열심히 하면 편하게 일할 수 있는 환경"
                                   value={idealloveformik.values.ddddd}
                                   onChange={idealloveformik.handleChange}
@@ -1876,6 +1880,7 @@ const Dashboard = () => {
                                   name="eeeee"
                                   className="form-control"
                                   id="eeeee"
+                                  rows="3"
                                   placeholder="지금 하고 있는 일을 더욱 발전시켜 인정받고 싶습니다"
                                   value={idealloveformik.values.eeeee}
                                   onChange={idealloveformik.handleChange}
