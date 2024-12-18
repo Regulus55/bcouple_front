@@ -446,6 +446,7 @@ const Dashboard = () => {
   // }, [profileInfo])
 
   // 학력
+
   const handleEducationChange = e => {
     const value = e.target.value
     educationformik.handleChange(e)
