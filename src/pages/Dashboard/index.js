@@ -109,12 +109,15 @@ const Dashboard = () => {
         return newActiveStates
       })
     } else {
-      toast.error("5개 이상 선택할 수 없습니다.", {
-        position: "top-left",
-        autoClose: 3000,
-        hideProgressBar: false,
-        draggable: true,
-      })
+      toast.error(
+        `${favoriteCategories[category].title} 항목은 5개 이상 선택할 수 없습니다.`,
+        {
+          position: "top-left",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+        }
+      )
     }
   }
 
@@ -1899,7 +1902,9 @@ const Dashboard = () => {
                           {Object.keys(favoriteCategories).map(categoryKey => (
                             <>
                               <Label>
-                                {favoriteCategories[categoryKey].title}
+                                {favoriteCategories[categoryKey].title} (
+                                {favoriteCategories[categoryKey].title} 항목은
+                                5개 까지만 선택 가능)
                               </Label>
                               <Row
                                 key={categoryKey}
