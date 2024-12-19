@@ -41,7 +41,7 @@ const EmailSendForm = ({ setEmail, setCheckedEmail }) => {
     initialValues: {
       email: "",
     },
-    sendformikSchema: Yup.object({
+    validationSchema: Yup.object({
       email: Yup.string().required("Please Enter Your Email"),
     }),
     onSubmit: async values => {
@@ -125,7 +125,7 @@ const EmailCheckForm = ({ email, setCheckedEmail }) => {
       email,
       code: "",
     },
-    checkformikSchema: Yup.object({
+    validationSchema: Yup.object({
       email: Yup.string().required("Please Enter Your Email"),
       code: Yup.string().required("Please Enter Code"),
     }),
@@ -208,6 +208,8 @@ const EmailCheckForm = ({ email, setCheckedEmail }) => {
 
 // 회원가입 폼
 const RegistForm = ({ email }) => {
+  const navigate = useNavigate()
+
   const registerformik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -217,14 +219,14 @@ const RegistForm = ({ email }) => {
       password: "",
       passwordconfirm: "",
       consent: {
-        overTwenty: true,
-        agreeOfTerm: true,
-        agreeOfPersonalInfo: true,
-        agreeOfMarketing: true,
-        etc: true,
+        overTwenty: false,
+        agreeOfTerm: false,
+        agreeOfPersonalInfo: false,
+        agreeOfMarketing: false,
+        etc: false,
       },
     },
-    registerformikSchema: Yup.object({
+    validationSchema: Yup.object({
       email: Yup.string()
         .email("Invalid email format")
         .required("Please enter your email"),
@@ -273,19 +275,30 @@ const RegistForm = ({ email }) => {
 
   // 전체체크
   const agreements = [
-    { id: 1, label: "14세 이상입니다(필수)", key: "overTwenty" },
-    { id: 2, label: "이용약관(필수)", key: "agreeOfTerm" },
+    {
+      id: 1,
+      label: "14세 이상입니다(필수)",
+      key: "overTwenty",
+    },
+    { id: 2, label: "이용약관(필수)", key: "agreeOfTerm", link: "naver.com" },
     {
       id: 3,
       label: "개인정보수집 및 이용동의(필수)",
       key: "agreeOfPersonalInfo",
+      link: "naver.com",
     },
     {
       id: 4,
       label: "개인정보 마케팅 활용 동의(선택)",
       key: "agreeOfMarketing",
+      link: "naver.com",
     },
-    { id: 5, label: "이벤트, 특가 알림 및 SMS 등 수신(선택)", key: "etc" },
+    {
+      id: 5,
+      label: "이벤트, 특가 알림 및 SMS 등 수신(선택)",
+      key: "etc",
+      link: "",
+    },
   ]
   const handleSingleCheck = (checked, key) => {
     registerformik.setFieldValue(`consent.${key}`, checked)
@@ -471,7 +484,10 @@ const RegistForm = ({ email }) => {
                   <FaChevronRight
                     size={18}
                     className="hover-opacity-50 cursor-pointer"
-                    onClick={() => console.log(`${item.id} 의 상세약관버튼`)}
+                    // onClick={() => navigate(`/${item.link}`)}
+                    onClick={() =>
+                      (window.location.href = `https://${item.link}`)
+                    }
                   />
                 )}
               </div>

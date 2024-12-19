@@ -70,7 +70,17 @@ const Dashboard = () => {
   const { data: profileInfo } = useProfile()
 
   const [activeTab, setActiveTab] = useState("1")
+  useEffect(() => {
+    if (
+      ["profile", "marriageInfo", "religionInfo"].every(
+        key => profileInfo?.[key] != null
+      )
+    ) {
+      setActiveTab("2")
+    }
+  }, [profileInfo])
 
+  // favorite 버튼
   const [activeStates, setActiveStates] = useState(
     Object.keys(favoriteCategories).reduce((acc, categoryKey) => {
       const items = favoriteCategories[categoryKey].items || []
@@ -360,8 +370,8 @@ const Dashboard = () => {
         const method =
           profileInfo?.marriageInfo !== null &&
           profileInfo?.marriageInfo !== undefined
-            ? "post"
-            : "put"
+            ? "put"
+            : "post"
         const url = "http://localhost/api/marriage"
         const res = await axios[method](url, userInput, config)
         console.log("결혼 관련 res", res)
@@ -388,20 +398,20 @@ const Dashboard = () => {
     )
     marriageformik.setFieldValue("childrenInfo", updatedChildren)
   }
-  // useEffect(() => {
-  //   if (profileInfo?.profile) {
-  //     marriageformik.setValues({
-  //       mExperience: profileInfo.profile.mExperience || "",
-  //       reasonForDivorce: profileInfo.profile.reasonForDivorce || "",
-  //       childrenInfo:
-  //         profileInfo.profile.childrenInfo?.map(child => ({
-  //           birthYear: child.birthYear || "",
-  //           childrenGender: child.childrenGender || "",
-  //           parentingStatus: child.parentingStatus || "",
-  //         })) || [],
-  //     })
-  //   }
-  // }, [profileInfo])
+  useEffect(() => {
+    if (profileInfo?.marriageInfo) {
+      marriageformik.setValues({
+        mExperience: profileInfo.marriageInfo.mExperience || "",
+        reasonForDivorce: profileInfo.marriageInfo.reasonForDivorce || "",
+        childrenInfo:
+          profileInfo.marriageInfo.childrenInfo?.map(child => ({
+            birthYear: child.birthYear || "",
+            childrenGender: child.childrenGender || "",
+            parentingStatus: child.parentingStatus || "",
+          })) || [],
+      })
+    }
+  }, [profileInfo])
 
   // 종교
   const religionformik = useFormik({
@@ -432,30 +442,31 @@ const Dashboard = () => {
         }
         const url = "http://localhost/api/religion"
         const method =
-          profileInfo?.profile !== null && profileInfo?.profile !== undefined
+          profileInfo?.religionInfo !== null &&
+          profileInfo?.religionInfo !== undefined
             ? "put"
             : "post"
-        // const res = await axios[method](url, userInput, config)
-        // console.log("종교 res", res)
-        // if (method === "post" && res.status === 201) {
-        //   alert("종교 내용 저장 성공")
-        // } else if (method === "put" && res.status === 200) {
-        //   alert("종교 내용 수정 성공")
-        // }
+        const res = await axios[method](url, userInput, config)
+        console.log("종교 res", res)
+        if (method === "post" && res.status === 201) {
+          alert("종교 내용 저장 성공")
+        } else if (method === "put" && res.status === 200) {
+          alert("종교 내용 수정 성공")
+        }
       } catch (e) {
         console.log("종교 error", e)
       }
     },
   })
-  // useEffect(() => {
-  //   if (profileInfo?.profile) {
-  //     religionformik.setValues({
-  //       religionName: profileInfo.religionInfo.religionName || "",
-  //       attendanceAtReligious:
-  //         profileInfo.religionInfo.attendanceAtReligious || "",
-  //     })
-  //   }
-  // }, [profileInfo])
+  useEffect(() => {
+    if (profileInfo?.religionInfo) {
+      religionformik.setValues({
+        religionName: profileInfo.religionInfo.religionName || "",
+        attendanceAtReligious:
+          profileInfo.religionInfo.attendanceAtReligious || "",
+      })
+    }
+  }, [profileInfo])
 
   // 학력
 
