@@ -29,8 +29,8 @@ import { Link, useNavigate } from "react-router-dom"
 import profileImg from "../../assets/images/profile-img.png"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import Dropzone from "react-dropzone"
 import axios from "axios"
+import { FaChevronRight } from "react-icons/fa"
 
 // 이메일보내기
 const EmailSendForm = ({ setEmail, setCheckedEmail }) => {
@@ -445,20 +445,35 @@ const RegistForm = ({ email }) => {
             <hr className="border-2" />
 
             {agreements.map(item => (
-              <div key={item.id} className="form-check mb-2">
-                <input
-                  type="checkbox"
-                  id={`agreement-${item.id}`}
-                  className="form-check-input"
-                  checked={registerformik.values.consent[item.key]}
-                  onChange={e => handleSingleCheck(e.target.checked, item.key)}
-                />
-                <label
-                  htmlFor={`agreement-${item.id}`}
-                  className="form-check-label"
-                >
-                  {item.label}
-                </label>
+              <div
+                key={item.id}
+                className="form-check mb-3 d-flex justify-content-between align-items-center"
+              >
+                <div>
+                  <input
+                    type="checkbox"
+                    id={`agreement-${item.id}`}
+                    className="form-check-input"
+                    checked={registerformik.values.consent[item.key]}
+                    onChange={e =>
+                      handleSingleCheck(e.target.checked, item.key)
+                    }
+                  />
+
+                  <label
+                    htmlFor={`agreement-${item.id}`}
+                    className="form-check-label"
+                  >
+                    {item.label}
+                  </label>
+                </div>
+                {(item.id === 2 || item.id === 3 || item.id === 4) && (
+                  <FaChevronRight
+                    size={18}
+                    className="hover-opacity-50 cursor-pointer"
+                    onClick={() => console.log(`${item.id} 의 상세약관버튼`)}
+                  />
+                )}
               </div>
             ))}
           </div>
