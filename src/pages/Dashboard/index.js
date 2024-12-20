@@ -73,7 +73,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (
       ["profile", "marriageInfo", "religionInfo"].every(
-        key => profileInfo?.[key] != null
+        key => profileInfo?.[key] !== null && profileInfo?.[key] !== undefined
       )
     ) {
       setActiveTab("2")
