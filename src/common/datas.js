@@ -1,6 +1,6 @@
 // 취미 버튼
 const favoriteCategories = {
-  hobbies: {
+  myHobbies: {
     title: "취미",
     items: [
       { id: 0, value: "공연/전시회 관람", label: "show" },
@@ -32,7 +32,7 @@ const favoriteCategories = {
     ],
   },
 
-  exercises: {
+  myExcises: {
     title: "운동",
     items: [
       { id: 0, value: "캠핑", label: "flame" },
@@ -64,7 +64,7 @@ const favoriteCategories = {
     ],
   },
 
-  interestedWithMovie: {
+  myInterestedInMovie: {
     title: "관심사 (영화)",
     items: [
       { id: 0, value: "드라마/로맨스", label: "heart" },
@@ -82,7 +82,7 @@ const favoriteCategories = {
     ],
   },
 
-  interestedWithMusic: {
+  myInterestedInMusic: {
     title: "관심사 (음악)",
     items: [
       { id: 0, value: "락앤롤", label: "speaker" },
@@ -98,7 +98,7 @@ const favoriteCategories = {
     ],
   },
 
-  interestedWithTV: {
+  myInterestedInTV: {
     title: "관심사 (TV)",
     items: [
       { id: 0, value: "시사/뉴스", label: "news" },

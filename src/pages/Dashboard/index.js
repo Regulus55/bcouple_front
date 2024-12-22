@@ -37,12 +37,12 @@ toast.configure()
 
 import useProfile from "hooks/useProfile"
 import {
-  exercises,
+  myExcises,
   favoriteCategories,
-  hobbies,
-  interestedWithMovie,
-  interestedWithMusic,
-  interestedWithTV,
+  myHobbies,
+  myInterestedInMovie,
+  myInterestedInMusic,
+  myInterestedInTV,
 } from "../../common/datas"
 
 const mbtiTypeOptionGroup = [
@@ -147,17 +147,37 @@ const Dashboard = () => {
       myWorkStrongPoint: Yup.string().required("This field is required"),
       iWantToDo: Yup.string().required("This field is required"),
     }),
-    onSubmit: values => {
+    onSubmit: async values => {
       const userInput = {
         myAppearance: values.myAppearance,
         expressOneLine: values.expressOneLine,
         characteristicsMyAppearance: values.characteristicsMyAppearance,
         myWorkStrongPoint: values.myWorkStrongPoint,
         iWantToDo: values.iWantToDo,
-        selectedItems: values.selectedItems,
+        myHobbies: values.selectedItems.myHobbies,
+        myExcises: values.selectedItems.myExcises,
+        myInterestedInTV: values.selectedItems.myInterestedInTV,
+        myInterestedInMovie: values.selectedItems.myInterestedInMovie,
+        myInterestedInMusic: values.selectedItems.myInterestedInMusic
       }
-
       console.log("이상형 인터뷰 userInput", userInput)
+
+      try{
+        const token = localStorage.getItem("token")
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        const url= "http://localhost/api/introduce"
+        const res = await axios.post(url, userInput,config)
+        console.log('취미 내용 res',res)
+        if(res.status === 201){
+          alert('취미 내용 저장 완료')
+        }
+      }catch(e){
+        console.log(e)
+      }
     },
   })
 
@@ -556,13 +576,7 @@ const Dashboard = () => {
     onSubmit: async values => {
       const userInput = {
         finalEduLevel: parseInt(values.finalEduLevel, 10),
-        schoolInfos: values.schoolInfos.map(edu => ({
-          name: edu.name,
-          location: edu.location,
-          educationLevel: parseInt(edu.educationLevel, 10),
-          isEducationLevel: parseInt(edu.isEducationLevel, 10),
-          majors: edu.majors,
-        })),
+        schoolInfos: values.schoolInfos,
       }
       console.log("학력 userInput", userInput)
 
