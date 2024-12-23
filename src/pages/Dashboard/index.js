@@ -14,7 +14,7 @@ import {
   Label,
   CardBody,
   CardTitle,
-  CardSubtitle
+  CardSubtitle,
 } from "reactstrap"
 import { Link } from "react-router-dom"
 import { useFormik } from "formik"
@@ -37,11 +37,8 @@ import "react-toastify/dist/ReactToastify.css"
 toast.configure()
 
 import useProfile from "hooks/useProfile"
-import {
-  favoriteCategories, mbtiTypeOptionGroup
-} from "../../common/datas"
+import { favoriteCategories, mbtiTypeOptionGroup } from "../../common/datas"
 import CardContainer from "../../components/Common/CardContainer"
-
 
 const Dashboard = () => {
   //meta title
@@ -89,8 +86,8 @@ const Dashboard = () => {
           ...prevState,
           [category]: {
             ...prevState[category],
-            [value]: !prevState[category][value]
-          }
+            [value]: !prevState[category][value],
+          },
         }
 
         idealloveformik.setFieldValue(
@@ -112,7 +109,7 @@ const Dashboard = () => {
           position: "top-left",
           autoClose: 3000,
           hideProgressBar: false,
-          draggable: true
+          draggable: true,
         }
       )
     }
@@ -125,7 +122,7 @@ const Dashboard = () => {
       characteristicsMyAppearance: "",
       myWorkStrongPoint: "",
       iWantToDo: "",
-      selectedItems: {}
+      selectedItems: {},
     },
     validationSchema: Yup.object({
       myAppearance: Yup.string().required("This field is required"),
@@ -134,7 +131,7 @@ const Dashboard = () => {
         "This field is required"
       ),
       myWorkStrongPoint: Yup.string().required("This field is required"),
-      iWantToDo: Yup.string().required("This field is required")
+      iWantToDo: Yup.string().required("This field is required"),
     }),
     onSubmit: async values => {
       const userInput = {
@@ -155,8 +152,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
         const url = "http://localhost/api/introduce"
         const res = await axios.post(url, userInput, config)
@@ -165,10 +162,9 @@ const Dashboard = () => {
           alert("취미 내용 저장 완료")
         }
       } catch (e) {
-      } catch (e) {
         console.log(e)
       }
-    }
+    },
   })
 
   const [selectedFiles, setselectedFiles] = useState([])
@@ -177,7 +173,7 @@ const Dashboard = () => {
     files.map(file =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-        formattedSize: formatBytes(file.size)
+        formattedSize: formatBytes(file.size),
       })
     )
     setselectedFiles(files)
@@ -208,7 +204,7 @@ const Dashboard = () => {
       mbtiType: "",
       smoking: "",
       drinking: "",
-      selfIntroduce: ""
+      selfIntroduce: "",
     },
     validationSchema: Yup.object({
       birth: Yup.date()
@@ -238,7 +234,7 @@ const Dashboard = () => {
       drinking: Yup.number()
         .required("This field is required")
         .typeError("Drinking must be a number"),
-      selfIntroduce: Yup.string().required("This field is required")
+      selfIntroduce: Yup.string().required("This field is required"),
     }),
     onSubmit: async values => {
       const currentYear = new Date().getFullYear()
@@ -260,7 +256,7 @@ const Dashboard = () => {
         mbtiType: values.mbtiType,
         drinking: parseInt(values.drinking, 10),
         smoking: values.smoking === "true" || values.smoking === true,
-        selfIntroduce: values.selfIntroduce
+        selfIntroduce: values.selfIntroduce,
       }
       console.log("기본정보 userinput", userInput)
       // console.log("기본정보 values", values)
@@ -269,8 +265,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
         const url = "http://localhost/api/profile"
         const method =
@@ -288,7 +284,7 @@ const Dashboard = () => {
       } catch (e) {
         console.log("기본정보 에러", e)
       }
-    }
+    },
   })
 
   useEffect(() => {
@@ -309,7 +305,7 @@ const Dashboard = () => {
         mbtiType: profileInfo.profile.mbtiType || "",
         smoking: profileInfo.profile.smoking.toString() || "",
         selfIntroduce: profileInfo.profile.selfIntroduce || "",
-        drinking: profileInfo.profile.drinking.toString() || ""
+        drinking: profileInfo.profile.drinking.toString() || "",
       })
     }
   }, [profileInfo])
@@ -317,15 +313,15 @@ const Dashboard = () => {
   //Floating labels forms
   const floatingformik = useFormik({
     initialValues: {
-      name: ""
+      name: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("This field is required")
+      name: Yup.string().required("This field is required"),
     }),
 
     onSubmit: values => {
       console.log("valuesssssdsssss", values)
-    }
+    },
   })
 
   // 결혼
@@ -334,11 +330,11 @@ const Dashboard = () => {
       isChild: false,
       mExperience: 0,
       reasonForDivorce: "",
-      childrenInfo: []
+      childrenInfo: [],
     },
     validationSchema: Yup.object({
       mExperience: Yup.number().required("Marriage experience is required"),
-      reasonForDivorce: Yup.string().required("Reason for divorce is required")
+      reasonForDivorce: Yup.string().required("Reason for divorce is required"),
     }),
     onSubmit: async values => {
       const currentYear = new Date().getFullYear()
@@ -350,19 +346,19 @@ const Dashboard = () => {
         childrenInfo:
           values.childrenInfo.length > 0
             ? values.childrenInfo.map((child, index) => ({
-              age: currentYear - values.childrenInfo[index].birthYear,
-              birthYear: parseInt(child.birthYear, 10),
-              childrenGender: parseInt(child.childrenGender, 10),
-              parentingStatus: parseInt(child.parentingStatus, 10)
-            }))
+                age: currentYear - values.childrenInfo[index].birthYear,
+                birthYear: parseInt(child.birthYear, 10),
+                childrenGender: parseInt(child.childrenGender, 10),
+                parentingStatus: parseInt(child.parentingStatus, 10),
+              }))
             : [
-              {
-                age: 0,
-                birthYear: 0,
-                childrenGender: 0,
-                parentingStatus: 0
-              }
-            ]
+                {
+                  age: 0,
+                  birthYear: 0,
+                  childrenGender: 0,
+                  parentingStatus: 0,
+                },
+              ],
       }
       console.log("결혼 관련 userInput", userInput)
 
@@ -370,8 +366,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
         const method =
           profileInfo?.marriageInfo !== null &&
@@ -389,13 +385,13 @@ const Dashboard = () => {
       } catch (e) {
         console.log("결혼 관련 e", e)
       }
-    }
+    },
   })
 
   const addChild = () => {
     marriageformik.setFieldValue("childrenInfo", [
       ...marriageformik.values.childrenInfo,
-      {}
+      {},
     ])
   }
   const removeChild = index => {
@@ -413,8 +409,8 @@ const Dashboard = () => {
           profileInfo.marriageInfo.childrenInfo?.map(child => ({
             birthYear: child.birthYear || "",
             childrenGender: child.childrenGender || "",
-            parentingStatus: child.parentingStatus || ""
-          })) || []
+            parentingStatus: child.parentingStatus || "",
+          })) || [],
       })
     }
   }, [profileInfo])
@@ -423,19 +419,19 @@ const Dashboard = () => {
   const religionformik = useFormik({
     initialValues: {
       religionName: 0,
-      attendanceAtReligious: 0
+      attendanceAtReligious: 0,
     },
     validationSchema: Yup.object({
       religionName: Yup.number().required("Religion name is required"),
       attendanceAtReligious: Yup.number().required(
         "Attendance status is required"
-      )
+      ),
     }),
 
     onSubmit: async values => {
       const userInput = {
         religionName: parseInt(values.religionName, 10),
-        attendanceAtReligious: parseInt(values.attendanceAtReligious, 10)
+        attendanceAtReligious: parseInt(values.attendanceAtReligious, 10),
       }
       console.log("종교 values", userInput)
 
@@ -443,8 +439,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
         const url = "http://localhost/api/religion"
         const method =
@@ -462,14 +458,14 @@ const Dashboard = () => {
       } catch (e) {
         console.log("종교 error", e)
       }
-    }
+    },
   })
   useEffect(() => {
     if (profileInfo?.religionInfo) {
       religionformik.setValues({
         religionName: profileInfo.religionInfo.religionName || "",
         attendanceAtReligious:
-          profileInfo.religionInfo.attendanceAtReligious || ""
+          profileInfo.religionInfo.attendanceAtReligious || "",
       })
     }
   }, [profileInfo])
@@ -505,7 +501,6 @@ const Dashboard = () => {
         graduatedSchoolsCount = 0 // 기본값 (필요한 경우)
     }
 
-
     const currentFields = educationformik.values.schoolInfos
     const newFields = Array(graduatedSchoolsCount)
       .fill(null)
@@ -516,7 +511,7 @@ const Dashboard = () => {
             location: "",
             educationLevel: 0,
             isEducationLevel: 0,
-            majors: []
+            majors: [],
           }
         )
       })
@@ -532,8 +527,8 @@ const Dashboard = () => {
         location: "",
         educationLevel: 0,
         isEducationLevel: 0,
-        majors: []
-      }
+        majors: [],
+      },
     ]
     educationformik.setFieldValue("schoolInfos", updatedSchoolInfos)
   }
@@ -549,7 +544,7 @@ const Dashboard = () => {
     const updatedSchoolInfos = [...educationformik.values.schoolInfos]
     updatedSchoolInfos[index] = {
       ...updatedSchoolInfos[index],
-      majors: value.split(",").map(item => item.trim())
+      majors: value.split(",").map(item => item.trim()),
     }
     educationformik.setFieldValue("schoolInfos", updatedSchoolInfos)
   }
@@ -557,10 +552,10 @@ const Dashboard = () => {
   const educationformik = useFormik({
     initialValues: {
       finalEduLevel: 0,
-      schoolInfos: []
+      schoolInfos: [],
     },
     validationSchema: Yup.object({
-      finalEduLevel: Yup.string().required("Final education level is required")
+      finalEduLevel: Yup.string().required("Final education level is required"),
       // schoolInfos: Yup.array()
       //   .of(
       //     Yup.object().shape({
@@ -579,12 +574,10 @@ const Dashboard = () => {
     onSubmit: async values => {
       const userInput = {
         finalEduLevel: parseInt(values.finalEduLevel, 10),
-        schoolInfos: values.schoolInfos
+        schoolInfos: values.schoolInfos,
       }
       console.log("학력 userInput", userInput)
 
-      try {
-        const token = localStorage.getItem("token")
       try {
         const token = localStorage.getItem("token")
         const config = {
@@ -597,14 +590,13 @@ const Dashboard = () => {
         console.log("학력 res", res)
         if (res.status === 201) {
           alert("학력 내용 저장 완료")
-        const url = "http://localhost/api/education"
-        const res = await axios.post(url, userInput, config)
-        console.log("학력 res", res)
-        if (res.status === 201) {
-          alert("학력 내용 저장 완료")
+          const url = "http://localhost/api/education"
+          const res = await axios.post(url, userInput, config)
+          console.log("학력 res", res)
+          if (res.status === 201) {
+            alert("학력 내용 저장 완료")
+          }
         }
-      } catch (e) {
-        console.log("학력error", e)
       } catch (e) {
         console.log("학력error", e)
       }
@@ -626,7 +618,7 @@ const Dashboard = () => {
       addressOfCompany: "",
       salary: 0,
       additionalIncome: 0,
-      annualIncome: 0
+      annualIncome: 0,
     },
     validationSchema: Yup.object({
       jobName: Yup.string().required("Job name is required"),
@@ -641,7 +633,7 @@ const Dashboard = () => {
         .min(0, "Salary cannot be negative"),
       annualIncome: Yup.number()
         .required("Annual income is required")
-        .min(0, "Annual income cannot be negative")
+        .min(0, "Annual income cannot be negative"),
     }),
 
     onSubmit: async values => {
@@ -658,8 +650,6 @@ const Dashboard = () => {
 
       try {
         const token = localStorage.getItem("token")
-      try {
-        const token = localStorage.getItem("token")
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -670,16 +660,16 @@ const Dashboard = () => {
         console.log("직업 res", res)
         if (res.status === 201) {
           alert("직업 내용 저장 성공")
-        const res = await axios.post(url, userInput, config)
-        console.log("직업 res", res)
-        if (res.status === 201) {
-          alert("직업 내용 저장 성공")
+          const res = await axios.post(url, userInput, config)
+          console.log("직업 res", res)
+          if (res.status === 201) {
+            alert("직업 내용 저장 성공")
+          }
         }
-      } catch (e) {
       } catch (e) {
         console.log(e)
       }
-    }
+    },
   })
 
   return (
@@ -757,7 +747,6 @@ const Dashboard = () => {
                 <TabContent activeTab={activeTab}>
                   <TabPane tabId="1" id="v-pills-confir" role="tabpanel">
                     <CardContainer title={"기본 프로필"}>
-
                       <Form onSubmit={basicInfoFormik.handleSubmit}>
                         <Row>
                           <Col xl={12}>
@@ -781,8 +770,8 @@ const Dashboard = () => {
                                 {basicInfoFormik.errors.country &&
                                 basicInfoFormik.touched.country ? (
                                   <span className="text-danger">
-                                      {basicInfoFormik.errors.country}
-                                    </span>
+                                    {basicInfoFormik.errors.country}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -808,8 +797,8 @@ const Dashboard = () => {
                               {basicInfoFormik.errors.birth &&
                               basicInfoFormik.touched.birth ? (
                                 <span className="text-danger">
-                                    {basicInfoFormik.errors.birth}
-                                  </span>
+                                  {basicInfoFormik.errors.birth}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -829,8 +818,8 @@ const Dashboard = () => {
                               {basicInfoFormik.errors.height &&
                               basicInfoFormik.touched.height ? (
                                 <span className="text-danger">
-                                    {basicInfoFormik.errors.height}
-                                  </span>
+                                  {basicInfoFormik.errors.height}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -852,8 +841,8 @@ const Dashboard = () => {
                               {basicInfoFormik.errors.weight &&
                               basicInfoFormik.touched.weight ? (
                                 <span className="text-danger">
-                                    {basicInfoFormik.errors.weight}
-                                  </span>
+                                  {basicInfoFormik.errors.weight}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -878,8 +867,8 @@ const Dashboard = () => {
                               {basicInfoFormik.errors.bornArea &&
                               basicInfoFormik.touched.bornArea ? (
                                 <span className="text-danger">
-                                    {basicInfoFormik.errors.bornArea}
-                                  </span>
+                                  {basicInfoFormik.errors.bornArea}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -902,8 +891,8 @@ const Dashboard = () => {
                               {basicInfoFormik.errors.addressOfHome &&
                               basicInfoFormik.touched.addressOfHome ? (
                                 <span className="text-danger">
-                                    {basicInfoFormik.errors.addressOfHome}
-                                  </span>
+                                  {basicInfoFormik.errors.addressOfHome}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -928,8 +917,8 @@ const Dashboard = () => {
                               {basicInfoFormik.errors.activityArea &&
                               basicInfoFormik.touched.activityArea ? (
                                 <span className="text-danger">
-                                    {basicInfoFormik.errors.activityArea}
-                                  </span>
+                                  {basicInfoFormik.errors.activityArea}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -953,15 +942,13 @@ const Dashboard = () => {
                                 <option value={3}>AB형</option>
                                 <option value={4}>O형</option>
                               </select>
-                              <label htmlFor="floatingSelectGrid">
-                                혈액형
-                              </label>
+                              <label htmlFor="floatingSelectGrid">혈액형</label>
                               <div>
                                 {basicInfoFormik.errors.bloodType &&
                                 basicInfoFormik.touched.bloodType ? (
                                   <span className="text-danger">
-                                      {basicInfoFormik.errors.bloodType}
-                                    </span>
+                                    {basicInfoFormik.errors.bloodType}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -990,8 +977,8 @@ const Dashboard = () => {
                                 {basicInfoFormik.errors.mbtiType &&
                                 basicInfoFormik.touched.mbtiType ? (
                                   <span className="text-danger">
-                                      {basicInfoFormik.errors.mbtiType}
-                                    </span>
+                                    {basicInfoFormik.errors.mbtiType}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -1023,8 +1010,8 @@ const Dashboard = () => {
                                 {basicInfoFormik.errors.drinking &&
                                 basicInfoFormik.touched.drinking ? (
                                   <span className="text-danger">
-                                      {basicInfoFormik.errors.drinking}
-                                    </span>
+                                    {basicInfoFormik.errors.drinking}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -1056,8 +1043,8 @@ const Dashboard = () => {
                                 {basicInfoFormik.errors.smoking &&
                                 basicInfoFormik.touched.smoking ? (
                                   <span className="text-danger">
-                                      {basicInfoFormik.errors.smoking}
-                                    </span>
+                                    {basicInfoFormik.errors.smoking}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -1086,8 +1073,8 @@ const Dashboard = () => {
                                 {basicInfoFormik.errors.gender &&
                                 basicInfoFormik.touched.gender ? (
                                   <span className="text-danger">
-                                      {basicInfoFormik.errors.gender}
-                                    </span>
+                                    {basicInfoFormik.errors.gender}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -1117,8 +1104,8 @@ const Dashboard = () => {
                                 {basicInfoFormik.errors.bodyType &&
                                 basicInfoFormik.touched.bodyType ? (
                                   <span className="text-danger">
-                                      {basicInfoFormik.errors.bodyType}
-                                    </span>
+                                    {basicInfoFormik.errors.bodyType}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -1128,9 +1115,7 @@ const Dashboard = () => {
                         <Row>
                           <Col xl={12}>
                             <div className="mt-3">
-                              <Label>
-                                회원님의 간략한 소개를 적어주세요.
-                              </Label>
+                              <Label>회원님의 간략한 소개를 적어주세요.</Label>
                               <Input
                                 type="textarea"
                                 name="selfIntroduce"
@@ -1185,7 +1170,6 @@ const Dashboard = () => {
                     </CardContainer>
 
                     <CardContainer title={"결혼관련"}>
-
                       <Form onSubmit={marriageformik.handleSubmit}>
                         <Row>
                           <Col xl={12}>
@@ -1212,8 +1196,8 @@ const Dashboard = () => {
                               {marriageformik.errors.mExperience &&
                               marriageformik.touched.mExperience ? (
                                 <span className="text-danger">
-                                    {marriageformik.errors.mExperience}
-                                  </span>
+                                  {marriageformik.errors.mExperience}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1235,8 +1219,8 @@ const Dashboard = () => {
                               {marriageformik.errors.reasonForDivorce &&
                               marriageformik.touched.reasonForDivorce ? (
                                 <span className="text-danger">
-                                    {marriageformik.errors.reasonForDivorce}
-                                  </span>
+                                  {marriageformik.errors.reasonForDivorce}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1249,8 +1233,7 @@ const Dashboard = () => {
                                 className="form-select"
                                 name="childrenInfo"
                                 value={
-                                  marriageformik.values.childrenInfo.length >
-                                  0
+                                  marriageformik.values.childrenInfo.length > 0
                                     ? 1
                                     : 0
                                 }
@@ -1281,8 +1264,7 @@ const Dashboard = () => {
                             <button
                               type="button"
                               disabled={
-                                marriageformik.values.childrenInfo.length ===
-                                0
+                                marriageformik.values.childrenInfo.length === 0
                                   ? true
                                   : false
                               }
@@ -1361,17 +1343,13 @@ const Dashboard = () => {
                           )
                         )}
 
-                        <button
-                          type="submit"
-                          className="btn btn-primary w-md"
-                        >
+                        <button type="submit" className="btn btn-primary w-md">
                           결혼 관련 저장
                         </button>
                       </Form>
                     </CardContainer>
 
                     <CardContainer title={"종교관련"}>
-
                       <Form onSubmit={religionformik.handleSubmit}>
                         <Row>
                           <Col xl={12}>
@@ -1399,8 +1377,8 @@ const Dashboard = () => {
                                 {religionformik.errors.religionName &&
                                 religionformik.touched.religionName ? (
                                   <span className="text-danger">
-                                      {religionformik.errors.religionName}
-                                    </span>
+                                    {religionformik.errors.religionName}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -1431,16 +1409,14 @@ const Dashboard = () => {
                                 출석 상황
                               </label>
                               <div>
-                                {religionformik.errors
-                                  .attendanceAtReligious &&
-                                religionformik.touched
-                                  .attendanceAtReligious ? (
+                                {religionformik.errors.attendanceAtReligious &&
+                                religionformik.touched.attendanceAtReligious ? (
                                   <span className="text-danger">
-                                      {
-                                        religionformik.errors
-                                          .attendanceAtReligious
-                                      }
-                                    </span>
+                                    {
+                                      religionformik.errors
+                                        .attendanceAtReligious
+                                    }
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -1461,7 +1437,6 @@ const Dashboard = () => {
 
                   <TabPane tabId="2" id="v-pills-confir" role="tabpanel">
                     <CardContainer title={"학력관련"}>
-
                       <Form onSubmit={educationformik.handleSubmit}>
                         <Row>
                           <Col xl={9}>
@@ -1490,8 +1465,8 @@ const Dashboard = () => {
                                 {educationformik.errors.finalEduLevel &&
                                 educationformik.touched.finalEduLevel ? (
                                   <span className="text-danger">
-                                      {educationformik.errors.finalEduLevel}
-                                    </span>
+                                    {educationformik.errors.finalEduLevel}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -1501,16 +1476,14 @@ const Dashboard = () => {
                             <button
                               type="button"
                               disabled={
-                                educationformik.values.schoolInfos.length ===
-                                0
+                                educationformik.values.schoolInfos.length === 0
                                   ? true
                                   : false
                               }
                               onClick={addSchools}
                               className="btn btn-primary w-100"
                             >
-                              +
-                              <div>추가하기</div>
+                              +<div>추가하기</div>
                             </button>
                           </Col>
                         </Row>
@@ -1613,8 +1586,7 @@ const Dashboard = () => {
                                       removeSchools(index)
                                     }}
                                   >
-                                    -
-                                    <div>삭제하기</div>
+                                    -<div>삭제하기</div>
                                   </button>
                                 </Col>
                               </Row>
@@ -1634,7 +1606,6 @@ const Dashboard = () => {
                     </CardContainer>
 
                     <CardContainer title={"직업관련"}>
-
                       <Form onSubmit={jobformik.handleSubmit}>
                         <Row>
                           <Col xl={12}>
@@ -1653,8 +1624,8 @@ const Dashboard = () => {
                               {jobformik.errors.jobName &&
                               jobformik.touched.jobName ? (
                                 <span className="text-danger">
-                                    {jobformik.errors.jobName}
-                                  </span>
+                                  {jobformik.errors.jobName}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1673,14 +1644,12 @@ const Dashboard = () => {
                                 onChange={jobformik.handleChange}
                                 onBlur={jobformik.handleBlur}
                               />
-                              <label htmlFor="floatingnameInput">
-                                직장명
-                              </label>
+                              <label htmlFor="floatingnameInput">직장명</label>
                               {jobformik.errors.workplace &&
                               jobformik.touched.workplace ? (
                                 <span className="text-danger">
-                                    {jobformik.errors.workplace}
-                                  </span>
+                                  {jobformik.errors.workplace}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1701,8 +1670,8 @@ const Dashboard = () => {
                               {jobformik.errors.roleAtWork &&
                               jobformik.touched.roleAtWork ? (
                                 <span className="text-danger">
-                                    {jobformik.errors.roleAtWork}
-                                  </span>
+                                  {jobformik.errors.roleAtWork}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1727,8 +1696,8 @@ const Dashboard = () => {
                               {jobformik.errors.addressOfCompany &&
                               jobformik.touched.addressOfCompany ? (
                                 <span className="text-danger">
-                                    {jobformik.errors.addressOfCompany}
-                                  </span>
+                                  {jobformik.errors.addressOfCompany}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1753,8 +1722,8 @@ const Dashboard = () => {
                               {jobformik.errors.salary &&
                               jobformik.touched.salary ? (
                                 <span className="text-danger">
-                                    {jobformik.errors.salary}
-                                  </span>
+                                  {jobformik.errors.salary}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1777,8 +1746,8 @@ const Dashboard = () => {
                               {jobformik.errors.additionalIncome &&
                               jobformik.touched.additionalIncome ? (
                                 <span className="text-danger">
-                                    {jobformik.errors.additionalIncome}
-                                  </span>
+                                  {jobformik.errors.additionalIncome}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1795,14 +1764,12 @@ const Dashboard = () => {
                                 onChange={jobformik.handleChange}
                                 onBlur={jobformik.handleBlur}
                               />
-                              <label htmlFor="floatingnameInput">
-                                총수입
-                              </label>
+                              <label htmlFor="floatingnameInput">총수입</label>
                               {jobformik.errors.annualIncome &&
                               jobformik.touched.annualIncome ? (
                                 <span className="text-danger">
-                                    {jobformik.errors.annualIncome}
-                                  </span>
+                                  {jobformik.errors.annualIncome}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1821,7 +1788,6 @@ const Dashboard = () => {
                   </TabPane>
 
                   <TabPane tabId="3" id="v-pills-confir" role="tabpanel">
-
                     <CardContainer title={"자기소개"}>
                       <Form onSubmit={idealloveformik.handleSubmit}>
                         <Row>
@@ -1846,8 +1812,8 @@ const Dashboard = () => {
                                 {idealloveformik.errors.myAppearance &&
                                 idealloveformik.touched.myAppearance ? (
                                   <span className="text-danger">
-                                      {idealloveformik.errors.myAppearance}
-                                    </span>
+                                    {idealloveformik.errors.myAppearance}
+                                  </span>
                                 ) : null}
                               </div>
                             </div>
@@ -1871,66 +1837,64 @@ const Dashboard = () => {
                               {idealloveformik.errors.expressOneLine &&
                               idealloveformik.touched.expressOneLine ? (
                                 <span className="text-danger">
-                                    {idealloveformik.errors.expressOneLine}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col xl={12}>
-                              <div className="mb-4">
-                                <Label>나의 외모 특징은 무엇인가요?</Label>
-                                <Input
-                                  type="textarea"
-                                  name="characteristicsMyAppearance"
-                                  className="form-control"
-                                  id="characteristicsMyAppearance"
-                                  rows="3"
-                                  placeholder="키가 크진 않지만 비율이 좋아서 생각보다 키가 커 보인다고 합니다"
-                                  value={
-                                    idealloveformik.values
+                                  {idealloveformik.errors.expressOneLine}
+                                </span>
+                              ) : null}
+                            </div>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col xl={12}>
+                            <div className="mb-4">
+                              <Label>나의 외모 특징은 무엇인가요?</Label>
+                              <Input
+                                type="textarea"
+                                name="characteristicsMyAppearance"
+                                className="form-control"
+                                id="characteristicsMyAppearance"
+                                rows="3"
+                                placeholder="키가 크진 않지만 비율이 좋아서 생각보다 키가 커 보인다고 합니다"
+                                value={
+                                  idealloveformik.values
+                                    .characteristicsMyAppearance
+                                }
+                                onChange={idealloveformik.handleChange}
+                                onBlur={idealloveformik.handleBlur}
+                              />
+                              {idealloveformik.errors
+                                .characteristicsMyAppearance &&
+                              idealloveformik.touched
+                                .characteristicsMyAppearance ? (
+                                <span className="text-danger">
+                                  {
+                                    idealloveformik.errors
                                       .characteristicsMyAppearance
                                   }
-                                  onChange={idealloveformik.handleChange}
-                                  onBlur={idealloveformik.handleBlur}
-                                />
-                                {idealloveformik.errors
-                                  .characteristicsMyAppearance &&
-                                idealloveformik.touched
-                                  .characteristicsMyAppearance ? (
-                                  <span className="text-danger">
-                                    {
-                                      idealloveformik.errors
-                                        .characteristicsMyAppearance
-                                    }
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col xl={12}>
-                              <div className="mb-4">
-                                <Label>지금 하는 일의 장점은 무엇인가요?</Label>
-                                <Input
-                                  type="textarea"
-                                  name="myWorkStrongPoint"
-                                  className="form-control"
-                                  id="myWorkStrongPoint"
-                                  rows="3"
-                                  placeholder="내 일만 열심히 하면 편하게 일할 수 있는 환경"
-                                  value={
-                                    idealloveformik.values.myWorkStrongPoint
-                                  }
-                                  onChange={idealloveformik.handleChange}
-                                  onBlur={idealloveformik.handleBlur}
-                                />
-                                {idealloveformik.errors.myWorkStrongPoint &&
-                                idealloveformik.touched.myWorkStrongPoint ? (
-                                  <span className="text-danger">
-                                    {idealloveformik.errors.myWorkStrongPoint}
-                                  </span>
+                                </span>
+                              ) : null}
+                            </div>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col xl={12}>
+                            <div className="mb-4">
+                              <Label>지금 하는 일의 장점은 무엇인가요?</Label>
+                              <Input
+                                type="textarea"
+                                name="myWorkStrongPoint"
+                                className="form-control"
+                                id="myWorkStrongPoint"
+                                rows="3"
+                                placeholder="내 일만 열심히 하면 편하게 일할 수 있는 환경"
+                                value={idealloveformik.values.myWorkStrongPoint}
+                                onChange={idealloveformik.handleChange}
+                                onBlur={idealloveformik.handleBlur}
+                              />
+                              {idealloveformik.errors.myWorkStrongPoint &&
+                              idealloveformik.touched.myWorkStrongPoint ? (
+                                <span className="text-danger">
+                                  {idealloveformik.errors.myWorkStrongPoint}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1939,8 +1903,7 @@ const Dashboard = () => {
                           <Col xl={12}>
                             <div className="mb-4">
                               <Label>
-                                앞으로 하고 싶은 일 (직업관, 안정성 vs.
-                                진취성)
+                                앞으로 하고 싶은 일 (직업관, 안정성 vs. 진취성)
                               </Label>
                               <Input
                                 type="textarea"
@@ -1956,8 +1919,8 @@ const Dashboard = () => {
                               {idealloveformik.errors.iWantToDo &&
                               idealloveformik.touched.iWantToDo ? (
                                 <span className="text-danger">
-                                    {idealloveformik.errors.iWantToDo}
-                                  </span>
+                                  {idealloveformik.errors.iWantToDo}
+                                </span>
                               ) : null}
                             </div>
                           </Col>
@@ -1967,8 +1930,8 @@ const Dashboard = () => {
                           <>
                             <Label>
                               {favoriteCategories[categoryKey].title} (
-                              {favoriteCategories[categoryKey].title} 항목은
-                              5개 까지만 선택 가능)
+                              {favoriteCategories[categoryKey].title} 항목은 5개
+                              까지만 선택 가능)
                             </Label>
                             <Row
                               key={categoryKey}
@@ -1985,14 +1948,14 @@ const Dashboard = () => {
                                       style={{
                                         backgroundColor: activeStates[
                                           categoryKey
-                                          ]?.[item.value]
+                                        ]?.[item.value]
                                           ? "#556EE6"
                                           : "#F5F5F5",
                                         color: activeStates[categoryKey]?.[
                                           item.value
-                                          ]
+                                        ]
                                           ? "white"
-                                          : "black"
+                                          : "black",
                                       }}
                                     >
                                       <box-icon
@@ -2002,7 +1965,7 @@ const Dashboard = () => {
                                         color={
                                           activeStates[categoryKey]?.[
                                             item.value
-                                            ]
+                                          ]
                                             ? "white"
                                             : "gray"
                                         }
@@ -2030,7 +1993,6 @@ const Dashboard = () => {
                     </CardContainer>
 
                     <CardContainer title={"이상형 인터뷰"}>
-
                       {/*<Form onSubmit={idealloveformik.handleSubmit}>*/}
                       {/*  <Row>*/}
                       {/*    <Col xl={12}>*/}
@@ -2225,7 +2187,6 @@ const Dashboard = () => {
                       {/*    </Col>*/}
                       {/*  </Row>*/}
                       {/*</Form>*/}
-
                     </CardContainer>
                   </TabPane>
 
@@ -2326,7 +2287,6 @@ const Dashboard = () => {
 
                   <TabPane tabId="5" id="v-pills-confir" role="tabpanel">
                     <CardContainer title={"증빙서류"}>
-
                       <Form onSubmit={floatingformik.handleSubmit}>
                         <Row>
                           <Col sm={12}>
@@ -2396,7 +2356,6 @@ const Dashboard = () => {
                     </CardContainer>
 
                     <CardContainer title={"증빙서류 업로드"}>
-
                       <Form onSubmit={floatingformik.handleSubmit}>
                         <Row>
                           <Col sm={12}>
@@ -2457,9 +2416,7 @@ const Dashboard = () => {
                                               {f.name}
                                             </Link>
                                             <p className="mb-0">
-                                              <strong>
-                                                {f.formattedSize}
-                                              </strong>
+                                              <strong>{f.formattedSize}</strong>
                                             </p>
                                           </Col>
                                         </Row>
