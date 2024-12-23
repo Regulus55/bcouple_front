@@ -37,12 +37,12 @@ toast.configure()
 
 import useProfile from "hooks/useProfile"
 import {
-  exercises,
+  myExcises,
   favoriteCategories,
-  hobbies,
-  interestedWithMovie,
-  interestedWithMusic,
-  interestedWithTV,
+  myHobbies,
+  myInterestedInMovie,
+  myInterestedInMusic,
+  myInterestedInTV,
 } from "../../common/datas"
 
 const mbtiTypeOptionGroup = [
@@ -141,31 +141,51 @@ const Dashboard = () => {
 
   const idealloveformik = useFormik({
     initialValues: {
-      aaaaa: "",
-      bbbbb: "",
-      ccccc: "",
-      ddddd: "",
-      eeeee: "",
+      myAppearance: "",
+      expressOneLine: "",
+      characteristicsMyAppearance: "",
+      myWorkStrongPoint: "",
+      iWantToDo: "",
       selectedItems: {},
     },
     validationSchema: Yup.object({
-      aaaaa: Yup.string().required("This field is required"),
-      bbbbb: Yup.string().required("This field is required"),
-      ccccc: Yup.string().required("This field is required"),
-      ddddd: Yup.string().required("This field is required"),
-      eeeee: Yup.string().required("This field is required"),
+      myAppearance: Yup.string().required("This field is required"),
+      expressOneLine: Yup.string().required("This field is required"),
+      characteristicsMyAppearance: Yup.string().required("This field is required"),
+      myWorkStrongPoint: Yup.string().required("This field is required"),
+      iWantToDo: Yup.string().required("This field is required"),
     }),
-    onSubmit: values => {
+    onSubmit: async values => {
       const userInput = {
-        aaaaa: values.aaaaa,
-        bbbbb: values.bbbbb,
-        ccccc: values.ccccc,
-        ddddd: values.ddddd,
-        eeeee: values.eeeee,
-        selectedItems: values.selectedItems,
+        myAppearance: values.myAppearance,
+        expressOneLine: values.expressOneLine,
+        characteristicsMyAppearance: values.characteristicsMyAppearance,
+        myWorkStrongPoint: values.myWorkStrongPoint,
+        iWantToDo: values.iWantToDo,
+        myHobbies: values.selectedItems.myHobbies,
+        myExcises: values.selectedItems.myExcises,
+        myInterestedInTV: values.selectedItems.myInterestedInTV,
+        myInterestedInMovie: values.selectedItems.myInterestedInMovie,
+        myInterestedInMusic: values.selectedItems.myInterestedInMusic
       }
-
       console.log("이상형 인터뷰 userInput", userInput)
+
+      try{
+        const token = localStorage.getItem("token")
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        const url= "http://localhost/api/introduce"
+        const res = await axios.post(url, userInput,config)
+        console.log('취미 내용 res',res)
+        if(res.status === 201){
+          alert('취미 내용 저장 완료')
+        }
+      }catch(e){
+        console.log(e)
+      }
     },
   })
 
@@ -307,7 +327,7 @@ const Dashboard = () => {
         mbtiType: profileInfo.profile.mbtiType || "",
         smoking: profileInfo.profile.smoking.toString() || "",
         selfIntroduce: profileInfo.profile.selfIntroduce || "",
-        drinking: profileInfo.profile.drinking || "",
+        drinking: profileInfo.profile.drinking.toString() || "",
       })
     }
   }, [profileInfo])
@@ -554,41 +574,45 @@ const Dashboard = () => {
     },
     validationSchema: Yup.object({
       finalEduLevel: Yup.string().required("Final education level is required"),
-      schoolInfos: Yup.array()
-        .of(
-          Yup.object().shape({
-            name: Yup.string().required("School Name is required"),
-            location: Yup.string().required("School Location is required"),
-            educationLevel: Yup.number().required("EducationLevel is required"),
-            isEducationLevel: Yup.number().required(
-              "isEducationLevel is required"
-            ),
-            majors: Yup.string().required("majors is required"),
-          })
-        )
-        .min(1, "At least one child is required"),
-
-      // schoolInfos: values.schoolInfos.map(edu => ({
-      //   name: edu.name,
-      //   location: edu.location,
-      //   educationLevel: edu.educationLevel,
-      //   isEducationLevel: edu.isEducationLevel,
-      //   majors: []
-      // }))
+      // schoolInfos: Yup.array()
+      //   .of(
+      //     Yup.object().shape({
+      //       name: Yup.string().required("School Name is required"),
+      //       location: Yup.string().required("School Location is required"),
+      //       educationLevel: Yup.number().required("EducationLevel is required"),
+      //       isEducationLevel: Yup.number().required(
+      //         "isEducationLevel is required"
+      //       ),
+      //       majors: Yup.string().required("majors is required"),
+      //     })
+      //   )
+      //   .min(1, "At least one child is required"),
     }),
 
-    onSubmit: values => {
+    onSubmit: async values => {
       const userInput = {
         finalEduLevel: parseInt(values.finalEduLevel, 10),
-        schoolInfos: values.schoolInfos.map(edu => ({
-          name: edu.name,
-          location: edu.location,
-          educationLevel: parseInt(edu.educationLevel, 10),
-          isEducationLevel: parseInt(edu.isEducationLevel, 10),
-          majors: edu.majors,
-        })),
+        schoolInfos: values.schoolInfos,
       }
       console.log("학력 userInput", userInput)
+
+      try{
+        const token = localStorage.getItem('token')
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+        const url= "http://localhost/api/education"
+        const res = await axios.post(url,userInput,config)
+        console.log('학력 res',res)
+        if(res.status === 201){
+          alert('학력 내용 저장 완료')
+        }
+      }catch(e){
+        console.log('학력error',e)
+      }
+
     },
   })
 
@@ -632,6 +656,7 @@ const Dashboard = () => {
         roleAtWork: values.roleAtWork,
         addressOfCompany: values.addressOfCompany,
         salary: values.salary,
+<<<<<<< HEAD
         // additionalIncome: values.additionalIncome,
         annualIncome: values.annualIncome,
       }
@@ -652,6 +677,27 @@ const Dashboard = () => {
         const res = await axios[method](url, userInput, config)
         console.log("직업 res", res)
       } catch (e) {
+=======
+        annualIncome: values.annualIncome,
+        additionalIncome: values.additionalIncome
+      }
+      console.log("직업 userInput", userInput)
+
+      try{
+        const token = localStorage.getItem('token')
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+        const url = "http://localhost/api/job"
+        const res = await axios.post(url, userInput,config)
+        console.log("직업 res",res)
+        if(res.status === 201){
+          alert('직업 내용 저장 성공')
+        }
+      }catch(e){
+>>>>>>> 193c3ce63d3b38513e01c5f5ef0f74c23a8f56d1
         console.log(e)
       }
     },
@@ -989,10 +1035,10 @@ const Dashboard = () => {
                                   <option defaultValue="">
                                     Open this select your Drinking Information
                                   </option>
-                                  <option value={0}>아예 안마심</option>
-                                  <option value={1}>가끔 한두잔</option>
-                                  <option value={2}>주에 한번</option>
-                                  <option value={3}>주에 두번 이상</option>
+                                  <option value="0">아예 안마심</option>
+                                  <option value="1">가끔 한두잔</option>
+                                  <option value="2">주에 한번</option>
+                                  <option value="3">주에 두번 이상</option>
                                 </select>
                                 <label htmlFor="floatingSelectGrid">
                                   음주여부
@@ -1834,20 +1880,20 @@ const Dashboard = () => {
                                 </Label>
                                 <Input
                                   type="textarea"
-                                  name="aaaaa"
+                                  name="myAppearance"
                                   className="form-control"
-                                  id="aaaaa"
+                                  id="myAppearance"
                                   rows="3"
                                   placeholder="믿음직하고 주변을 즐겁게 하는 사람"
-                                  value={idealloveformik.values.aaaaa}
+                                  value={idealloveformik.values.myAppearance}
                                   onChange={idealloveformik.handleChange}
                                   onBlur={idealloveformik.handleBlur}
                                 />
                                 <div>
-                                  {idealloveformik.errors.aaaaa &&
-                                  idealloveformik.touched.aaaaa ? (
+                                  {idealloveformik.errors.myAppearance &&
+                                  idealloveformik.touched.myAppearance ? (
                                     <span className="text-danger">
-                                      {idealloveformik.errors.aaaaa}
+                                      {idealloveformik.errors.myAppearance}
                                     </span>
                                   ) : null}
                                 </div>
@@ -1860,19 +1906,19 @@ const Dashboard = () => {
                                 <Label>나의 매력과 장점이 있다면</Label>
                                 <Input
                                   type="textarea"
-                                  name="bbbbb"
+                                  name="expressOneLine"
                                   className="form-control"
-                                  id="bbbbb"
+                                  id="expressOneLine"
                                   rows="3"
                                   placeholder="주변 사람들과 잘 어울리고 사람들을 편하게 해주는 편입니다"
-                                  value={idealloveformik.values.bbbbb}
+                                  value={idealloveformik.values.expressOneLine}
                                   onChange={idealloveformik.handleChange}
                                   onBlur={idealloveformik.handleBlur}
                                 />
-                                {idealloveformik.errors.bbbbb &&
-                                idealloveformik.touched.bbbbb ? (
+                                {idealloveformik.errors.expressOneLine &&
+                                idealloveformik.touched.expressOneLine ? (
                                   <span className="text-danger">
-                                    {idealloveformik.errors.bbbbb}
+                                    {idealloveformik.errors.expressOneLine}
                                   </span>
                                 ) : null}
                               </div>
@@ -1884,19 +1930,19 @@ const Dashboard = () => {
                                 <Label>나의 외모 특징은 무엇인가요?</Label>
                                 <Input
                                   type="textarea"
-                                  name="ccccc"
+                                  name="characteristicsMyAppearance"
                                   className="form-control"
-                                  id="ccccc"
+                                  id="characteristicsMyAppearance"
                                   rows="3"
                                   placeholder="키가 크진 않지만 비율이 좋아서 생각보다 키가 커 보인다고 합니다"
-                                  value={idealloveformik.values.ccccc}
+                                  value={idealloveformik.values.characteristicsMyAppearance}
                                   onChange={idealloveformik.handleChange}
                                   onBlur={idealloveformik.handleBlur}
                                 />
-                                {idealloveformik.errors.ccccc &&
-                                idealloveformik.touched.ccccc ? (
+                                {idealloveformik.errors.characteristicsMyAppearance &&
+                                idealloveformik.touched.characteristicsMyAppearance ? (
                                   <span className="text-danger">
-                                    {idealloveformik.errors.ccccc}
+                                    {idealloveformik.errors.characteristicsMyAppearance}
                                   </span>
                                 ) : null}
                               </div>
@@ -1908,19 +1954,19 @@ const Dashboard = () => {
                                 <Label>지금 하는 일의 장점은 무엇인가요?</Label>
                                 <Input
                                   type="textarea"
-                                  name="ddddd"
+                                  name="myWorkStrongPoint"
                                   className="form-control"
-                                  id="ddddd"
+                                  id="myWorkStrongPoint"
                                   rows="3"
                                   placeholder="내 일만 열심히 하면 편하게 일할 수 있는 환경"
-                                  value={idealloveformik.values.ddddd}
+                                  value={idealloveformik.values.myWorkStrongPoint}
                                   onChange={idealloveformik.handleChange}
                                   onBlur={idealloveformik.handleBlur}
                                 />
-                                {idealloveformik.errors.ddddd &&
-                                idealloveformik.touched.ddddd ? (
+                                {idealloveformik.errors.myWorkStrongPoint &&
+                                idealloveformik.touched.myWorkStrongPoint ? (
                                   <span className="text-danger">
-                                    {idealloveformik.errors.ddddd}
+                                    {idealloveformik.errors.myWorkStrongPoint}
                                   </span>
                                 ) : null}
                               </div>
@@ -1935,19 +1981,19 @@ const Dashboard = () => {
                                 </Label>
                                 <Input
                                   type="textarea"
-                                  name="eeeee"
+                                  name="iWantToDo"
                                   className="form-control"
-                                  id="eeeee"
+                                  id="iWantToDo"
                                   rows="3"
                                   placeholder="지금 하고 있는 일을 더욱 발전시켜 인정받고 싶습니다"
-                                  value={idealloveformik.values.eeeee}
+                                  value={idealloveformik.values.iWantToDo}
                                   onChange={idealloveformik.handleChange}
                                   onBlur={idealloveformik.handleBlur}
                                 />
-                                {idealloveformik.errors.eeeee &&
-                                idealloveformik.touched.eeeee ? (
+                                {idealloveformik.errors.iWantToDo &&
+                                idealloveformik.touched.iWantToDo ? (
                                   <span className="text-danger">
-                                    {idealloveformik.errors.eeeee}
+                                    {idealloveformik.errors.iWantToDo}
                                   </span>
                                 ) : null}
                               </div>
