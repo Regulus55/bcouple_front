@@ -111,4 +111,23 @@ const favoriteCategories = {
   },
 }
 
-export { favoriteCategories }
+const mbtiTypeOptionGroup = [
+  { label: "ENFP", value: "ENFP" },
+  { label: "ENFJ", value: "ENFJ" },
+  { label: "ENTP", value: "ENTP" },
+  { label: "ENTJ", value: "ENTJ" },
+  { label: "INFP", value: "INFP" },
+  { label: "INFJ", value: "INFJ" },
+  { label: "INTP", value: "INTP" },
+  { label: "INTJ", value: "INTJ" },
+  { label: "ISFP", value: "ISFP" },
+  { label: "ISFJ", value: "ISFJ" },
+  { label: "ISTP", value: "ISTP" },
+  { label: "ISTJ", value: "ISTJ" },
+  { label: "ESFP", value: "ESFP" },
+  { label: "ESFJ", value: "ESFJ" },
+  { label: "ESTP", value: "ESTP" },
+  { label: "ESTJ", value: "ESTJ" },
+]
+
+export { favoriteCategories,mbtiTypeOptionGroup }
