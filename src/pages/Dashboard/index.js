@@ -151,7 +151,9 @@ const Dashboard = () => {
     validationSchema: Yup.object({
       myAppearance: Yup.string().required("This field is required"),
       expressOneLine: Yup.string().required("This field is required"),
-      characteristicsMyAppearance: Yup.string().required("This field is required"),
+      characteristicsMyAppearance: Yup.string().required(
+        "This field is required"
+      ),
       myWorkStrongPoint: Yup.string().required("This field is required"),
       iWantToDo: Yup.string().required("This field is required"),
     }),
@@ -166,24 +168,24 @@ const Dashboard = () => {
         myExcises: values.selectedItems.myExcises,
         myInterestedInTV: values.selectedItems.myInterestedInTV,
         myInterestedInMovie: values.selectedItems.myInterestedInMovie,
-        myInterestedInMusic: values.selectedItems.myInterestedInMusic
+        myInterestedInMusic: values.selectedItems.myInterestedInMusic,
       }
       console.log("이상형 인터뷰 userInput", userInput)
 
-      try{
+      try {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
-        const url= "http://localhost/api/introduce"
-        const res = await axios.post(url, userInput,config)
-        console.log('취미 내용 res',res)
-        if(res.status === 201){
-          alert('취미 내용 저장 완료')
+        const url = "http://localhost/api/introduce"
+        const res = await axios.post(url, userInput, config)
+        console.log("취미 내용 res", res)
+        if (res.status === 201) {
+          alert("취미 내용 저장 완료")
         }
-      }catch(e){
+      } catch (e) {
         console.log(e)
       }
     },
@@ -596,23 +598,22 @@ const Dashboard = () => {
       }
       console.log("학력 userInput", userInput)
 
-      try{
-        const token = localStorage.getItem('token')
+      try {
+        const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
-        const url= "http://localhost/api/education"
-        const res = await axios.post(url,userInput,config)
-        console.log('학력 res',res)
-        if(res.status === 201){
-          alert('학력 내용 저장 완료')
+        const url = "http://localhost/api/education"
+        const res = await axios.post(url, userInput, config)
+        console.log("학력 res", res)
+        if (res.status === 201) {
+          alert("학력 내용 저장 완료")
         }
-      }catch(e){
-        console.log('학력error',e)
+      } catch (e) {
+        console.log("학력error", e)
       }
-
     },
   })
 
@@ -656,9 +657,8 @@ const Dashboard = () => {
         roleAtWork: values.roleAtWork,
         addressOfCompany: values.addressOfCompany,
         salary: values.salary,
-<<<<<<< HEAD
-        // additionalIncome: values.additionalIncome,
         annualIncome: values.annualIncome,
+        additionalIncome: values.additionalIncome,
       }
       console.log("직업 userInput", userInput)
 
@@ -670,34 +670,12 @@ const Dashboard = () => {
           },
         }
         const url = "http://localhost/api/job"
-        const method =
-          profileInfo?.jobInfo !== null && profileInfo?.jobInfo !== undefined
-            ? "put"
-            : "post"
-        const res = await axios[method](url, userInput, config)
+        const res = await axios.post(url, userInput, config)
         console.log("직업 res", res)
+        if (res.status === 201) {
+          alert("직업 내용 저장 성공")
+        }
       } catch (e) {
-=======
-        annualIncome: values.annualIncome,
-        additionalIncome: values.additionalIncome
-      }
-      console.log("직업 userInput", userInput)
-
-      try{
-        const token = localStorage.getItem('token')
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-        const url = "http://localhost/api/job"
-        const res = await axios.post(url, userInput,config)
-        console.log("직업 res",res)
-        if(res.status === 201){
-          alert('직업 내용 저장 성공')
-        }
-      }catch(e){
->>>>>>> 193c3ce63d3b38513e01c5f5ef0f74c23a8f56d1
         console.log(e)
       }
     },
@@ -1935,14 +1913,22 @@ const Dashboard = () => {
                                   id="characteristicsMyAppearance"
                                   rows="3"
                                   placeholder="키가 크진 않지만 비율이 좋아서 생각보다 키가 커 보인다고 합니다"
-                                  value={idealloveformik.values.characteristicsMyAppearance}
+                                  value={
+                                    idealloveformik.values
+                                      .characteristicsMyAppearance
+                                  }
                                   onChange={idealloveformik.handleChange}
                                   onBlur={idealloveformik.handleBlur}
                                 />
-                                {idealloveformik.errors.characteristicsMyAppearance &&
-                                idealloveformik.touched.characteristicsMyAppearance ? (
+                                {idealloveformik.errors
+                                  .characteristicsMyAppearance &&
+                                idealloveformik.touched
+                                  .characteristicsMyAppearance ? (
                                   <span className="text-danger">
-                                    {idealloveformik.errors.characteristicsMyAppearance}
+                                    {
+                                      idealloveformik.errors
+                                        .characteristicsMyAppearance
+                                    }
                                   </span>
                                 ) : null}
                               </div>
@@ -1959,7 +1945,9 @@ const Dashboard = () => {
                                   id="myWorkStrongPoint"
                                   rows="3"
                                   placeholder="내 일만 열심히 하면 편하게 일할 수 있는 환경"
-                                  value={idealloveformik.values.myWorkStrongPoint}
+                                  value={
+                                    idealloveformik.values.myWorkStrongPoint
+                                  }
                                   onChange={idealloveformik.handleChange}
                                   onBlur={idealloveformik.handleBlur}
                                 />
