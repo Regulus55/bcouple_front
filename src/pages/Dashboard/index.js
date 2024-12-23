@@ -72,11 +72,19 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("1")
   useEffect(() => {
     if (
-      ["profile", "marriageInfo", "religionInfo"].every(
-        key => profileInfo?.[key] !== null && profileInfo?.[key] !== undefined
+      ["profile", "marriageInfo", "religionInfo"].some(
+        key => profileInfo?.[key] === null || profileInfo?.[key] === undefined
+      )
+    ) {
+      setActiveTab("1")
+    } else if (
+      ["educationInfo", "jobInfo"].some(
+        key => profileInfo?.[key] === null || profileInfo?.[key] === undefined
       )
     ) {
       setActiveTab("2")
+    } else {
+      setActiveTab("3")
     }
   }, [profileInfo])
 
@@ -173,6 +181,15 @@ const Dashboard = () => {
     setselectedFiles(files)
   }
 
+  function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
+  }
   // 기본정보
   const basicInfoFormik = useFormik({
     initialValues: {
@@ -469,7 +486,6 @@ const Dashboard = () => {
   }, [profileInfo])
 
   // 학력
-
   const handleEducationChange = e => {
     const value = e.target.value
     educationformik.handleChange(e)
@@ -581,6 +597,7 @@ const Dashboard = () => {
       educationformik.setFieldValue("finalEduLevel", "0")
     }
   }, [educationformik.values.schoolInfos])
+
   // 직업
   const jobformik = useFormik({
     initialValues: {
@@ -589,7 +606,7 @@ const Dashboard = () => {
       roleAtWork: "",
       addressOfCompany: "",
       salary: 0,
-      additionalIncome: 0,
+      // additionalIncome: 0,
       annualIncome: 0,
     },
     validationSchema: Yup.object({
@@ -608,8 +625,35 @@ const Dashboard = () => {
         .min(0, "Annual income cannot be negative"),
     }),
 
-    onSubmit: values => {
-      console.log("직업 values", values)
+    onSubmit: async values => {
+      const userInput = {
+        jobName: values.jobName,
+        workplace: values.workplace,
+        roleAtWork: values.roleAtWork,
+        addressOfCompany: values.addressOfCompany,
+        salary: values.salary,
+        // additionalIncome: values.additionalIncome,
+        annualIncome: values.annualIncome,
+      }
+      console.log("직업 userInput", userInput)
+
+      try {
+        const token = localStorage.getItem("token")
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        const url = "http://localhost/api/job"
+        const method =
+          profileInfo?.jobInfo !== null && profileInfo?.jobInfo !== undefined
+            ? "put"
+            : "post"
+        const res = await axios[method](url, userInput, config)
+        console.log("직업 res", res)
+      } catch (e) {
+        console.log(e)
+      }
     },
   })
 
