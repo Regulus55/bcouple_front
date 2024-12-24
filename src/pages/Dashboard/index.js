@@ -498,7 +498,7 @@ const Dashboard = () => {
         graduatedSchoolsCount = 3
         break
       default:
-        graduatedSchoolsCount = 0 // 기본값 (필요한 경우)
+        graduatedSchoolsCount = 0
     }
 
     const currentFields = educationformik.values.schoolInfos
@@ -556,19 +556,19 @@ const Dashboard = () => {
     },
     validationSchema: Yup.object({
       finalEduLevel: Yup.string().required("Final education level is required"),
-      // schoolInfos: Yup.array()
-      //   .of(
-      //     Yup.object().shape({
-      //       name: Yup.string().required("School Name is required"),
-      //       location: Yup.string().required("School Location is required"),
-      //       educationLevel: Yup.number().required("EducationLevel is required"),
-      //       isEducationLevel: Yup.number().required(
-      //         "isEducationLevel is required"
-      //       ),
-      //       majors: Yup.string().required("majors is required"),
-      //     })
-      //   )
-      //   .min(1, "At least one child is required"),
+      schoolInfos: Yup.array()
+        .of(
+          Yup.object().shape({
+            name: Yup.string().required("School Name is required"),
+            location: Yup.string().required("School Location is required"),
+            educationLevel: Yup.number().required("EducationLevel is required"),
+            isEducationLevel: Yup.number().required(
+              "isEducationLevel is required"
+            ),
+            majors: Yup.string().required("majors is required"),
+          })
+        )
+        .min(1, "At least one child is required"),
     }),
 
     onSubmit: async values => {
@@ -690,7 +690,7 @@ const Dashboard = () => {
                         setActiveTab("1")
                       }}
                     >
-                      <i className="bx bxs-truck d-block check-nav-icon mt-4 mb-2" />
+                      <i className="bx bxs-user d-block check-nav-icon mt-4 mb-2" />
                       <p className="fw-bold mb-4">기본정보 / 결혼 / 종교관련</p>
                     </NavLink>
                   </NavItem>
@@ -702,7 +702,7 @@ const Dashboard = () => {
                         setActiveTab("2")
                       }}
                     >
-                      <i className="bx bx-money d-block check-nav-icon mt-4 mb-2" />
+                      <i className="bx bx-briefcase d-block check-nav-icon mt-4 mb-2" />
                       <p className="fw-bold mb-4">학력관련 / 직업 / 소득수준</p>
                     </NavLink>
                   </NavItem>
@@ -713,7 +713,7 @@ const Dashboard = () => {
                         setActiveTab("3")
                       }}
                     >
-                      <i className="bx bx-badge-check d-block check-nav-icon mt-4 mb-2" />
+                      <i className="bx bx-heart d-block check-nav-icon mt-4 mb-2" />
                       <p className="fw-bold mb-4">자기소개 / 이상형 인터뷰</p>
                     </NavLink>
                   </NavItem>
@@ -1161,7 +1161,6 @@ const Dashboard = () => {
                           <button
                             type="submit"
                             className="btn btn-primary w-md"
-                            onClick={console.log("클릭됨")}
                           >
                             기본 프로필 저장
                           </button>
@@ -1481,7 +1480,7 @@ const Dashboard = () => {
                                   : false
                               }
                               onClick={addSchools}
-                              className="btn btn-primary w-100"
+                              className="btn btn-primary w-100 mb-3"
                             >
                               +<div>추가하기</div>
                             </button>
@@ -1580,9 +1579,8 @@ const Dashboard = () => {
                                 <Col xl={2}>
                                   <button
                                     type="button"
-                                    className="btn btn-danger w-100"
+                                    className="btn btn-danger w-100 mb-3"
                                     onClick={() => {
-                                      console.log("인덱스스스스스스", index)
                                       removeSchools(index)
                                     }}
                                   >
