@@ -12,8 +12,6 @@ import {
   Card,
   Form,
   Label,
-  CardBody,
-  CardTitle,
   CardSubtitle,
 } from "reactstrap"
 import { Link } from "react-router-dom"
@@ -1027,7 +1025,12 @@ const Dashboard = () => {
                                     ? "true"
                                     : "false"
                                 }
-                                onChange={basicInfoFormik.handleChange}
+                                onChange={e =>
+                                  basicInfoFormik.setFieldValue(
+                                    "smoking",
+                                    e.target.value === "true"
+                                  )
+                                }
                                 onBlur={basicInfoFormik.handleBlur}
                               >
                                 <option defaultValue="">
@@ -2189,98 +2192,92 @@ const Dashboard = () => {
                   </TabPane>
 
                   <TabPane tabId="4" id="v-pills-confir" role="tabpanel">
-                    <Card>
-                      <CardBody>
-                        <CardTitle tag="h4" className={"mb-4"}>
-                          직업관련
-                        </CardTitle>
+                    <CardContainer title={"직업관련"}>
+                      <Form onSubmit={floatingformik.handleSubmit}>
+                        <Row>
+                          <Col xl={12}>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                name="bornArea"
+                                className="form-control"
+                                id="floatingnameInput"
+                                placeholder="bornArea"
+                                value={floatingformik.values.bornArea}
+                                onChange={floatingformik.handleChange}
+                                onBlur={floatingformik.handleBlur}
+                              />
+                              <label htmlFor="floatingnameInput">직업</label>
+                              {floatingformik.errors.bornArea &&
+                              floatingformik.touched.bornArea ? (
+                                <span className="text-danger">
+                                  {floatingformik.errors.bornArea}
+                                </span>
+                              ) : null}
+                            </div>
+                          </Col>
+                        </Row>
 
-                        <Form onSubmit={floatingformik.handleSubmit}>
-                          <Row>
-                            <Col xl={12}>
-                              <div className="form-floating mb-3">
-                                <input
-                                  type="text"
-                                  name="bornArea"
-                                  className="form-control"
-                                  id="floatingnameInput"
-                                  placeholder="bornArea"
-                                  value={floatingformik.values.bornArea}
-                                  onChange={floatingformik.handleChange}
-                                  onBlur={floatingformik.handleBlur}
-                                />
-                                <label htmlFor="floatingnameInput">직업</label>
-                                {floatingformik.errors.bornArea &&
-                                floatingformik.touched.bornArea ? (
-                                  <span className="text-danger">
-                                    {floatingformik.errors.bornArea}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
+                        <Row>
+                          <Col xl={6}>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                name="bornArea"
+                                className="form-control"
+                                id="floatingnameInput"
+                                placeholder="bornArea"
+                                value={floatingformik.values.bornArea}
+                                onChange={floatingformik.handleChange}
+                                onBlur={floatingformik.handleBlur}
+                              />
+                              <label htmlFor="floatingnameInput">
+                                연봉정보
+                              </label>
+                              {floatingformik.errors.bornArea &&
+                              floatingformik.touched.bornArea ? (
+                                <span className="text-danger">
+                                  {floatingformik.errors.bornArea}
+                                </span>
+                              ) : null}
+                            </div>
+                          </Col>
 
-                          <Row>
-                            <Col xl={6}>
-                              <div className="form-floating mb-3">
-                                <input
-                                  type="text"
-                                  name="bornArea"
-                                  className="form-control"
-                                  id="floatingnameInput"
-                                  placeholder="bornArea"
-                                  value={floatingformik.values.bornArea}
-                                  onChange={floatingformik.handleChange}
-                                  onBlur={floatingformik.handleBlur}
-                                />
-                                <label htmlFor="floatingnameInput">
-                                  연봉정보
-                                </label>
-                                {floatingformik.errors.bornArea &&
-                                floatingformik.touched.bornArea ? (
-                                  <span className="text-danger">
-                                    {floatingformik.errors.bornArea}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
+                          <Col xl={6}>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                name="bornArea"
+                                className="form-control"
+                                id="floatingnameInput"
+                                placeholder="bornArea"
+                                value={floatingformik.values.bornArea}
+                                onChange={floatingformik.handleChange}
+                                onBlur={floatingformik.handleBlur}
+                              />
+                              <label htmlFor="floatingnameInput">
+                                부가수입
+                              </label>
+                              {floatingformik.errors.bornArea &&
+                              floatingformik.touched.bornArea ? (
+                                <span className="text-danger">
+                                  {floatingformik.errors.bornArea}
+                                </span>
+                              ) : null}
+                            </div>
+                          </Col>
+                        </Row>
 
-                            <Col xl={6}>
-                              <div className="form-floating mb-3">
-                                <input
-                                  type="text"
-                                  name="bornArea"
-                                  className="form-control"
-                                  id="floatingnameInput"
-                                  placeholder="bornArea"
-                                  value={floatingformik.values.bornArea}
-                                  onChange={floatingformik.handleChange}
-                                  onBlur={floatingformik.handleBlur}
-                                />
-                                <label htmlFor="floatingnameInput">
-                                  부가수입
-                                </label>
-                                {floatingformik.errors.bornArea &&
-                                floatingformik.touched.bornArea ? (
-                                  <span className="text-danger">
-                                    {floatingformik.errors.bornArea}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-
-                          <div className={"mt-3"}>
-                            <button
-                              type="submit"
-                              className="btn btn-primary w-md"
-                            >
-                              직업 / 연소득관련 저장
-                            </button>
-                          </div>
-                        </Form>
-                      </CardBody>
-                    </Card>
+                        <div className={"mt-3"}>
+                          <button
+                            type="submit"
+                            className="btn btn-primary w-md"
+                          >
+                            직업 / 연소득관련 저장
+                          </button>
+                        </div>
+                      </Form>
+                    </CardContainer>
                   </TabPane>
 
                   <TabPane tabId="5" id="v-pills-confir" role="tabpanel">
