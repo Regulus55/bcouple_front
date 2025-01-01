@@ -1,17 +1,17 @@
 
 services:
-  beecouple_nginx:
-    container_name: beecouple_nginx
-    image: nginx:stable-alpine
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/templates:/etc/nginx/templates
-    ports:
-      - "80:80"
-    depends_on:
-      - beecouple_frontend
-    networks:
-      - beecouple-network
+#  beecouple_nginx:
+#    container_name: beecouple_nginx
+#    image: nginx:stable-alpine
+#    volumes:
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./nginx/templates:/etc/nginx/templates
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - beecouple_frontend
+#    networks:
+#      - beecouple-network
 
   beecouple_frontend:
     container_name: beecouple_frontend
@@ -25,10 +25,10 @@ services:
     stdin_open: true
     tty: true
     networks:
-      - beecouple-network
+      - hakjoon-network
 
 
 
 networks:
-  beecouple-network:
+  hakjoon-network:
     driver: bridge
