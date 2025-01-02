@@ -12,7 +12,7 @@ import {
   Card,
   Form,
   Label,
-  CardSubtitle,
+  CardSubtitle
 } from "reactstrap"
 import { Link } from "react-router-dom"
 import { useFormik } from "formik"
@@ -84,8 +84,8 @@ const Dashboard = () => {
           ...prevState,
           [category]: {
             ...prevState[category],
-            [value]: !prevState[category][value],
-          },
+            [value]: !prevState[category][value]
+          }
         }
 
         idealloveformik.setFieldValue(
@@ -107,7 +107,7 @@ const Dashboard = () => {
           position: "top-left",
           autoClose: 3000,
           hideProgressBar: false,
-          draggable: true,
+          draggable: true
         }
       )
     }
@@ -120,7 +120,7 @@ const Dashboard = () => {
       characteristicsMyAppearance: "",
       myWorkStrongPoint: "",
       iWantToDo: "",
-      selectedItems: {},
+      selectedItems: {}
     },
     validationSchema: Yup.object({
       myAppearance: Yup.string().required("This field is required"),
@@ -129,7 +129,7 @@ const Dashboard = () => {
         "This field is required"
       ),
       myWorkStrongPoint: Yup.string().required("This field is required"),
-      iWantToDo: Yup.string().required("This field is required"),
+      iWantToDo: Yup.string().required("This field is required")
     }),
     onSubmit: async values => {
       const userInput = {
@@ -142,7 +142,7 @@ const Dashboard = () => {
         myExcises: values.selectedItems.myExcises,
         myInterestedInTV: values.selectedItems.myInterestedInTV,
         myInterestedInMovie: values.selectedItems.myInterestedInMovie,
-        myInterestedInMusic: values.selectedItems.myInterestedInMusic,
+        myInterestedInMusic: values.selectedItems.myInterestedInMusic
       }
       console.log("이상형 인터뷰 userInput", userInput)
 
@@ -150,8 +150,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
         const url = "http://localhost/api/introduce"
         const res = await axios.post(url, userInput, config)
@@ -162,7 +162,7 @@ const Dashboard = () => {
       } catch (e) {
         console.log(e)
       }
-    },
+    }
   })
 
   const [selectedFiles, setselectedFiles] = useState([])
@@ -171,10 +171,10 @@ const Dashboard = () => {
     files.map(file =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-        formattedSize: formatBytes(file.size),
+        formattedSize: formatBytes(file.size)
       })
     )
-    setselectedFiles(files)
+    files.length < 6 ? setselectedFiles(files) : alert("파일은 5개까지만 등록할수 있습니다.")
   }
 
   function formatBytes(bytes, decimals = 2) {
@@ -186,6 +186,7 @@ const Dashboard = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
+
   // 기본정보
   const basicInfoFormik = useFormik({
     initialValues: {
@@ -202,7 +203,7 @@ const Dashboard = () => {
       mbtiType: "",
       smoking: "",
       drinking: "",
-      selfIntroduce: "",
+      selfIntroduce: ""
     },
     validationSchema: Yup.object({
       birth: Yup.date()
@@ -232,7 +233,7 @@ const Dashboard = () => {
       drinking: Yup.number()
         .required("This field is required")
         .typeError("Drinking must be a number"),
-      selfIntroduce: Yup.string().required("This field is required"),
+      selfIntroduce: Yup.string().required("This field is required")
     }),
     onSubmit: async values => {
       const currentYear = new Date().getFullYear()
@@ -254,7 +255,7 @@ const Dashboard = () => {
         mbtiType: values.mbtiType,
         drinking: parseInt(values.drinking, 10),
         smoking: values.smoking === "true" || values.smoking === true,
-        selfIntroduce: values.selfIntroduce,
+        selfIntroduce: values.selfIntroduce
       }
       console.log("기본정보 userinput", userInput)
       // console.log("기본정보 values", values)
@@ -263,8 +264,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
         const url = "http://localhost/api/profile"
         const method =
@@ -282,7 +283,7 @@ const Dashboard = () => {
       } catch (e) {
         console.log("기본정보 에러", e)
       }
-    },
+    }
   })
 
   useEffect(() => {
@@ -303,7 +304,7 @@ const Dashboard = () => {
         mbtiType: profileInfo.profile.mbtiType || "",
         smoking: profileInfo.profile.smoking.toString() || "",
         selfIntroduce: profileInfo.profile.selfIntroduce || "",
-        drinking: profileInfo.profile.drinking.toString() || "",
+        drinking: profileInfo.profile.drinking.toString() || ""
       })
     }
   }, [profileInfo])
@@ -311,15 +312,15 @@ const Dashboard = () => {
   //Floating labels forms
   const floatingformik = useFormik({
     initialValues: {
-      name: "",
+      name: ""
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("This field is required"),
+      name: Yup.string().required("This field is required")
     }),
 
     onSubmit: values => {
       console.log("valuesssssdsssss", values)
-    },
+    }
   })
 
   // 결혼
@@ -328,11 +329,11 @@ const Dashboard = () => {
       isChild: false,
       mExperience: 0,
       reasonForDivorce: "",
-      childrenInfo: [],
+      childrenInfo: []
     },
     validationSchema: Yup.object({
       mExperience: Yup.number().required("Marriage experience is required"),
-      reasonForDivorce: Yup.string().required("Reason for divorce is required"),
+      reasonForDivorce: Yup.string().required("Reason for divorce is required")
     }),
     onSubmit: async values => {
       const currentYear = new Date().getFullYear()
@@ -344,19 +345,19 @@ const Dashboard = () => {
         childrenInfo:
           values.childrenInfo.length > 0
             ? values.childrenInfo.map((child, index) => ({
-                age: currentYear - values.childrenInfo[index].birthYear,
-                birthYear: parseInt(child.birthYear, 10),
-                childrenGender: parseInt(child.childrenGender, 10),
-                parentingStatus: parseInt(child.parentingStatus, 10),
-              }))
+              age: currentYear - values.childrenInfo[index].birthYear,
+              birthYear: parseInt(child.birthYear, 10),
+              childrenGender: parseInt(child.childrenGender, 10),
+              parentingStatus: parseInt(child.parentingStatus, 10)
+            }))
             : [
-                {
-                  age: 0,
-                  birthYear: 0,
-                  childrenGender: 0,
-                  parentingStatus: 0,
-                },
-              ],
+              {
+                age: 0,
+                birthYear: 0,
+                childrenGender: 0,
+                parentingStatus: 0
+              }
+            ]
       }
       console.log("결혼 관련 userInput", userInput)
 
@@ -364,8 +365,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
         const method =
           profileInfo?.marriageInfo !== null &&
@@ -383,13 +384,13 @@ const Dashboard = () => {
       } catch (e) {
         console.log("결혼 관련 e", e)
       }
-    },
+    }
   })
 
   const addChild = () => {
     marriageformik.setFieldValue("childrenInfo", [
       ...marriageformik.values.childrenInfo,
-      {},
+      {}
     ])
   }
   const removeChild = index => {
@@ -407,8 +408,8 @@ const Dashboard = () => {
           profileInfo.marriageInfo.childrenInfo?.map(child => ({
             birthYear: child.birthYear || "",
             childrenGender: child.childrenGender || "",
-            parentingStatus: child.parentingStatus || "",
-          })) || [],
+            parentingStatus: child.parentingStatus || ""
+          })) || []
       })
     }
   }, [profileInfo])
@@ -417,19 +418,19 @@ const Dashboard = () => {
   const religionformik = useFormik({
     initialValues: {
       religionName: 0,
-      attendanceAtReligious: 0,
+      attendanceAtReligious: 0
     },
     validationSchema: Yup.object({
       religionName: Yup.number().required("Religion name is required"),
       attendanceAtReligious: Yup.number().required(
         "Attendance status is required"
-      ),
+      )
     }),
 
     onSubmit: async values => {
       const userInput = {
         religionName: parseInt(values.religionName, 10),
-        attendanceAtReligious: parseInt(values.attendanceAtReligious, 10),
+        attendanceAtReligious: parseInt(values.attendanceAtReligious, 10)
       }
       console.log("종교 values", userInput)
 
@@ -437,8 +438,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
         const url = "http://localhost/api/religion"
         const method =
@@ -456,14 +457,14 @@ const Dashboard = () => {
       } catch (e) {
         console.log("종교 error", e)
       }
-    },
+    }
   })
   useEffect(() => {
     if (profileInfo?.religionInfo) {
       religionformik.setValues({
         religionName: profileInfo.religionInfo.religionName || "",
         attendanceAtReligious:
-          profileInfo.religionInfo.attendanceAtReligious || "",
+          profileInfo.religionInfo.attendanceAtReligious || ""
       })
     }
   }, [profileInfo])
@@ -509,7 +510,7 @@ const Dashboard = () => {
             location: "",
             educationLevel: 0,
             isEducationLevel: 0,
-            majors: [],
+            majors: []
           }
         )
       })
@@ -525,8 +526,8 @@ const Dashboard = () => {
         location: "",
         educationLevel: 0,
         isEducationLevel: 0,
-        majors: [],
-      },
+        majors: []
+      }
     ]
     educationformik.setFieldValue("schoolInfos", updatedSchoolInfos)
   }
@@ -542,7 +543,7 @@ const Dashboard = () => {
     const updatedSchoolInfos = [...educationformik.values.schoolInfos]
     updatedSchoolInfos[index] = {
       ...updatedSchoolInfos[index],
-      majors: value.split(",").map(item => item.trim()),
+      majors: value.split(",").map(item => item.trim())
     }
     educationformik.setFieldValue("schoolInfos", updatedSchoolInfos)
   }
@@ -550,7 +551,7 @@ const Dashboard = () => {
   const educationformik = useFormik({
     initialValues: {
       finalEduLevel: 0,
-      schoolInfos: [],
+      schoolInfos: []
     },
     validationSchema: Yup.object({
       finalEduLevel: Yup.string().required("Final education level is required"),
@@ -563,16 +564,16 @@ const Dashboard = () => {
             isEducationLevel: Yup.number().required(
               "isEducationLevel is required"
             ),
-            majors: Yup.string().required("majors is required"),
+            majors: Yup.string().required("majors is required")
           })
         )
-        .min(1, "At least one child is required"),
+        .min(1, "At least one child is required")
     }),
 
     onSubmit: async values => {
       const userInput = {
         finalEduLevel: parseInt(values.finalEduLevel, 10),
-        schoolInfos: values.schoolInfos,
+        schoolInfos: values.schoolInfos
       }
       console.log("학력 userInput", userInput)
 
@@ -580,8 +581,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
         const url = "http://localhost/api/education"
         const res = await axios.post(url, userInput, config)
@@ -598,7 +599,7 @@ const Dashboard = () => {
       } catch (e) {
         console.log("학력error", e)
       }
-    },
+    }
   })
 
   useEffect(() => {
@@ -616,7 +617,7 @@ const Dashboard = () => {
       addressOfCompany: "",
       salary: 0,
       additionalIncome: 0,
-      annualIncome: 0,
+      annualIncome: 0
     },
     validationSchema: Yup.object({
       jobName: Yup.string().required("Job name is required"),
@@ -631,7 +632,7 @@ const Dashboard = () => {
         .min(0, "Salary cannot be negative"),
       annualIncome: Yup.number()
         .required("Annual income is required")
-        .min(0, "Annual income cannot be negative"),
+        .min(0, "Annual income cannot be negative")
     }),
 
     onSubmit: async values => {
@@ -642,7 +643,7 @@ const Dashboard = () => {
         addressOfCompany: values.addressOfCompany,
         salary: values.salary,
         annualIncome: values.annualIncome,
-        additionalIncome: values.additionalIncome,
+        additionalIncome: values.additionalIncome
       }
       console.log("직업 userInput", userInput)
 
@@ -650,8 +651,8 @@ const Dashboard = () => {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
         const url = "http://localhost/api/job"
         const res = await axios.post(url, userInput, config)
@@ -667,9 +668,54 @@ const Dashboard = () => {
       } catch (e) {
         console.log(e)
       }
-    },
+    }
   })
 
+  const [schoolPapers, setSchoolPapers] = useState([])
+
+  function handleSchoolFiles(files) {
+    files.map(file =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size),
+      })
+    )
+    setSchoolPapers(files)
+  }
+
+  /**
+   * Formats the size
+   */
+  function formatSchoolBytes(bytes, decimals = 2) {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
+  }
+
+  const certificateformik = useFormik({
+    initialValues: {
+      schoolfiles: ""
+
+    },
+    validationSchema: Yup.object({
+
+      workfile: Yup.string().required("This field is required")
+
+    }),
+    onSubmit: async values => {
+
+      const userInput = {
+        schoolfiles: values.workfile
+      }
+      console.log("기본정보 userinput", userInput)
+
+
+    }
+  })
   return (
     <React.Fragment>
       <div className="page-content">
@@ -1485,7 +1531,8 @@ const Dashboard = () => {
                               onClick={addSchools}
                               className="btn btn-primary w-100 mb-3"
                             >
-                              +<div>추가하기</div>
+                              +
+                              <div>추가하기</div>
                             </button>
                           </Col>
                         </Row>
@@ -1587,7 +1634,8 @@ const Dashboard = () => {
                                       removeSchools(index)
                                     }}
                                   >
-                                    -<div>삭제하기</div>
+                                    -
+                                    <div>삭제하기</div>
                                   </button>
                                 </Col>
                               </Row>
@@ -1859,7 +1907,8 @@ const Dashboard = () => {
                                   idealloveformik.values
                                     .characteristicsMyAppearance
                                 }
-                                onChange={idealloveformik.handleChange}
+
+
                                 onBlur={idealloveformik.handleBlur}
                               />
                               {idealloveformik.errors
@@ -1949,14 +1998,14 @@ const Dashboard = () => {
                                       style={{
                                         backgroundColor: activeStates[
                                           categoryKey
-                                        ]?.[item.value]
+                                          ]?.[item.value]
                                           ? "#556EE6"
                                           : "#F5F5F5",
                                         color: activeStates[categoryKey]?.[
                                           item.value
-                                        ]
+                                          ]
                                           ? "white"
-                                          : "black",
+                                          : "black"
                                       }}
                                     >
                                       <box-icon
@@ -1966,7 +2015,7 @@ const Dashboard = () => {
                                         color={
                                           activeStates[categoryKey]?.[
                                             item.value
-                                          ]
+                                            ]
                                             ? "white"
                                             : "gray"
                                         }
@@ -2282,44 +2331,54 @@ const Dashboard = () => {
 
                   <TabPane tabId="5" id="v-pills-confir" role="tabpanel">
                     <CardContainer title={"증빙서류"}>
-                      <Form onSubmit={floatingformik.handleSubmit}>
+                      <Form onSubmit={certificateformik.handleSubmit}>
+                        <Row>
+                          <Col sm={12}>
+                            <div>
+                              <Label
+                                htmlFor="formFileLg"
+                                className="form-label"
+                              >
+                                혼인증명서 (필수)
+                              </Label>
+                              <Input
+                                className="form-control form-control-lg"
+                                id="formFileLg"
+                                type="file"
+                              />
+                            </div>
+                          </Col>
+                        </Row>
+
                         <Row>
                           <Col sm={12}>
                             <div className="mt-4">
-                              <div>
-                                <Label
-                                  htmlFor="formFileLg"
-                                  className="form-label"
-                                >
-                                  혼인증명서 (필수)
-                                </Label>
+                              <Label
+                                htmlFor="formFileLg"
+                                className="form-label"
+                              >
+                                최종학력 졸업증명서 (필수)
+                              </Label>
+                              <div className="input-group">
                                 <Input
-                                  className="form-control form-control-lg"
-                                  id="formFileLg"
                                   type="file"
+                                  name='schoolfiles'
+                                  value={certificateformik.values.schoolfiles}
+                                  className="form-control form-control-lg"
+                                  id="inputGroupFile04"
+                                  aria-describedby="inputGroupFileAddon04"
+                                  aria-label="Upload"
                                 />
+                                <button className="btn btn-primary" type="button" id="inputGroupFileAddon04"
+                                        disabled="true">추가하기
+                                </button>
                               </div>
+
                             </div>
                           </Col>
+                        </Row>
 
-                          <Col sm={12}>
-                            <div className="mt-4">
-                              <div>
-                                <Label
-                                  htmlFor="formFileLg"
-                                  className="form-label"
-                                >
-                                  최종학력 졸업증명서 (필수)
-                                </Label>
-                                <Input
-                                  className="form-control form-control-lg"
-                                  id="formFileLg"
-                                  type="file"
-                                />
-                              </div>
-                            </div>
-                          </Col>
-
+                        <Row>
                           <Col sm={12}>
                             <div className="mt-4">
                               <div>
@@ -2332,6 +2391,8 @@ const Dashboard = () => {
                                 <Input
                                   className="form-control form-control-lg"
                                   id="formFileLg"
+                                  name="workfile"
+                                  value={certificateformik.values.workfile}
                                   type="file"
                                 />
                               </div>
@@ -2350,14 +2411,14 @@ const Dashboard = () => {
                       </Form>
                     </CardContainer>
 
-                    <CardContainer title={"증빙서류 업로드"}>
+                    <CardContainer title={"프로필 이미지 업로드"}>
                       <Form onSubmit={floatingformik.handleSubmit}>
                         <Row>
                           <Col sm={12}>
                             <CardSubtitle className="mb-3">
                               {" "}
                               회원님의 평상시 잘 나온 사진들을 업로드 자유롭게
-                              업로드 해 주시면 됩니다. (최대 10장까지 가능)
+                              업로드 해 주시면 됩니다. (최대 5장까지 가능)
                             </CardSubtitle>
                             <Form>
                               <Dropzone
