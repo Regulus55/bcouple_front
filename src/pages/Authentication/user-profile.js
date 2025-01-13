@@ -10,7 +10,7 @@ import {
   Label,
   Input,
   FormFeedback,
-  Form
+  Form,
 } from "reactstrap"
 
 // Formik profileformik
@@ -32,6 +32,7 @@ import useProfile from "hooks/useProfile"
 import axios from "axios"
 import Dropzone from "react-dropzone"
 import { Link } from "react-router-dom"
+import UpdateImage from "components/Common/UpdateImage"
 
 const UserProfile = () => {
   //meta title
@@ -47,7 +48,7 @@ const UserProfile = () => {
     state => state.Profile,
     profile => ({
       error: profile.error,
-      success: profile.success
+      success: profile.success,
     })
   )
   const { error, success } = useSelector(ProfileProperties)
@@ -55,7 +56,7 @@ const UserProfile = () => {
   const {
     data: profileInfo,
     isLoading: profileLoading,
-    isError: profileError
+    isError: profileError,
   } = useProfile()
 
   useEffect(() => {
@@ -80,27 +81,13 @@ const UserProfile = () => {
   }, [dispatch, success])
 
   // 이미지
-  const [selectedFile, setSelectedFile] = useState(null)
-
-  const handleAcceptedFiles = (e) => {
-    setSelectedFile(e.target.files[0])
+  const [preview, setPreview] = useState(null)
+  const [profileImage, setProfileImage] = useState(null)
+  const handleFileUpload = file => {
+    setProfileImage(file)
+    const previewURL = URL.createObjectURL(file)
+    setPreview(previewURL)
   }
-
-
-  function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const dm = decimals < 0 ? 0 : decimals
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
-  }
-
-  useEffect(() => {
-
-  }, [])
-  /////////////
 
   const profileformik = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -111,33 +98,31 @@ const UserProfile = () => {
       email: profileInfo?.email || "",
       phone: profileInfo?.phone || "",
       profileImg: profileInfo?.profileImg,
-      id: profileInfo?.id || ""
+      id: profileInfo?.id || "",
     },
     profileformikSchema: Yup.object({
       nickName: Yup.string().required("Please Enter Your UserName"),
       email: Yup.string().required("Please Enter Your UserName"),
-      phone: Yup.string().required("Please Enter Your UserName")
+      phone: Yup.string().required("Please Enter Your UserName"),
     }),
     onSubmit: async values => {
-
       const formData = new FormData()
       formData.append("userName", values.nickName)
       formData.append("nickName", values.nickName)
       formData.append("email", values.email)
       formData.append("phone", values.phone)
-      formData.append("profileImg", selectedFile)
+      formData.append("profileImg", profileImage)
 
       for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
+        console.log(`${key}:`, value)
       }
       try {
         const token = localStorage.getItem("token")
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data"
-
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
         const url = "http://localhost/api/member"
         const res = await axios.put(url, formData, config)
@@ -148,7 +133,7 @@ const UserProfile = () => {
       } catch (e) {
         console.log(e)
       }
-    }
+    },
   })
 
   // 약관동의
@@ -158,14 +143,14 @@ const UserProfile = () => {
     {
       id: 3,
       label: "개인정보수집 및 이용동의(필수)",
-      key: "agreeOfPersonalInfo"
+      key: "agreeOfPersonalInfo",
     },
     {
       id: 4,
       label: "개인정보 마케팅 활용 동의(선택)",
-      key: "agreeOfMarketing"
+      key: "agreeOfMarketing",
     },
-    { id: 5, label: "이벤트, 특가 알림 및 SMS 등 수신(선택)", key: "etc" }
+    { id: 5, label: "이벤트, 특가 알림 및 SMS 등 수신(선택)", key: "etc" },
   ]
 
   const handleSingleCheck = (checked, key) => {
@@ -173,7 +158,7 @@ const UserProfile = () => {
 
     const allChecked = Object.values({
       ...consentformik.values.consent,
-      [key]: checked
+      [key]: checked,
     }).every(Boolean)
 
     document.getElementById("select-all").checked = allChecked
@@ -197,8 +182,8 @@ const UserProfile = () => {
         agreeOfTerm: true,
         agreeOfPersonalInfo: true,
         agreeOfMarketing: false,
-        etc: false
-      }
+        etc: false,
+      },
     },
     consentformikSchema: Yup.object({
       consent: Yup.object({
@@ -209,10 +194,9 @@ const UserProfile = () => {
           "필수 약관에 동의해주세요."
         ),
         agreeOfMarketing: Yup.boolean(),
-        etc: Yup.boolean()
-      })
+        etc: Yup.boolean(),
+      }),
     }),
-
 
     onSubmit: async values => {
       try {
@@ -223,9 +207,8 @@ const UserProfile = () => {
       } catch (e) {
         console.log(e)
       }
-    }
+    },
   })
-
 
   return (
     <React.Fragment>
@@ -244,7 +227,7 @@ const UserProfile = () => {
                   <div className="d-flex mb-4">
                     <div className="ms-3">
                       <img
-                        src={profileformik.values.profileImg}
+                        src={preview || "/default_image.png"}
                         alt=""
                         className="avatar-md rounded-circle img-thumbnail"
                         style={{ objectFit: "cover" }}
@@ -260,7 +243,6 @@ const UserProfile = () => {
                       </div>
                     </div>
                   </div>
-
 
                   {/*<Dropzone*/}
                   {/*  onDrop={handleAcceptedFiles}*/}
@@ -325,18 +307,9 @@ const UserProfile = () => {
                   {/*  </Row>*/}
                   {/*</div>*/}
 
-
                   <div className="input-group">
-                    <Input
-                      type="file"
-                      className="form-control"
-                      id="profileImg"
-                      accept="image/png, image/jpeg, image/jpg"
-                      onChange={handleAcceptedFiles}
-                    />
-                    <Label className="input-group-text" htmlFor="inputGroupFile02">Upload</Label>
+                    <UpdateImage onFileUpload={handleFileUpload} />
                   </div>
-
                 </CardBody>
               </Card>
             </Col>
@@ -503,7 +476,7 @@ const UserProfile = () => {
                           [
                             "overTwenty",
                             "agreeOfTerm",
-                            "agreeOfPersonalInfo"
+                            "agreeOfPersonalInfo",
                           ].includes(key) && consentformik.errors.consent[key]
                       ) && (
                         <div className="text-danger mt-2">
