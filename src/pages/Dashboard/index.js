@@ -2447,43 +2447,39 @@ const Dashboard = () => {
                                 className="dropzone-previews mt-3"
                                 id="file-previews"
                               >
-                                <Row>
-                                  {selectedFiles.map((f, i) => {
-                                    return (
-                                      <Col key={i + "-file"}>
-                                        <Card
-                                          className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                                          <div className="p-2">
-                                            <Row className="align-items-center">
-                                              <Col className="col-auto">
-                                                <img
-                                                  data-dz-thumbnail=""
-                                                  height="80"
-                                                  className="avatar-sm rounded bg-light"
-                                                  alt={f.name}
-                                                  src={f.preview}
-                                                />
-                                              </Col>
-                                              <Col>
-                                                <Link
-                                                  to="#"
-                                                  className="text-muted font-weight-bold"
-                                                >
-                                                  {f.name}
-                                                </Link>
-                                                <p className="mb-0">
-                                                  <strong>
-                                                    {f.formattedSize}
-                                                  </strong>
-                                                </p>
-                                              </Col>
-                                            </Row>
-                                          </div>
-                                        </Card>
-                                      </Col>
-                                    )
-                                  })}
-                                </Row>
+                                {selectedFiles.map((f, i) => {
+                                  return (
+                                    <Card
+                                      className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                                      key={i + "-file"}
+                                    >
+                                      <div className="p-2">
+                                        <Row className="align-items-center">
+                                          <Col className="col-auto">
+                                            <img
+                                              data-dz-thumbnail=""
+                                              height="80"
+                                              className="avatar-sm rounded bg-light"
+                                              alt={f.name}
+                                              src={f.preview}
+                                            />
+                                          </Col>
+                                          <Col>
+                                            <Link
+                                              to="#"
+                                              className="text-muted font-weight-bold"
+                                            >
+                                              {f.name}
+                                            </Link>
+                                            <p className="mb-0">
+                                              <strong>{f.formattedSize}</strong>
+                                            </p>
+                                          </Col>
+                                        </Row>
+                                      </div>
+                                    </Card>
+                                  )
+                                })}
                               </div>
                             </Form>
                           </Col>

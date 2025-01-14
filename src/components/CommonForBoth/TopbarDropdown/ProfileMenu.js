@@ -55,7 +55,7 @@ const ProfileMenu = props => {
         >
           <img
             className="rounded-circle header-profile-user"
-            src={profileInfo?.profileImg[0] || "/moon.jpg"}
+            src={profileInfo?.profileImg[0] || "/default_image.png"}
             alt="Header Avatar"
             style={{ objectFit: "cover" }}
           />
