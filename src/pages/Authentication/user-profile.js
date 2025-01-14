@@ -32,6 +32,7 @@ import useProfile from "hooks/useProfile"
 import axios from "axios"
 import Dropzone from "react-dropzone"
 import { Link } from "react-router-dom"
+import Consent from "../../components/Common/Consent"
 
 const UserProfile = () => {
   //meta title
@@ -43,14 +44,6 @@ const UserProfile = () => {
   const [name, setname] = useState("")
   const [idx, setidx] = useState(1)
 
-  const ProfileProperties = createSelector(
-    state => state.Profile,
-    profile => ({
-      error: profile.error,
-      success: profile.success
-    })
-  )
-  const { error, success } = useSelector(ProfileProperties)
 
   const {
     data: profileInfo,
@@ -58,49 +51,12 @@ const UserProfile = () => {
     isError: profileError
   } = useProfile()
 
-  useEffect(() => {
-    if (localStorage.getItem("authUser")) {
-      const obj = JSON.parse(localStorage.getItem("authUser"))
-      if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
-        setname(obj.displayName)
-        setemail(obj.email)
-        setidx(obj.uid)
-      } else if (
-        process.env.REACT_APP_DEFAULTAUTH === "fake" ||
-        process.env.REACT_APP_DEFAULTAUTH === "jwt"
-      ) {
-        setname(obj.username)
-        setemail(obj.email)
-        setidx(obj.uid)
-      }
-      setTimeout(() => {
-        dispatch(resetProfileFlag())
-      }, 3000)
-    }
-  }, [dispatch, success])
-
   // 이미지
   const [selectedFile, setSelectedFile] = useState(null)
-
   const handleAcceptedFiles = (e) => {
     setSelectedFile(e.target.files[0])
   }
 
-
-  function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const dm = decimals < 0 ? 0 : decimals
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
-  }
-
-  useEffect(() => {
-
-  }, [])
-  /////////////
 
   const profileformik = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -128,7 +84,7 @@ const UserProfile = () => {
       formData.append("profileImg", selectedFile)
 
       for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
+        console.log(`${key}:`, value)
       }
       try {
         const token = localStorage.getItem("token")
@@ -151,81 +107,6 @@ const UserProfile = () => {
     }
   })
 
-  // 약관동의
-  const agreements = [
-    { id: 1, label: "14세 이상입니다(필수)", key: "overTwenty" },
-    { id: 2, label: "이용약관(필수)", key: "agreeOfTerm" },
-    {
-      id: 3,
-      label: "개인정보수집 및 이용동의(필수)",
-      key: "agreeOfPersonalInfo"
-    },
-    {
-      id: 4,
-      label: "개인정보 마케팅 활용 동의(선택)",
-      key: "agreeOfMarketing"
-    },
-    { id: 5, label: "이벤트, 특가 알림 및 SMS 등 수신(선택)", key: "etc" }
-  ]
-
-  const handleSingleCheck = (checked, key) => {
-    consentformik.setFieldValue(`consent.${key}`, checked)
-
-    const allChecked = Object.values({
-      ...consentformik.values.consent,
-      [key]: checked
-    }).every(Boolean)
-
-    document.getElementById("select-all").checked = allChecked
-  }
-
-  const handleAllCheck = checked => {
-    const updatedConsent = agreements.reduce((acc, cur) => {
-      acc[cur.key] = checked
-      return acc
-    }, {})
-    consentformik.setFieldValue("consent", updatedConsent)
-  }
-
-  const consentformik = useFormik({
-    // enableReinitialize : use this flag when initial values needs to be changed
-    enableReinitialize: true,
-
-    initialValues: {
-      consent: {
-        overTwenty: true,
-        agreeOfTerm: true,
-        agreeOfPersonalInfo: true,
-        agreeOfMarketing: false,
-        etc: false
-      }
-    },
-    consentformikSchema: Yup.object({
-      consent: Yup.object({
-        overTwenty: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
-        agreeOfTerm: Yup.boolean().oneOf([true], "필수 약관에 동의해주세요."),
-        agreeOfPersonalInfo: Yup.boolean().oneOf(
-          [true],
-          "필수 약관에 동의해주세요."
-        ),
-        agreeOfMarketing: Yup.boolean(),
-        etc: Yup.boolean()
-      })
-    }),
-
-
-    onSubmit: async values => {
-      try {
-        console.log("제출밸류", values.consent)
-        const url = "http://localhost/api/consent"
-        // const res = await axios.put(url, values.consent)
-        // console.log("약관수정 res", res)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  })
-
 
   return (
     <React.Fragment>
@@ -236,11 +117,9 @@ const UserProfile = () => {
 
           <Row>
             <Col lg="12">
-              {error && error ? <Alert color="danger">{error}</Alert> : null}
-              {success ? <Alert color="success">{success}</Alert> : null}
-
               <Card>
                 <CardBody>
+                  <h4 className="card-title mb-4">프로필</h4>
                   <div className="d-flex mb-4">
                     <div className="ms-3">
                       <img
@@ -342,10 +221,12 @@ const UserProfile = () => {
             </Col>
           </Row>
 
-          <h4 className="card-title mb-4">Change Profile Info</h4>
 
           <Card>
             <CardBody>
+              <h4 className="card-title mb-4">
+                프로필 변경
+              </h4>
               <Form
                 className="form-horizontal"
                 onSubmit={e => {
@@ -435,7 +316,7 @@ const UserProfile = () => {
                 {/* 제출버튼 */}
                 <div className="text-center mt-4">
                   <Button type="submit" color="primary">
-                    Update Profile Info
+                    프로필 업데이트
                   </Button>
                 </div>
               </Form>
@@ -444,81 +325,8 @@ const UserProfile = () => {
 
           <Card>
             <CardBody>
-              <Form
-                className="form-horizontal"
-                onSubmit={e => {
-                  e.preventDefault()
-                  consentformik.handleSubmit()
-                  return false
-                }}
-              >
-                <Row>
-                  <Col xl={12}>
-                    <label className="form-label fw-bold">Consent</label>
-                    <div className="signup-consent p-3 border border-2 rounded">
-                      <div className="form-check">
-                        <input
-                          type="checkbox"
-                          id="select-all"
-                          className="form-check-input"
-                          onChange={e => handleAllCheck(e.target.checked)}
-                          checked={Object.values(
-                            consentformik.values.consent
-                          ).every(Boolean)}
-                        />
-                        <label
-                          htmlFor="select-all"
-                          className="form-check-label"
-                        >
-                          전체 선택
-                        </label>
-                      </div>
-
-                      <hr className="border-2" />
-
-                      {agreements.map(item => (
-                        <div key={item.id} className="form-check mb-2">
-                          <input
-                            type="checkbox"
-                            id={`agreement-${item.id}`}
-                            className="form-check-input"
-                            checked={consentformik.values.consent[item.key]}
-                            onChange={e =>
-                              handleSingleCheck(e.target.checked, item.key)
-                            }
-                          />
-                          <label
-                            htmlFor={`agreement-${item.id}`}
-                            className="form-check-label"
-                          >
-                            {item.label}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-
-                    {consentformik.touched.consent &&
-                      Object.keys(consentformik.errors.consent || {}).some(
-                        key =>
-                          [
-                            "overTwenty",
-                            "agreeOfTerm",
-                            "agreeOfPersonalInfo"
-                          ].includes(key) && consentformik.errors.consent[key]
-                      ) && (
-                        <div className="text-danger mt-2">
-                          Please agree to all the required terms.
-                        </div>
-                      )}
-                  </Col>
-                </Row>
-
-                <div className="text-center mt-4">
-                  <Button type="submit" color="primary">
-                    Update Profile Info
-                  </Button>
-                </div>
-              </Form>
+              <h4 className="card-title mb-4">약관동의 변경</h4>
+              <Consent />
             </CardBody>
           </Card>
 
@@ -895,4 +703,4 @@ const UserProfile = () => {
   )
 }
 
-export default withRouter(UserProfile)
+export default UserProfile

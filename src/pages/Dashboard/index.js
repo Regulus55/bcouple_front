@@ -696,26 +696,30 @@ const Dashboard = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
 
+
+//학력
+  const [medic, setMedic] = useState(null)
+  const handleMedicFile = (e) => {
+    setMedic(e.target.files[0])
+  }
+
   const certificateformik = useFormik({
     initialValues: {
-      schoolfiles: ""
-
+      workfile: ""
     },
     validationSchema: Yup.object({
-
       workfile: Yup.string().required("This field is required")
-
     }),
     onSubmit: async values => {
+      const formData = new FormData()
+      formData.append("workfile", values.workfile)
 
-      const userInput = {
-        schoolfiles: values.workfile
-      }
-      console.log("기본정보 userinput", userInput)
-
-
+      // for (let [key, value] of formData.entries()) {
+      //   console.log(`${key}:`, value)
+      // }
     }
   })
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -2381,21 +2385,30 @@ const Dashboard = () => {
                         <Row>
                           <Col sm={12}>
                             <div className="mt-4">
-                              <div>
                                 <Label
                                   htmlFor="formFileLg"
                                   className="form-label"
                                 >
                                   재직증명서 또는 의료보험증 사본 (필수)
                                 </Label>
-                                <Input
-                                  className="form-control form-control-lg"
-                                  id="formFileLg"
-                                  name="workfile"
-                                  value={certificateformik.values.workfile}
-                                  type="file"
-                                />
-                              </div>
+                                {/*<Input*/}
+                                {/*  className="form-control form-control-lg"*/}
+                                {/*  id="formFileLg"*/}
+                                {/*  name="workfile"*/}
+                                {/*  value={certificateformik.values.workfile}*/}
+                                {/*  type="file"*/}
+                                {/*/>*/}
+                                <div className="input-group">
+                                  <Input
+                                    type="file"
+                                    className="form-control"
+                                    name="workfile"
+                                    id="profileImg"
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onChange={handleMedicFile}
+                                  />
+                                  <Label className="input-group-text" htmlFor="inputGroupFile02">Upload</Label>
+                                </div>
                             </div>
                           </Col>
                         </Row>
