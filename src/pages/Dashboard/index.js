@@ -704,6 +704,8 @@ const Dashboard = () => {
   }
 
   const certificateformik = useFormik({
+    enableReinitialize: true,
+
     initialValues: {
       workfile: ""
     },
@@ -712,11 +714,17 @@ const Dashboard = () => {
     }),
     onSubmit: async values => {
       const formData = new FormData()
-      formData.append("workfile", values.workfile)
+      formData.append("workfile", medic)
 
+      console.log('sububububbuu')
       // for (let [key, value] of formData.entries()) {
       //   console.log(`${key}:`, value)
       // }
+      try{
+        console.log('xcccccccccccc')
+      }catch(e){
+        console.log(e)
+      }
     }
   })
 
