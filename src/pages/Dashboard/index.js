@@ -709,9 +709,17 @@ const Dashboard = () => {
     certificateformik.setFieldValue("marriageFile", marriageFile)
   }
 
+  const [additionalInputs, setAdditionalInputs] = useState([])
   const handleGraduationFile = e => {
-    const graduationFile = e.target.files[0]
-    certificateformik.setFieldValue("graduationFile", graduationFile)
+    const graduationFile = e.target.files?.[0]
+    certificateformik.setFieldValue(e.target.name, graduationFile)
+  }
+  const addGraduationFileInput = () => {
+    const newFieldName = `graduationFile_${
+      additionalGraduationInputs.length + 1
+    }`
+    setAdditionalGraduationInputs([...additionalGraduationInputs, newFieldName])
+    certificateformik.setFieldValue(newFieldName, "")
   }
 
   const handleEmploymentFile = e => {
@@ -2374,7 +2382,7 @@ const Dashboard = () => {
                                   type="file"
                                   className="form-control"
                                   name="marriageFile"
-                                  id="profileImg"
+                                  id="marriageFile"
                                   accept="image/png, image/jpeg, image/jpg"
                                   onChange={handleMarriageFile}
                                 />
@@ -2399,22 +2407,46 @@ const Dashboard = () => {
                                 최종학력 졸업증명서 (필수)
                               </Label>
                               <div className="input-group">
-                                <Input
+                                <button
+                                  className="btn btn-danger"
+                                  type="button"
+                                  id="inputGroupFileAddon03"
+                                >
+                                  삭제하기
+                                </button>
+                                <input
                                   type="file"
                                   className="form-control"
-                                  id="inputGroupFile04"
-                                  aria-describedby="inputGroupFileAddon04"
-                                  aria-label="Upload"
+                                  name="graduationFile"
+                                  id="graduationFile"
+                                  accept="image/png, image/jpeg, image/jpg"
+                                  onChange={handleGraduationFile}
                                 />
                                 <button
                                   className="btn btn-primary"
                                   type="button"
-                                  id="inputGroupFileAddon04"
+                                  onClick={addGraduationFileInput}
                                 >
-                                  Button
+                                  추가하기
                                 </button>
                               </div>
                             </div>
+
+                            {/* {additionalGraduationInputs.map((fieldName, index) => (
+        <div className="mt-4" key={index}>
+          <label htmlFor={fieldName} className="form-label">
+            추가 졸업증명서 {index + 1}
+          </label>
+          <input
+            type="file"
+            className="form-control"
+            name={fieldName}
+            id={fieldName}
+            accept="image/png, image/jpeg, image/jpg"
+            onChange={handleGraduationFile}
+          />
+        </div>
+      ))} */}
                           </Col>
                         </Row>
 
@@ -2432,7 +2464,7 @@ const Dashboard = () => {
                                   type="file"
                                   className="form-control"
                                   name="employmentFile"
-                                  id="profileImg"
+                                  id="employmentFile"
                                   accept="image/png, image/jpeg, image/jpg"
                                   onChange={handleEmploymentFile}
                                 />
