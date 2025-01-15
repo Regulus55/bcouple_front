@@ -165,30 +165,6 @@ const Dashboard = () => {
     },
   })
 
-  const [selectedFiles, setselectedFiles] = useState([])
-
-  function handleAcceptedFiles(files) {
-    files.map(file =>
-      Object.assign(file, {
-        preview: URL.createObjectURL(file),
-        formattedSize: formatBytes(file.size),
-      })
-    )
-    files.length < 6
-      ? setselectedFiles(files)
-      : alert("파일은 5개까지만 등록할수 있습니다.")
-  }
-
-  function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const dm = decimals < 0 ? 0 : decimals
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
-  }
-
   // 기본정보
   const basicInfoFormik = useFormik({
     initialValues: {
@@ -673,45 +649,17 @@ const Dashboard = () => {
     },
   })
 
-  const [schoolPapers, setSchoolPapers] = useState([])
-
-  function handleSchoolFiles(files) {
-    files.map(file =>
-      Object.assign(file, {
-        preview: URL.createObjectURL(file),
-        formattedSize: formatBytes(file.size),
-      })
-    )
-    setSchoolPapers(files)
-  }
-
-  /**
-   * Formats the size
-   */
-  function formatSchoolBytes(bytes, decimals = 2) {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const dm = decimals < 0 ? 0 : decimals
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
-  }
-
-  //학력
-  // const [medic, setMedic] = useState(null)
-  // const handleMedicFile = e => {
-  //   console.log("File Selected:", e.target.files[0])
-  //   setMedic(e.target.files[0])
-  // }
+  // 증빙서류
   const handleMarriageFile = e => {
     const marriageFile = e.target.files[0]
     certificateformik.setFieldValue("marriageFile", marriageFile)
   }
 
+  // 최종학력 졸업증명서 칸
   const [additionalGraduationInputs, setAdditionalGraduationInputs] = useState(
     []
   )
+
   const handleGraduationFile = e => {
     const graduationFile = e.target.files?.[0]
     certificateformik.setFieldValue(e.target.name, graduationFile)
@@ -730,6 +678,8 @@ const Dashboard = () => {
     certificateformik.setFieldValue(fieldName, undefined)
   }
 
+  // 재직증명서
+  // 혼인증명서
   const handleEmploymentFile = e => {
     const employmentFile = e.target.files[0]
     certificateformik.setFieldValue("employmentFile", employmentFile)
@@ -753,6 +703,62 @@ const Dashboard = () => {
 
       try {
         console.log("증명서밸류", values)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+  })
+
+  // 프로필 이미지 업로드 의 이미지
+  const [selectedFiles, setselectedFiles] = useState([])
+
+  function handleAcceptedFiles(files) {
+    files.map(file =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size),
+      })
+    )
+    if (files.length < 6) {
+      setselectedFiles(files)
+    } else {
+      alert("파일은 5개까지만 등록할 수 있습니다.")
+    }
+  }
+
+  function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
+  }
+
+  // 프로필 이미지 업로드
+  const profileimageformik = useFormik({
+    initialValues: {
+      profileImageUpload: [],
+    },
+    validationSchema: Yup.object({
+      profileImageUpload: Yup.mixed().required("This field is required"),
+    }),
+
+    onSubmit: async values => {
+      try {
+        const token = localStorage.getItem("token")
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        const url = "http://localhost/api/job"
+        const res = await axios.post(url, selectedFiles, config)
+        console.log("직업 res", res)
+        // if (res.status === 201) {
+        //   alert("직업 내용 저장 성공")
+        // }
       } catch (e) {
         console.log(e)
       }
@@ -2503,7 +2509,7 @@ const Dashboard = () => {
                     </CardContainer>
 
                     <CardContainer title={"프로필 이미지 업로드"}>
-                      <Form onSubmit={floatingformik.handleSubmit}>
+                      <Form onSubmit={profileimageformik.handleSubmit}>
                         <Row>
                           <Col sm={12}>
                             <CardSubtitle className="mb-3">
@@ -2581,7 +2587,7 @@ const Dashboard = () => {
 
                         <div className={"mt-3"}>
                           <button
-                            type="button"
+                            type="submit"
                             className="btn btn-primary w-md"
                           >
                             프로필 이미지 업로드
