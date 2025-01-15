@@ -709,7 +709,9 @@ const Dashboard = () => {
     certificateformik.setFieldValue("marriageFile", marriageFile)
   }
 
-  const [additionalInputs, setAdditionalInputs] = useState([])
+  const [additionalGraduationInputs, setAdditionalGraduationInputs] = useState(
+    []
+  )
   const handleGraduationFile = e => {
     const graduationFile = e.target.files?.[0]
     certificateformik.setFieldValue(e.target.name, graduationFile)
@@ -718,8 +720,14 @@ const Dashboard = () => {
     const newFieldName = `graduationFile_${
       additionalGraduationInputs.length + 1
     }`
-    setAdditionalGraduationInputs([...additionalGraduationInputs, newFieldName])
+    setAdditionalGraduationInputs(prev => [...prev, newFieldName])
     certificateformik.setFieldValue(newFieldName, "")
+  }
+  const removeGraduationFileInput = fieldName => {
+    setAdditionalGraduationInputs(prev =>
+      prev.filter(name => name !== fieldName)
+    )
+    certificateformik.setFieldValue(fieldName, undefined)
   }
 
   const handleEmploymentFile = e => {
@@ -2407,13 +2415,6 @@ const Dashboard = () => {
                                 최종학력 졸업증명서 (필수)
                               </Label>
                               <div className="input-group">
-                                <button
-                                  className="btn btn-danger"
-                                  type="button"
-                                  id="inputGroupFileAddon03"
-                                >
-                                  삭제하기
-                                </button>
                                 <input
                                   type="file"
                                   className="form-control"
@@ -2432,21 +2433,32 @@ const Dashboard = () => {
                               </div>
                             </div>
 
-                            {/* {additionalGraduationInputs.map((fieldName, index) => (
-        <div className="mt-4" key={index}>
-          <label htmlFor={fieldName} className="form-label">
-            추가 졸업증명서 {index + 1}
-          </label>
-          <input
-            type="file"
-            className="form-control"
-            name={fieldName}
-            id={fieldName}
-            accept="image/png, image/jpeg, image/jpg"
-            onChange={handleGraduationFile}
-          />
-        </div>
-      ))} */}
+                            {additionalGraduationInputs.map(
+                              (fieldName, index) => (
+                                <div
+                                  className="input-group mt-3"
+                                  key={fieldName}
+                                >
+                                  <input
+                                    type="file"
+                                    className="form-control"
+                                    name={fieldName}
+                                    id={fieldName}
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onChange={handleGraduationFile}
+                                  />
+                                  <button
+                                    className="btn btn-danger"
+                                    type="button"
+                                    onClick={() =>
+                                      removeGraduationFileInput(fieldName)
+                                    }
+                                  >
+                                    삭제하기
+                                  </button>
+                                </div>
+                              )
+                            )}
                           </Col>
                         </Row>
 
